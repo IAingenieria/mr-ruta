@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const VALID_EMAIL = import.meta.env.VITE_CRM_EMAIL as string;
-const VALID_PASS  = import.meta.env.VITE_CRM_PASSWORD as string;
+const VALID_EMAIL = import.meta.env.VITE_CRM_EMAIL || "info@mr-ruta.com";
+const VALID_PASS  = import.meta.env.VITE_CRM_PASSWORD || "Zuazua#114";
 const SESSION_KEY = "mr_ruta_auth";
 
 interface LoginPageProps {
