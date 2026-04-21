@@ -1,5 +1,9 @@
 {
   "rewrites": [
     { "source": "/", "destination": "/MrRuta_Website_Final.html" }
+  ],
+  "redirects": [
+    { "source": "/login", "destination": "https://digital-hub-crm.vercel.app", "permanent": false },
+    { "source": "/app",   "destination": "https://digital-hub-crm.vercel.app", "permanent": false }
   ]
 }
