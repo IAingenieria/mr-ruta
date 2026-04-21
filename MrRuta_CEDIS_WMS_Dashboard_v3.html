@@ -1,0 +1,2096 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mr. Ruta — CEDIS WMS Dashboard v3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+/* ═══════════════ TOKENS ═══════════════ */
+:root{
+  --g900:#041A0D;--g800:#073D1E;--g700:#0A5C2E;--g600:#0D7A40;
+  --g500:#129057;--g400:#18B36B;--g300:#3FCA88;--g100:#C2F0D8;--g50:#EBF9F2;
+  --b800:#061E4A;--b700:#0B306E;--b600:#1044A0;--b500:#1A5EC8;
+  --b400:#3A7EE8;--b300:#72A9F4;--b100:#C8DFFB;--b50:#EBF2FE;
+  --a700:#9E4A00;--a600:#C45E00;--a500:#E87800;--a400:#F5A623;
+  --a100:#FEE9B8;--a50:#FFF8E9;
+  --r700:#7A0B0B;--r600:#A01A1A;--r500:#C42828;--r300:#F47A7A;--r100:#FDDDDD;--r50:#FEF2F2;
+  --p700:#2D1B7A;--p500:#5040CC;--p100:#DCD9FB;--p50:#F0EFFE;
+  --gray900:#0D100E;--gray800:#1A1F1C;--gray700:#2E3330;
+  --gray600:#454C48;--gray500:#636A66;--gray400:#8C9490;
+  --gray300:#B5BCB8;--gray200:#D8DDD9;--gray100:#EEF2F0;--gray50:#F8FAF9;
+  --sidebar-w:220px;--topbar-h:56px;
+  --font:'DM Sans',system-ui,sans-serif;--mono:'DM Mono',monospace;
+  --bg:#F0F4F2;--surface:#fff;--border:rgba(0,0,0,.08);--border2:rgba(0,0,0,.14);
+  --text:#0D100E;--text2:#454C48;--text3:#8C9490;
+  --shadow:0 1px 4px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 16px rgba(0,0,0,.10);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:hidden;font-size:14px}
+
+/* ═══════════════ SIDEBAR ═══════════════ */
+.sidebar{
+  width:var(--sidebar-w);background:var(--gray800);flex-shrink:0;
+  display:flex;flex-direction:column;height:100vh;overflow:hidden;
+  border-right:1px solid rgba(255,255,255,.06);
+}
+.sidebar-logo{
+  padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08);
+  display:flex;align-items:center;gap:10px;
+}
+.logo-icon{
+  width:32px;height:32px;background:var(--g500);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;
+}
+.logo-text{font-size:15px;font-weight:700;color:#fff;line-height:1.2}
+.logo-sub{font-size:10px;color:rgba(255,255,255,.5);line-height:1}
+.sidebar-section{padding:8px 12px 4px;font-size:9px;font-weight:700;letter-spacing:.08em;color:rgba(255,255,255,.3);text-transform:uppercase}
+.nav-link{
+  display:flex;align-items:center;gap:10px;padding:9px 16px;
+  border-radius:8px;margin:1px 8px;cursor:pointer;
+  font-size:13px;font-weight:500;color:rgba(255,255,255,.6);
+  transition:all .15s;border:none;background:none;width:calc(100% - 16px);
+  font-family:var(--font);text-align:left;
+}
+.nav-link:hover{background:rgba(255,255,255,.08);color:#fff}
+.nav-link.active{background:rgba(18,144,87,.25);color:var(--g300);font-weight:700}
+.nav-link .nav-icon{font-size:15px;width:18px;text-align:center;flex-shrink:0}
+.nav-dot{
+  margin-left:auto;min-width:18px;height:18px;background:var(--r500);
+  border-radius:9px;font-size:10px;font-weight:700;color:#fff;
+  display:flex;align-items:center;justify-content:center;padding:0 5px;
+}
+.nav-dot.amber{background:var(--a500)}
+.nav-dot.green{background:var(--g500)}
+.sidebar-spacer{flex:1}
+.sidebar-bottom{padding:12px;border-top:1px solid rgba(255,255,255,.08)}
+.connection-badge{
+  display:flex;align-items:center;gap:8px;padding:8px 12px;
+  background:rgba(255,255,255,.06);border-radius:8px;margin-bottom:8px;
+}
+.conn-dot{
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;
+  box-shadow:0 0 8px currentColor;
+}
+.conn-dot.online{background:var(--g400);color:var(--g400);animation:glow 2s ease infinite}
+.conn-dot.offline{background:var(--r400);color:var(--r400)}
+@keyframes glow{0%,100%{opacity:1}50%{opacity:.4}}
+.conn-text{font-size:11px;color:rgba(255,255,255,.7)}
+.conn-text b{color:#fff;display:block;font-size:12px}
+
+/* ═══════════════ MAIN ═══════════════ */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{
+  height:var(--topbar-h);background:var(--surface);
+  border-bottom:1px solid var(--border);display:flex;
+  align-items:center;padding:0 24px;gap:16px;flex-shrink:0;
+  box-shadow:var(--shadow);
+}
+.topbar-title{font-size:17px;font-weight:700;flex:1}
+.topbar-sub{font-size:12px;color:var(--text3);margin-top:1px}
+.topbar-actions{display:flex;gap:8px;align-items:center}
+.topbar-time{
+  font-family:var(--mono);font-size:13px;font-weight:500;
+  color:var(--text2);background:var(--gray100);
+  padding:5px 10px;border-radius:6px;
+}
+.sync-indicator{
+  display:flex;align-items:center;gap:6px;padding:5px 12px;
+  background:var(--g50);border:1px solid var(--g100);border-radius:6px;
+  font-size:12px;font-weight:600;color:var(--g700);cursor:pointer;
+}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--g400);animation:glow 1.5s ease infinite}
+.btn-topbar{
+  padding:7px 16px;border-radius:7px;font-size:13px;font-weight:600;
+  border:none;cursor:pointer;font-family:var(--font);transition:all .15s;
+}
+.btn-primary{background:var(--g600);color:#fff}
+.btn-primary:hover{background:var(--g700)}
+.btn-secondary{background:var(--surface);color:var(--text2);border:1.5px solid var(--border2)}
+.btn-secondary:hover{background:var(--gray100)}
+.btn-danger{background:var(--r50);color:var(--r700);border:1.5px solid var(--r300)}
+
+/* ═══════════════ CONTENT ═══════════════ */
+.content{flex:1;overflow-y:auto;padding:24px;display:none}
+.content.active{display:block}
+.content::-webkit-scrollbar{width:5px}
+.content::-webkit-scrollbar-thumb{background:var(--gray200);border-radius:3px}
+.page-header{margin-bottom:20px}
+.page-title{font-size:22px;font-weight:700}
+.page-sub{font-size:13px;color:var(--text3);margin-top:3px}
+
+/* ═══════════════ GRID & CARDS ═══════════════ */
+.grid{display:grid;gap:16px}
+.cols-4{grid-template-columns:repeat(4,1fr)}
+.cols-3{grid-template-columns:repeat(3,1fr)}
+.cols-2{grid-template-columns:1fr 1fr}
+.cols-2-1{grid-template-columns:2fr 1fr}
+.cols-1-2{grid-template-columns:1fr 2fr}
+.span-2{grid-column:span 2}
+.span-3{grid-column:span 3}
+.card{
+  background:var(--surface);border-radius:12px;border:1px solid var(--border);
+  padding:20px;box-shadow:var(--shadow);
+}
+.card-sm{padding:14px 16px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.card-title{font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.04em}
+.card-action{font-size:12px;color:var(--b600);cursor:pointer;font-weight:600}
+.card-action:hover{text-decoration:underline}
+
+/* ═══════════════ KPI CARDS ═══════════════ */
+.kpi-card{
+  background:var(--surface);border-radius:12px;border:1px solid var(--border);
+  padding:18px 20px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:4px;
+}
+.kpi-val{font-size:28px;font-weight:800;line-height:1;letter-spacing:-.5px}
+.kpi-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.04em}
+.kpi-delta{font-size:12px;font-weight:600;margin-top:4px}
+.kpi-delta.up{color:var(--g600)}
+.kpi-delta.down{color:var(--r500)}
+.kpi-delta.warn{color:var(--a600)}
+.kpi-bar{height:3px;background:var(--gray100);border-radius:2px;margin-top:8px;overflow:hidden}
+.kpi-bar-fill{height:100%;border-radius:2px;transition:width .5s}
+
+/* ═══════════════ TABLES ═══════════════ */
+.table-wrap{overflow-x:auto;border-radius:8px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse}
+thead tr{background:var(--gray50)}
+th{padding:10px 14px;font-size:11px;font-weight:700;color:var(--text3);
+   text-transform:uppercase;letter-spacing:.04em;text-align:left;
+   border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:10px 14px;font-size:13px;border-bottom:1px solid var(--gray100);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--gray50)}
+.td-bold{font-weight:700}
+.td-mono{font-family:var(--mono);font-size:12px}
+
+/* ═══════════════ BADGES ═══════════════ */
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:10px;font-weight:700;padding:3px 8px;
+  border-radius:999px;letter-spacing:.02em;white-space:nowrap;
+}
+.badge-green{background:var(--g50);color:var(--g700)}
+.badge-amber{background:var(--a50);color:var(--a700)}
+.badge-red{background:var(--r50);color:var(--r700)}
+.badge-blue{background:var(--b50);color:var(--b700)}
+.badge-purple{background:var(--p50);color:var(--p700)}
+.badge-gray{background:var(--gray100);color:var(--gray600)}
+
+/* ═══════════════ PROGRESS ═══════════════ */
+.progress{height:8px;background:var(--gray100);border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;border-radius:4px;transition:width .5s}
+.progress-sm{height:5px}
+
+/* ═══════════════ FEFO INDICATOR ═══════════════ */
+.fefo-bar{
+  display:flex;height:14px;border-radius:4px;overflow:hidden;gap:1px;
+}
+.fefo-seg{height:100%;border-radius:2px;transition:width .5s}
+
+/* ═══════════════ LIVE FEED ═══════════════ */
+.live-feed{display:flex;flex-direction:column;gap:6px;max-height:360px;overflow-y:auto}
+.live-feed::-webkit-scrollbar{width:3px}
+.live-feed::-webkit-scrollbar-thumb{background:var(--gray200);border-radius:2px}
+.feed-item{
+  display:flex;align-items:flex-start;gap:10px;padding:10px 12px;
+  background:var(--gray50);border-radius:8px;border:1px solid var(--border);
+  animation:feedIn .3s ease;
+}
+@keyframes feedIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.feed-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.feed-content{flex:1;min-width:0}
+.feed-title{font-size:12px;font-weight:600;color:var(--text)}
+.feed-sub{font-size:11px;color:var(--text3);margin-top:1px}
+.feed-time{font-size:10px;color:var(--text3);font-family:var(--mono);flex-shrink:0;margin-top:2px}
+.feed-new{background:var(--g50);border-color:var(--g100)}
+
+/* ═══════════════ ROUTE CARDS ═══════════════ */
+.route-card{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:10px;padding:14px;transition:all .15s;
+}
+.route-card:hover{border-color:var(--gray300)}
+.route-card.loading{border-color:var(--a300);background:var(--a50)}
+.route-card.dispatched{border-color:var(--g300);background:var(--g50)}
+.route-card.pending{border-color:var(--border)}
+.route-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.route-name{font-size:14px;font-weight:700}
+.route-meta{font-size:11px;color:var(--text3);margin-top:1px}
+.route-vendedor{display:flex;align-items:center;gap:8px;margin-top:8px}
+.vendedor-chip{
+  display:flex;align-items:center;gap:6px;padding:5px 10px;
+  background:var(--gray100);border-radius:6px;font-size:12px;font-weight:500;
+}
+.avatar-sm{
+  width:22px;height:22px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:700;color:#fff;flex-shrink:0;
+}
+
+/* ═══════════════ ALERT ITEMS ═══════════════ */
+.alert-item{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:10px 12px;border-radius:8px;margin-bottom:6px;
+  border-left:3px solid;
+}
+.alert-item.critical{background:var(--r50);border-color:var(--r500)}
+.alert-item.critical .ai-title{color:var(--r700);font-size:12px;font-weight:700}
+.alert-item.warning{background:var(--a50);border-color:var(--a500)}
+.alert-item.warning .ai-title{color:var(--a700);font-size:12px;font-weight:700}
+.alert-item.info{background:var(--b50);border-color:var(--b500)}
+.alert-item.info .ai-title{color:var(--b700);font-size:12px;font-weight:700}
+.alert-item.success{background:var(--g50);border-color:var(--g500)}
+.alert-item.success .ai-title{color:var(--g700);font-size:12px;font-weight:700}
+.ai-desc{font-size:11px;color:var(--text3);margin-top:2px;line-height:1.4}
+
+/* ═══════════════ CONNECTIVITY PANEL ═══════════════ */
+.conn-flow{
+  display:flex;align-items:center;gap:0;
+  background:var(--gray800);border-radius:12px;padding:20px;overflow-x:auto;
+}
+.conn-node{
+  flex-shrink:0;text-align:center;padding:12px 16px;
+  background:rgba(255,255,255,.06);border-radius:10px;
+  border:1px solid rgba(255,255,255,.1);min-width:120px;
+}
+.conn-node.active{background:rgba(18,144,87,.2);border-color:rgba(63,202,136,.4)}
+.conn-node.highlight{background:rgba(26,94,200,.2);border-color:rgba(114,169,244,.4)}
+.conn-node-icon{font-size:22px;margin-bottom:6px}
+.conn-node-name{font-size:12px;font-weight:700;color:#fff;line-height:1.3}
+.conn-node-sub{font-size:10px;color:rgba(255,255,255,.5);margin-top:2px}
+.conn-arrow{
+  flex-shrink:0;padding:0 8px;display:flex;flex-direction:column;
+  align-items:center;gap:4px;
+}
+.conn-arrow-line{
+  width:48px;height:2px;background:rgba(255,255,255,.2);
+  border-radius:1px;position:relative;overflow:hidden;
+}
+.conn-arrow-line.active::after{
+  content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
+  background:var(--g400);border-radius:1px;
+  animation:flow 1.2s linear infinite;
+}
+.conn-arrow-line.reverse.active::after{animation-direction:reverse}
+@keyframes flow{to{left:200%}}
+.conn-arrow-label{font-size:9px;color:rgba(255,255,255,.4);white-space:nowrap;font-weight:600}
+.conn-arrow-head{color:rgba(255,255,255,.3);font-size:12px}
+.packet{
+  position:absolute;width:8px;height:8px;border-radius:50%;
+  background:var(--g400);box-shadow:0 0 8px var(--g400);
+  animation:packet 2s linear infinite;opacity:0;
+}
+@keyframes packet{0%{left:0;opacity:0}10%{opacity:1}90%{opacity:1}100%{left:calc(100% - 8px);opacity:0}}
+
+/* ═══════════════ INVENTORY FEFO ═══════════════ */
+.sku-inventory-row{
+  display:grid;grid-template-columns:180px 100px 1fr 100px 80px 120px;
+  gap:12px;align-items:center;padding:10px 14px;
+  border-bottom:1px solid var(--gray100);
+}
+.sku-inventory-row:last-child{border-bottom:none}
+.sku-inventory-row:hover{background:var(--gray50)}
+.sku-name-cell{font-size:13px;font-weight:600}
+.sku-brand-cell{font-size:11px;color:var(--text3)}
+.fefo-pill{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;
+}
+.fefo-ok{background:var(--g50);color:var(--g700)}
+.fefo-warn{background:var(--a50);color:var(--a700)}
+.fefo-critical{background:var(--r50);color:var(--r700)}
+
+/* ═══════════════ MODALS ═══════════════ */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;
+  display:none;align-items:center;justify-content:center;padding:24px;
+}
+.modal-overlay.show{display:flex}
+.modal{
+  background:var(--surface);border-radius:16px;padding:28px;
+  max-width:520px;width:100%;max-height:80vh;overflow-y:auto;
+  box-shadow:var(--shadow-md);animation:modalIn .2s ease;
+}
+@keyframes modalIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:none}}
+.modal-title{font-size:18px;font-weight:800;margin-bottom:4px}
+.modal-sub{font-size:13px;color:var(--text3);margin-bottom:20px}
+.modal-actions{display:flex;gap:8px;margin-top:20px;justify-content:flex-end}
+.form-group{margin-bottom:14px}
+.form-label{font-size:12px;font-weight:700;color:var(--text2);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.04em}
+.form-input{
+  width:100%;padding:10px 12px;border:1.5px solid var(--border2);
+  border-radius:8px;font-size:14px;font-family:var(--font);
+  background:var(--surface);color:var(--text);
+  transition:border-color .15s;
+}
+.form-input:focus{outline:none;border-color:var(--g500)}
+select.form-input{cursor:pointer}
+
+/* ═══════════════ TOAST ═══════════════ */
+.toast-container{
+  position:fixed;top:16px;right:16px;z-index:300;
+  display:flex;flex-direction:column;gap:8px;pointer-events:none;
+}
+.toast{
+  background:var(--gray800);color:#fff;border-radius:10px;
+  padding:12px 16px;font-size:13px;font-weight:500;
+  box-shadow:var(--shadow-md);pointer-events:all;
+  display:flex;align-items:center;gap:10px;min-width:280px;
+  animation:toastIn .3s ease;border-left:3px solid var(--g400);
+}
+.toast.error{border-left-color:var(--r400)}
+.toast.warning{border-left-color:var(--a400)}
+@keyframes toastIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+
+/* ═══════════════ MISC ═══════════════ */
+.data-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 0;border-bottom:1px solid var(--gray100);font-size:13px;
+}
+.data-row:last-child{border-bottom:none}
+.data-key{color:var(--text3)}
+.data-val{font-weight:700}
+.tag{
+  display:inline-block;padding:2px 8px;border-radius:4px;
+  font-size:11px;font-weight:600;background:var(--gray100);color:var(--gray600);
+}
+.pulse-dot{
+  width:10px;height:10px;border-radius:50%;display:inline-block;
+  animation:glow 1.5s ease infinite;
+}
+.order-incoming{
+  background:var(--b50);border:1.5px solid var(--b300);border-radius:10px;
+  padding:14px;margin-bottom:8px;animation:feedIn .4s ease;
+}
+.order-incoming.processing{background:var(--a50);border-color:var(--a300)}
+.order-incoming.confirmed{background:var(--g50);border-color:var(--g300)}
+.counter-anim{animation:countUp .3s ease}
+@keyframes countUp{0%{transform:scale(1.2);color:var(--g500)}100%{transform:scale(1);color:inherit}}
+
+/* Chart containers */
+.chart-wrap{position:relative;height:200px;width:100%}
+.chart-wrap-sm{position:relative;height:150px;width:100%}
+
+/* ═══════════════ V3 — SARGENTO MONITOR ═══════════════ */
+.sargento-monitor{
+  background:var(--gray800);border-radius:12px;padding:16px;
+  border:1px solid rgba(255,255,255,.06);
+}
+.sargento-monitor-title{
+  font-size:11px;font-weight:700;color:rgba(255,255,255,.4);
+  letter-spacing:.07em;text-transform:uppercase;margin-bottom:12px;
+  display:flex;align-items:center;gap:6px;
+}
+.vendor-live-row{
+  display:flex;align-items:center;gap:10px;padding:8px 10px;
+  border-radius:8px;margin-bottom:5px;transition:background .15s;
+}
+.vendor-live-row:hover{background:rgba(255,255,255,.04)}
+.vendor-live-row.warn{background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2)}
+.vendor-live-row.critical{background:rgba(196,40,40,.1);border:1px solid rgba(196,40,40,.25)}
+.vendor-live-row.ok{background:rgba(18,144,87,.06)}
+.vl-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
+.vl-name{font-size:12px;font-weight:600;color:#fff;flex:1}
+.vl-client{font-size:10px;color:rgba(255,255,255,.45);margin-top:1px}
+.vl-timer{font-family:var(--mono);font-size:14px;font-weight:700;flex-shrink:0;letter-spacing:.02em}
+.vl-status{font-size:9px;font-weight:700;padding:2px 7px;border-radius:6px;margin-left:4px;flex-shrink:0}
+.vl-ok{color:var(--g300);background:rgba(63,202,136,.15)}
+.vl-warn{color:var(--a300);background:rgba(245,166,35,.15)}
+.vl-critical{color:var(--r300);background:rgba(244,122,122,.15)}
+
+/* ═══════════════ V3 — FOTO COMPLIANCE ═══════════════ */
+.foto-compliance-row{
+  display:flex;align-items:center;gap:10px;padding:9px 0;
+  border-bottom:1px solid var(--gray100);font-size:12px;
+}
+.foto-compliance-row:last-child{border-bottom:none}
+.foto-ven-name{flex:1;font-weight:600;color:var(--text)}
+.foto-count{font-size:11px;color:var(--text3);flex-shrink:0}
+.foto-pct{font-size:13px;font-weight:700;flex-shrink:0;min-width:40px;text-align:right}
+.foto-mini-bar{flex:1;height:5px;background:var(--gray100);border-radius:3px;overflow:hidden;max-width:80px}
+.foto-mini-fill{height:100%;border-radius:3px;transition:width .5s}
+
+/* ═══════════════ V3 — SECURITY / DOUBLE AUTH ═══════════════ */
+.auth-request-card{
+  background:var(--surface);border-radius:10px;border:2px solid var(--a300);
+  padding:14px;margin-bottom:8px;animation:feedIn .3s ease;
+}
+.auth-request-card.approved{border-color:var(--g300);background:var(--g50)}
+.auth-request-card.denied{border-color:var(--r300);background:var(--r50)}
+.auth-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.auth-icon{font-size:20px}
+.auth-title{font-size:13px;font-weight:700;flex:1}
+.auth-time{font-size:10px;font-family:var(--mono);color:var(--text3)}
+.auth-detail{font-size:11px;color:var(--text3);margin-bottom:10px;line-height:1.4}
+.auth-actions{display:flex;gap:6px}
+.auth-btn{padding:6px 14px;border-radius:6px;font-size:11px;font-weight:700;border:none;cursor:pointer;font-family:var(--font)}
+.auth-btn-approve{background:var(--g600);color:#fff}
+.auth-btn-deny{background:var(--r50);color:var(--r700);border:1px solid var(--r300)}
+
+/* ═══════════════ V3 — CONTENEDOR SURTIDO ═══════════════ */
+.contenedor-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-top:8px}
+.contenedor-cell{
+  aspect-ratio:1;border-radius:6px;border:1.5px solid var(--border2);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:8px;font-weight:700;color:var(--text3);padding:4px;text-align:center;
+  cursor:pointer;transition:all .15s;
+}
+.contenedor-cell:hover{border-color:var(--g400)}
+.contenedor-cell.filled{background:var(--g50);border-color:var(--g300);color:var(--g700)}
+.contenedor-cell.loading{background:var(--a50);border-color:var(--a300);color:var(--a700);animation:cellPulse .8s ease infinite}
+.contenedor-cell.empty{background:var(--surface);border-style:dashed}
+@keyframes cellPulse{0%,100%{opacity:1}50%{opacity:.5}}
+.contenedor-cell-name{font-size:7px;margin-top:2px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;width:100%;text-align:center}
+
+/* ═══════════════ V3 — KPIS SEMÁFORO RAV ═══════════════ */
+.kpi-card.rav-red{border-left:3px solid var(--r500)}
+.kpi-card.rav-amber{border-left:3px solid var(--a500)}
+.kpi-card.rav-green{border-left:3px solid var(--g500)}
+.kpi-semaforo{display:flex;gap:4px;margin-top:6px}
+.sem-dot{width:10px;height:10px;border-radius:50%;opacity:.25}
+.sem-dot.active{opacity:1}
+
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ SIDEBAR ══════════════════ -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">🚚</div>
+    <div>
+      <div class="logo-text">Mr. Ruta <span style="font-size:9px;background:var(--g400);color:var(--g900);padding:1px 5px;border-radius:3px;font-weight:800;vertical-align:middle">v3</span></div>
+      <div class="logo-sub">CEDIS WMS · Monterrey Norte</div>
+    </div>
+  </div>
+
+  <div class="sidebar-section">Principal</div>
+  <button class="nav-link active" onclick="showPage('dashboard',this)">
+    <span class="nav-icon">📊</span> Dashboard
+  </button>
+  <button class="nav-link" onclick="showPage('pedidos',this)">
+    <span class="nav-icon">📦</span> Pedidos en vivo
+    <span class="nav-dot" id="pedidosBadge">0</span>
+  </button>
+  <button class="nav-link" onclick="showPage('inventario',this)">
+    <span class="nav-icon">🗄️</span> Inventario FEFO
+    <span class="nav-dot amber" id="fefoAlerts">2</span>
+  </button>
+  <button class="nav-link" onclick="showPage('despacho',this)">
+    <span class="nav-icon">🚚</span> Despacho rutas
+  </button>
+
+  <div class="sidebar-section">Operación v3</div>
+  <button class="nav-link" onclick="showPage('sargento',this)">
+    <span class="nav-icon">⏱</span> Sargento Monitor
+    <span class="nav-dot amber" id="sargentoAlerts">2</span>
+  </button>
+  <button class="nav-link" onclick="showPage('fotos',this)">
+    <span class="nav-icon">📸</span> Cumplimiento Fotos
+    <span class="nav-dot green">●</span>
+  </button>
+  <button class="nav-link" onclick="showPage('seguridad',this)">
+    <span class="nav-icon">🔐</span> Seguridad Patrim.
+    <span class="nav-dot" id="authBadge">1</span>
+  </button>
+
+  <div class="sidebar-section">Análisis</div>
+  <button class="nav-link" onclick="showPage('reportes',this)">
+    <span class="nav-icon">📈</span> Reportes
+  </button>
+  <button class="nav-link" onclick="showPage('conectividad',this)">
+    <span class="nav-icon">🔌</span> Conectividad API
+    <span class="nav-dot green">●</span>
+  </button>
+
+  <div class="sidebar-spacer"></div>
+  <div class="sidebar-bottom">
+    <div class="connection-badge">
+      <div class="conn-dot online" id="sidebarConnDot"></div>
+      <div class="conn-text">
+        <b id="connStatus">App campo: conectada</b>
+        <span id="connLastSync">Último sync: hace 0s</span>
+      </div>
+    </div>
+    <button class="nav-link" style="margin:0" onclick="toggleOffline()">
+      <span class="nav-icon">🔌</span>
+      <span id="offlineBtnText">Simular desconexión</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ══════════════════ MAIN ══════════════════ -->
+<div class="main">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="pageTitle">Dashboard — Vista general</div>
+      <div class="topbar-sub" id="pageSub">Centro de Distribución · Monterrey Norte · Turno matutino</div>
+    </div>
+    <div class="topbar-actions">
+      <div class="sync-indicator" onclick="forceSyncDemo()">
+        <div class="sync-dot" id="syncDot"></div>
+        <span id="syncLabel">En línea · sync activo</span>
+      </div>
+      <div class="topbar-time" id="topTime">09:41</div>
+      <button class="btn-topbar btn-secondary" onclick="showModal('modalAlerta')">⚠️ 3 alertas</button>
+      <button class="btn-topbar btn-danger" onclick="showModal('modalPedidoManual')" title="Requiere doble autorización">🔐 Pedido manual</button>
+    </div>
+  </div>
+
+  <!-- ══════════ PÁGINA: DASHBOARD ══════════ -->
+  <div class="content active" id="page-dashboard">
+    <div class="page-header">
+      <div class="page-title">Operación del día</div>
+      <div class="page-sub">Lunes 16 de marzo · 6 rutas activas · última actualización hace 12 seg</div>
+    </div>
+
+    <!-- KPIs v3 — Semáforo R-A-V -->
+    <div class="grid cols-4" style="margin-bottom:16px">
+      <div class="kpi-card rav-green">
+        <div class="kpi-label">Pedidos recibidos</div>
+        <div class="kpi-val" id="kpiPedidos" style="color:var(--b600)">38</div>
+        <div class="kpi-delta up">+12 vs ayer · 87% procesados</div>
+        <div class="kpi-bar"><div class="kpi-bar-fill" style="width:87%;background:var(--b500)"></div></div>
+        <div class="kpi-semaforo"><div class="sem-dot" style="background:var(--r500)"></div><div class="sem-dot" style="background:var(--a500)"></div><div class="sem-dot active" style="background:var(--g500)"></div></div>
+      </div>
+      <div class="kpi-card rav-green">
+        <div class="kpi-label">Fill rate</div>
+        <div class="kpi-val" id="kpiFillRate" style="color:var(--g600)">98.2%</div>
+        <div class="kpi-delta up">Meta >98% ✓ · Verde</div>
+        <div class="kpi-bar"><div class="kpi-bar-fill" style="width:98.2%;background:var(--g500)"></div></div>
+        <div class="kpi-semaforo"><div class="sem-dot" style="background:var(--r500)"></div><div class="sem-dot" style="background:var(--a500)"></div><div class="sem-dot active" style="background:var(--g500)"></div></div>
+      </div>
+      <div class="kpi-card rav-green">
+        <div class="kpi-label">Merma hoy</div>
+        <div class="kpi-val" id="kpiMerma" style="color:var(--g600)">1.1%</div>
+        <div class="kpi-delta up">Meta &lt;1.5% ✓ · -0.3pp vs ayer</div>
+        <div class="kpi-bar"><div class="kpi-bar-fill" style="width:74%;background:var(--g500)"></div></div>
+        <div class="kpi-semaforo"><div class="sem-dot" style="background:var(--r500)"></div><div class="sem-dot" style="background:var(--a500)"></div><div class="sem-dot active" style="background:var(--g500)"></div></div>
+      </div>
+      <div class="kpi-card rav-green">
+        <div class="kpi-label">Venta zona total</div>
+        <div class="kpi-val" id="kpiVenta" style="color:var(--text)">$284K</div>
+        <div class="kpi-delta up">+8.4% vs mismo día ant.</div>
+        <div class="kpi-bar"><div class="kpi-bar-fill" style="width:78%;background:var(--g400)"></div></div>
+        <div class="kpi-semaforo"><div class="sem-dot" style="background:var(--r500)"></div><div class="sem-dot" style="background:var(--a500)"></div><div class="sem-dot active" style="background:var(--g500)"></div></div>
+      </div>
+    </div>
+
+    <!-- KPIs v3 segunda fila — Sargento + Fotos + DSO + IVA -->
+    <div class="grid cols-4" style="margin-bottom:16px">
+      <div class="kpi-card rav-green">
+        <div class="kpi-label">⏱ Tiempo prom./visita</div>
+        <div class="kpi-val" style="color:var(--g600);font-size:24px">5:42</div>
+        <div class="kpi-delta up">Meta &lt;7:00 ✓ · Sargento activo</div>
+        <div class="kpi-bar"><div class="kpi-bar-fill" style="width:81%;background:var(--g500)"></div></div>
+        <div class="kpi-semaforo"><div class="sem-dot" style="background:var(--r500)"></div><div class="sem-dot" style="background:var(--a500)"></div><div class="sem-dot active" style="background:var(--g500)"></div></div>
+      </div>
+      <div class="kpi-card rav-amber">
+        <div class="kpi-label">📸 Cumplimiento fotos</div>
+        <div class="kpi-val" id="kpiFotos" style="color:var(--a600);font-size:24px">78%</div>
+        <div class="kpi-delta warn">Meta >90% — 3 vendedores abajo</div>
+        <div class="kpi-bar"><div class="kpi-bar-fill" style="width:78%;background:var(--a500)"></div></div>
+        <div class="kpi-semaforo"><div class="sem-dot" style="background:var(--r500)"></div><div class="sem-dot active" style="background:var(--a500)"></div><div class="sem-dot" style="background:var(--g500)"></div></div>
+      </div>
+      <div class="kpi-card rav-green">
+        <div class="kpi-label">💰 DSO (Días de cobro)</div>
+        <div class="kpi-val" style="color:var(--g600);font-size:24px">28</div>
+        <div class="kpi-delta up">Meta &lt;35 días ✓ · Cartera sana</div>
+        <div class="kpi-bar"><div class="kpi-bar-fill" style="width:80%;background:var(--g500)"></div></div>
+        <div class="kpi-semaforo"><div class="sem-dot" style="background:var(--r500)"></div><div class="sem-dot" style="background:var(--a500)"></div><div class="sem-dot active" style="background:var(--g500)"></div></div>
+      </div>
+      <div class="kpi-card rav-green">
+        <div class="kpi-label">🧾 Recuperación IVA</div>
+        <div class="kpi-val" style="color:var(--g600);font-size:24px">$42K</div>
+        <div class="kpi-delta up">Mes acumulado · Meta $50K</div>
+        <div class="kpi-bar"><div class="kpi-bar-fill" style="width:84%;background:var(--g400)"></div></div>
+        <div class="kpi-semaforo"><div class="sem-dot" style="background:var(--r500)"></div><div class="sem-dot" style="background:var(--a500)"></div><div class="sem-dot active" style="background:var(--g500)"></div></div>
+      </div>
+    </div>
+
+    <!-- Charts + Feed + Sargento Monitor v3 -->
+    <div class="grid cols-3" style="margin-bottom:16px">
+      <div class="card" style="grid-column:span 1">
+        <div class="card-header">
+          <div class="card-title">Pedidos por hora — hoy vs ayer</div>
+          <span class="badge badge-green">En tiempo real</span>
+        </div>
+        <div class="chart-wrap"><canvas id="chartPedidos"></canvas></div>
+      </div>
+      <div class="card" style="grid-column:span 1">
+        <div class="card-header">
+          <div class="card-title">Feed en tiempo real</div>
+          <span class="badge badge-blue" id="feedCount">38 eventos</span>
+        </div>
+        <div class="live-feed" id="liveFeed"></div>
+      </div>
+      <!-- SARGENTO MONITOR v3 -->
+      <div style="grid-column:span 1">
+        <div class="sargento-monitor">
+          <div class="sargento-monitor-title">
+            <span style="color:var(--g400)">⏱</span> Sargento Monitor — Visitas en curso
+          </div>
+          <div id="sargentoVendorList"></div>
+          <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06)">
+            <div style="font-size:10px;color:rgba(255,255,255,.35);font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px">Meta hoy: &lt;7 min/visita</div>
+            <div style="display:flex;gap:8px">
+              <div style="flex:1;text-align:center;background:rgba(63,202,136,.1);border-radius:6px;padding:8px">
+                <div style="font-size:18px;font-weight:800;color:var(--g300)">5:42</div>
+                <div style="font-size:9px;color:rgba(255,255,255,.4)">Prom. zona</div>
+              </div>
+              <div style="flex:1;text-align:center;background:rgba(245,166,35,.1);border-radius:6px;padding:8px">
+                <div style="font-size:18px;font-weight:800;color:var(--a300)">2</div>
+                <div style="font-size:9px;color:rgba(255,255,255,.4)">Sobre meta</div>
+              </div>
+              <div style="flex:1;text-align:center;background:rgba(196,40,40,.1);border-radius:6px;padding:8px">
+                <div style="font-size:18px;font-weight:800;color:var(--r300)">0</div>
+                <div style="font-size:9px;color:rgba(255,255,255,.4)">Críticos</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rutas + Alertas -->
+    <div class="grid cols-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Estado de rutas activas</div>
+          <span class="card-action" onclick="showPage('despacho',null)">Ver todas →</span>
+        </div>
+        <div class="grid cols-2" style="gap:8px" id="routesMini"></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Alertas activas</div>
+          <span class="badge badge-red" id="alertCount">3 críticas</span>
+        </div>
+        <div id="alertsList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ PÁGINA: PEDIDOS EN VIVO ══════════ -->
+  <div class="content" id="page-pedidos">
+    <div class="page-header">
+      <div class="page-title">Pedidos recibidos en tiempo real</div>
+      <div class="page-sub">Desde app de campo · Sincronización automática · BroadcastChannel activo</div>
+    </div>
+
+    <!-- Stats row -->
+    <div class="grid cols-4" style="margin-bottom:16px">
+      <div class="kpi-card card-sm">
+        <div class="kpi-label">Cola pendiente</div>
+        <div class="kpi-val" id="qPendiente" style="color:var(--a600);font-size:24px">5</div>
+        <div class="kpi-delta warn">Por procesar en CEDIS</div>
+      </div>
+      <div class="kpi-card card-sm">
+        <div class="kpi-label">Procesando</div>
+        <div class="kpi-val" id="qProcesando" style="color:var(--b600);font-size:24px">2</div>
+        <div class="kpi-delta" style="color:var(--b600)">Picking en curso</div>
+      </div>
+      <div class="kpi-card card-sm">
+        <div class="kpi-label">Confirmados hoy</div>
+        <div class="kpi-val" id="qConfirmado" style="color:var(--g600);font-size:24px">31</div>
+        <div class="kpi-delta up">Listos para carga</div>
+      </div>
+      <div class="kpi-card card-sm">
+        <div class="kpi-label">Promedio procesamiento</div>
+        <div class="kpi-val" style="color:var(--text);font-size:24px">4.2m</div>
+        <div class="kpi-delta up">Por pedido · Meta &lt;5m</div>
+      </div>
+    </div>
+
+    <!-- Incoming orders list -->
+    <div class="grid cols-2-1">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Cola de pedidos — en tiempo real</div>
+          <button class="btn-topbar btn-secondary" style="padding:5px 12px;font-size:12px" onclick="simulateIncomingOrder()">
+            📱 Simular pedido desde campo
+          </button>
+        </div>
+        <div id="orderQueue"></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Estadísticas del día</div>
+        </div>
+        <div class="chart-wrap-sm"><canvas id="chartStatus"></canvas></div>
+        <div style="margin-top:14px">
+          <div class="data-row"><span class="data-key">Pedido más grande</span><span class="data-val">$4,280 · Ana García R3</span></div>
+          <div class="data-row"><span class="data-key">SKU más pedido</span><span class="data-val">Gansito c/6 · 187 cajas</span></div>
+          <div class="data-row"><span class="data-key">Ruta más activa</span><span class="data-val">Norte B · Luis R.</span></div>
+          <div class="data-row"><span class="data-key">Hora pico</span><span class="data-val">9:00–10:30 AM</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ PÁGINA: INVENTARIO FEFO ══════════ -->
+  <div class="content" id="page-inventario">
+    <div class="page-header">
+      <div class="page-title">Inventario WMS — Control FEFO</div>
+      <div class="page-sub">First Expired First Out · Actualización en tiempo real · 47 SKUs activos</div>
+    </div>
+
+    <div class="grid cols-4" style="margin-bottom:16px">
+      <div class="kpi-card card-sm">
+        <div class="kpi-label">SKUs en riesgo</div>
+        <div class="kpi-val" style="color:var(--r500);font-size:24px">3</div>
+        <div class="kpi-delta down">Vencen en &lt;48h</div>
+      </div>
+      <div class="kpi-card card-sm">
+        <div class="kpi-label">SKUs alerta FEFO</div>
+        <div class="kpi-val" style="color:var(--a600);font-size:24px">7</div>
+        <div class="kpi-delta warn">Vencen en &lt;5 días</div>
+      </div>
+      <div class="kpi-card card-sm">
+        <div class="kpi-label">Valor en inventario</div>
+        <div class="kpi-val" style="font-size:22px">$1.84M</div>
+        <div class="kpi-delta up">Valorizado a precio venta</div>
+      </div>
+      <div class="kpi-card card-sm">
+        <div class="kpi-label">Días de stock prom.</div>
+        <div class="kpi-val" style="color:var(--g600);font-size:24px">4.2</div>
+        <div class="kpi-delta up">Meta 3–5 días ✓</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Inventario por SKU — control FEFO</div>
+        <div style="display:flex;gap:8px">
+          <input type="text" placeholder="🔍 Buscar SKU..." id="invSearch" oninput="filterInventory(this.value)"
+            style="padding:6px 10px;border:1.5px solid var(--border2);border-radius:6px;font-size:12px;font-family:var(--font);width:200px">
+          <select onchange="filterInventory()" id="invFilter"
+            style="padding:6px 10px;border:1.5px solid var(--border2);border-radius:6px;font-size:12px;font-family:var(--font)">
+            <option value="all">Todos los SKUs</option>
+            <option value="critical">Solo críticos</option>
+            <option value="alert">Con alerta FEFO</option>
+            <option value="ok">Stock OK</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>SKU / Producto</th>
+              <th>Marca</th>
+              <th>Stock actual</th>
+              <th>Stock disponible</th>
+              <th>Días stock</th>
+              <th>Estado FEFO</th>
+              <th>Lote próx. vencer</th>
+              <th>Buffer carga</th>
+            </tr>
+          </thead>
+          <tbody id="inventoryTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ PÁGINA: DESPACHO ══════════ -->
+  <div class="content" id="page-despacho">
+    <div class="page-header">
+      <div class="page-title">Despacho de rutas</div>
+      <div class="page-sub">Gestión de carga · 6 rutas hoy · Inicio 5:30 AM — Cierre estimado 6:00 PM</div>
+    </div>
+
+    <div class="grid cols-4" style="margin-bottom:16px">
+      <div class="kpi-card card-sm">
+        <div class="kpi-label">Rutas despachadas</div>
+        <div class="kpi-val" style="color:var(--g600);font-size:24px">4</div>
+        <div class="kpi-delta up">De 6 rutas programadas</div>
+      </div>
+      <div class="kpi-card card-sm">
+        <div class="kpi-label">Rutas cargando</div>
+        <div class="kpi-val" style="color:var(--a600);font-size:24px">1</div>
+        <div class="kpi-delta warn">En andén 3 ahora mismo</div>
+      </div>
+      <div class="kpi-card card-sm">
+        <div class="kpi-label">OTIF del día</div>
+        <div class="kpi-val" style="color:var(--g600);font-size:24px">96.4%</div>
+        <div class="kpi-delta up">Meta >95% ✓</div>
+      </div>
+      <div class="kpi-card card-sm">
+        <div class="kpi-label">Cajas despachadas</div>
+        <div class="kpi-val" style="font-size:22px">8,240</div>
+        <div class="kpi-delta up">De 9,100 planificadas</div>
+      </div>
+    </div>
+
+    <div class="grid cols-3" id="routeCards"></div>
+
+    <div class="grid cols-2" style="margin-top:16px">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Ventana de madrugada — hoy ejecutada</div>
+        </div>
+        <div id="timelineDespacho"></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Liquidaciones en curso</div>
+        </div>
+        <div id="liquidaciones"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ PÁGINA: REPORTES ══════════ -->
+  <div class="content" id="page-reportes">
+    <div class="page-header">
+      <div class="page-title">Reportes y analítica</div>
+      <div class="page-sub">Semana actual · Comparativa vs período anterior</div>
+    </div>
+    <div class="grid cols-2" style="margin-bottom:16px">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Fill rate semanal</div></div>
+        <div class="chart-wrap"><canvas id="chartFillRate"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Merma % semanal</div></div>
+        <div class="chart-wrap"><canvas id="chartMerma"></canvas></div>
+      </div>
+    </div>
+    <div class="grid cols-2">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Top 10 SKUs por volumen</div></div>
+        <div class="chart-wrap"><canvas id="chartTopSkus"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Comparativa rutas — efectividad</div></div>
+        <div class="chart-wrap"><canvas id="chartRutas"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ PÁGINA: SARGENTO MONITOR v3 ══════════ -->
+  <div class="content" id="page-sargento">
+    <div class="page-header">
+      <div class="page-title">⏱ Sargento Monitor — Control de Tiempos</div>
+      <div class="page-sub">Visitas en curso · Meta 7 min tiendas conocidas · 12 min nuevas · Alarma a 80% y 100%</div>
+    </div>
+    <div class="grid cols-4" style="margin-bottom:16px">
+      <div class="kpi-card rav-green card-sm"><div class="kpi-label">Tiempo prom. zona</div><div class="kpi-val" style="color:var(--g600);font-size:24px">5:42</div><div class="kpi-delta up">Meta &lt;7:00 ✓</div></div>
+      <div class="kpi-card rav-amber card-sm"><div class="kpi-label">Sobre meta hoy</div><div class="kpi-val" style="color:var(--a600);font-size:24px">2</div><div class="kpi-delta warn">Vendedores con visitas largas</div></div>
+      <div class="kpi-card rav-green card-sm"><div class="kpi-label">Visitas &lt;7 min</div><div class="kpi-val" style="color:var(--g600);font-size:24px">142</div><div class="kpi-delta up">De 152 totales · 93%</div></div>
+      <div class="kpi-card rav-green card-sm"><div class="kpi-label">Score Sargento zona</div><div class="kpi-val" style="color:var(--g600);font-size:24px">91%</div><div class="kpi-delta up">Eficiencia de tiempo ✓</div></div>
+    </div>
+    <div class="grid cols-2">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Vendedores — historial de tiempos hoy</div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Vendedor</th><th>Visitas</th><th>Prom. tiempo</th><th>Más larga</th><th>Eficiencia</th><th>Score</th></tr></thead>
+            <tbody id="sargentoTable"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Alertas de tiempo extendido — hoy</div><span class="badge badge-amber">2 activas</span></div>
+        <div id="sargentoAlertsList"></div>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--gray100)">
+          <div class="card-title" style="margin-bottom:10px">Configuración de presupuesto de tiempo</div>
+          <div class="data-row"><span class="data-key">Tienda conocida</span><span class="data-val">7 min · <span style="color:var(--text3);font-weight:400">Alarma a 5:36 (80%)</span></span></div>
+          <div class="data-row"><span class="data-key">Cliente nuevo</span><span class="data-val">12 min · <span style="color:var(--text3);font-weight:400">Alarma a 9:36 (80%)</span></span></div>
+          <div class="data-row"><span class="data-key">Cliente HORECA</span><span class="data-val">15 min · <span style="color:var(--text3);font-weight:400">Alarma a 12:00 (80%)</span></span></div>
+          <div class="data-row" style="border-bottom:none"><span class="data-key">Alarma de alarma</span><span class="data-val">Vibración + beep audible</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ PÁGINA: CUMPLIMIENTO FOTOS v3 ══════════ -->
+  <div class="content" id="page-fotos">
+    <div class="page-header">
+      <div class="page-title">📸 Cumplimiento "Foto o No Existe"</div>
+      <div class="page-sub">4 fotos obligatorias por visita · Meta >90% · El incumplimiento afecta el bono</div>
+    </div>
+    <div class="grid cols-4" style="margin-bottom:16px">
+      <div class="kpi-card rav-amber card-sm"><div class="kpi-label">Cumplimiento global</div><div class="kpi-val" style="color:var(--a600);font-size:24px">78%</div><div class="kpi-delta warn">Meta >90% — bajo</div></div>
+      <div class="kpi-card rav-green card-sm"><div class="kpi-label">Foto entrada anaquel</div><div class="kpi-val" style="color:var(--g600);font-size:24px">94%</div><div class="kpi-delta up">La mejor cumplida</div></div>
+      <div class="kpi-card rav-amber card-sm"><div class="kpi-label">Foto salida pedido</div><div class="kpi-val" style="color:var(--a600);font-size:24px">71%</div><div class="kpi-delta warn">Pendiente de mejorar</div></div>
+      <div class="kpi-card rav-red card-sm"><div class="kpi-label">Fotos de rechazo</div><div class="kpi-val" style="color:var(--r500);font-size:24px">48%</div><div class="kpi-delta down">Crítico — sin evidencia</div></div>
+    </div>
+    <div class="grid cols-2">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Cumplimiento por vendedor</div><span class="card-action" onclick="showToastMsg('Exportando reporte de fotos PDF...')">Exportar →</span></div>
+        <div id="fotoComplianceList"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Impacto en bono de ejecución</div></div>
+        <div class="alert-item warning" style="margin-bottom:12px">
+          <span style="font-size:16px">⚠️</span>
+          <div><div class="ai-title">3 vendedores por debajo del umbral de bono</div><div class="ai-desc">El bono requiere ≥90% de cumplimiento de fotos. Carlos M. (48%), Jorge R. (62%) y Marco T. (71%) perderán parte del bono este mes si no corrigen.</div></div>
+        </div>
+        <div class="data-row"><span class="data-key">Fotos capturadas hoy</span><span class="data-val">612 fotos</span></div>
+        <div class="data-row"><span class="data-key">Fotos esperadas hoy</span><span class="data-val">784 fotos (4 × 196 visitas)</span></div>
+        <div class="data-row"><span class="data-key">Subidas correctamente</span><span class="data-val" style="color:var(--g600)">598 fotos ✓</span></div>
+        <div class="data-row"><span class="data-key">Pendientes de sync</span><span class="data-val" style="color:var(--a600)">14 fotos — offline</span></div>
+        <div class="data-row" style="border-bottom:none"><span class="data-key">Rechazos con foto</span><span class="data-val" style="color:var(--r500)">48% — riesgo legal</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ PÁGINA: SEGURIDAD PATRIMONIAL v3 ══════════ -->
+  <div class="content" id="page-seguridad">
+    <div class="page-header">
+      <div class="page-title">🔐 Seguridad Patrimonial — Doble Autorización</div>
+      <div class="page-sub">Control de pedidos manuales · Ajustes de inventario · Nadie mueve inventario solo</div>
+    </div>
+    <div class="grid cols-4" style="margin-bottom:16px">
+      <div class="kpi-card rav-green card-sm"><div class="kpi-label">Pedidos manuales hoy</div><div class="kpi-val" style="color:var(--g600);font-size:24px">2</div><div class="kpi-delta up">Ambos autorizados ✓</div></div>
+      <div class="kpi-card rav-amber card-sm"><div class="kpi-label">Solicitudes pendientes</div><div class="kpi-val" style="color:var(--a600);font-size:24px" id="authPending">1</div><div class="kpi-delta warn">Esperando 2da autorización</div></div>
+      <div class="kpi-card rav-green card-sm"><div class="kpi-label">Ajustes inventario</div><div class="kpi-val" style="color:var(--g600);font-size:24px">0</div><div class="kpi-delta up">Cero sin autorización ✓</div></div>
+      <div class="kpi-card rav-green card-sm"><div class="kpi-label">Diferencia báscula</div><div class="kpi-val" style="color:var(--g600);font-size:24px">0.3%</div><div class="kpi-delta up">Meta &lt;1% ✓ · Sin desvíos</div></div>
+    </div>
+    <div class="grid cols-2">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Cola de autorización — doble firma</div><span class="badge badge-amber" id="authQueueBadge">1 pendiente</span></div>
+        <div id="authQueue"></div>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--gray100)">
+          <div class="card-title" style="margin-bottom:8px">Historial de autorizaciones hoy</div>
+          <div id="authHistory"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Contenedor de surtido — Rejillas por ruta</div></div>
+        <div style="font-size:12px;color:var(--text3);margin-bottom:10px;line-height:1.5">Cada celda = 1 cliente en el camión. Verde = surtido completo · Amarillo = en proceso · Gris = pendiente</div>
+        <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px">Ruta Norte B — Luis R. (30 clientes)</div>
+        <div class="contenedor-grid" id="contenedorGrid"></div>
+        <div style="display:flex;gap:12px;margin-top:10px;font-size:10px;color:var(--text3)">
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:var(--g50);border:1px solid var(--g300);border-radius:2px;display:inline-block"></span>Surtido</span>
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:var(--a50);border:1px solid var(--a300);border-radius:2px;display:inline-block"></span>Cargando</span>
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:var(--surface);border:1px dashed var(--border2);border-radius:2px;display:inline-block"></span>Pendiente</span>
+        </div>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--gray100)">
+          <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px">Opciones de contenedor de bajo costo</div>
+          <div class="data-row"><span class="data-key">Rejilla plástica modular</span><span class="data-val" style="color:var(--g600)">$35–80/panel · Reusable ♻️</span></div>
+          <div class="data-row"><span class="data-key">Caja cartón reciclada</span><span class="data-val" style="color:var(--g600)">$0 · Cajas del proveedor</span></div>
+          <div class="data-row" style="border-bottom:none"><span class="data-key">Charola plástica color</span><span class="data-val">Por canal: 🟢 Detalle 🔵 Conv. 🔴 HORECA</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ PÁGINA: CONECTIVIDAD ══════════ -->
+  <div class="content" id="page-conectividad">
+  <div class="content" id="page-conectividad">
+    <div class="page-header">
+      <div class="page-title">Arquitectura de conectividad</div>
+      <div class="page-sub">Integración App de campo ↔ CEDIS WMS ↔ ERP · Demo en tiempo real</div>
+    </div>
+
+    <!-- Demo en vivo -->
+    <div class="card" style="margin-bottom:16px;background:var(--gray800)">
+      <div style="color:#fff;font-size:14px;font-weight:700;margin-bottom:4px">🔴 Demo en vivo — abrir ambas apps en el mismo navegador</div>
+      <div style="color:rgba(255,255,255,.6);font-size:12px;margin-bottom:16px">
+        Cuando el vendedor confirma un pedido en la App de Campo, aparece aquí en tiempo real usando BroadcastChannel API. Sin servidor — comunicación directa entre pestañas del navegador.
+      </div>
+      <div class="conn-flow" id="connFlow">
+        <div class="conn-node active">
+          <div class="conn-node-icon">📱</div>
+          <div class="conn-node-name">App de campo</div>
+          <div class="conn-node-sub">Vendedor · Android</div>
+          <div style="margin-top:6px"><span class="badge badge-green" style="font-size:9px">ONLINE</span></div>
+        </div>
+        <div class="conn-arrow">
+          <div class="conn-arrow-label">Pedidos</div>
+          <div class="conn-arrow-line active" id="arrowLine1"></div>
+          <div class="conn-arrow-head">▶</div>
+        </div>
+        <div class="conn-node highlight">
+          <div class="conn-node-icon">🔌</div>
+          <div class="conn-node-name">API Middleware</div>
+          <div class="conn-node-sub">BroadcastChannel</div>
+          <div style="margin-top:6px"><span class="badge badge-blue" style="font-size:9px">ACTIVO</span></div>
+        </div>
+        <div class="conn-arrow">
+          <div class="conn-arrow-label">Sync</div>
+          <div class="conn-arrow-line active" id="arrowLine2"></div>
+          <div class="conn-arrow-head">▶</div>
+        </div>
+        <div class="conn-node active">
+          <div class="conn-node-icon">🏭</div>
+          <div class="conn-node-name">CEDIS WMS</div>
+          <div class="conn-node-sub">Este dashboard</div>
+          <div style="margin-top:6px"><span class="badge badge-green" style="font-size:9px">ONLINE</span></div>
+        </div>
+        <div class="conn-arrow">
+          <div class="conn-arrow-label">Inventario</div>
+          <div class="conn-arrow-line active" id="arrowLine3"></div>
+          <div class="conn-arrow-head">▶</div>
+        </div>
+        <div class="conn-node">
+          <div class="conn-node-icon">💾</div>
+          <div class="conn-node-name">ERP / SAP</div>
+          <div class="conn-node-sub">Inventario · CxC</div>
+          <div style="margin-top:6px"><span class="badge badge-gray" style="font-size:9px">SIMULADO</span></div>
+        </div>
+        <div class="conn-arrow">
+          <div class="conn-arrow-label">CFDI</div>
+          <div class="conn-arrow-line" id="arrowLine4"></div>
+          <div class="conn-arrow-head" style="color:rgba(255,255,255,.2)">▶</div>
+        </div>
+        <div class="conn-node">
+          <div class="conn-node-icon">🧾</div>
+          <div class="conn-node-name">SAT / PAC</div>
+          <div class="conn-node-sub">Timbrado CFDI</div>
+          <div style="margin-top:6px"><span class="badge badge-gray" style="font-size:9px">SIMULADO</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Métricas de conectividad -->
+    <div class="grid cols-4" style="margin-bottom:16px">
+      <div class="kpi-card card-sm">
+        <div class="kpi-label">Mensajes recibidos</div>
+        <div class="kpi-val" id="msgCount" style="color:var(--b600);font-size:24px">38</div>
+        <div class="kpi-delta up">Desde app de campo hoy</div>
+      </div>
+      <div class="kpi-card card-sm">
+        <div class="kpi-label">Latencia promedio</div>
+        <div class="kpi-val" style="color:var(--g600);font-size:24px">124ms</div>
+        <div class="kpi-delta up">App → CEDIS · excelente</div>
+      </div>
+      <div class="kpi-card card-sm">
+        <div class="kpi-label">Errores de sync</div>
+        <div class="kpi-val" style="color:var(--g600);font-size:24px">0</div>
+        <div class="kpi-delta up">100% de pedidos recibidos</div>
+      </div>
+      <div class="kpi-card card-sm">
+        <div class="kpi-label">Uptime del canal</div>
+        <div class="kpi-val" style="color:var(--g600);font-size:24px">99.9%</div>
+        <div class="kpi-delta up">Últimas 30 días</div>
+      </div>
+    </div>
+
+    <!-- Event log -->
+    <div class="grid cols-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Log de eventos — canal BroadcastChannel</div>
+          <button class="btn-topbar btn-secondary" style="padding:5px 12px;font-size:12px" onclick="simulateIncomingOrder()">
+            📱 Enviar evento de prueba
+          </button>
+        </div>
+        <div class="live-feed" id="connEventLog" style="max-height:320px"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Especificaciones del canal</div></div>
+        <div>
+          <div class="data-row"><span class="data-key">Tecnología actual (demo)</span><span class="data-val">BroadcastChannel API</span></div>
+          <div class="data-row"><span class="data-key">Producción recomendada</span><span class="data-val">WebSocket + Redis Pub/Sub</span></div>
+          <div class="data-row"><span class="data-key">Formato de mensaje</span><span class="data-val">JSON · UTF-8</span></div>
+          <div class="data-row"><span class="data-key">Autenticación</span><span class="data-val">JWT · RS256</span></div>
+          <div class="data-row"><span class="data-key">Cifrado</span><span class="data-val">TLS 1.3 (producción)</span></div>
+          <div class="data-row"><span class="data-key">Cola offline</span><span class="data-val">SQLite → sync al reconectar</span></div>
+          <div class="data-row"><span class="data-key">Retry policy</span><span class="data-val">Exponential backoff · 5 intentos</span></div>
+          <div class="data-row"><span class="data-key">CFDI timbrado</span><span class="data-val">PAC autorizado SAT · &lt;2seg</span></div>
+          <div class="data-row"><span class="data-key">Máx. mensajes/seg</span><span class="data-val">500 msg/s (WebSocket prod.)</span></div>
+        </div>
+        <div class="alert-item info" style="margin-top:12px">
+          <span style="font-size:16px">ℹ️</span>
+          <div>
+            <div class="ai-title">Para el demo con el cliente</div>
+            <div class="ai-desc">Abre la App de Campo (RutaDSD_App.html) en otra pestaña del mismo navegador. Cuando confirmes un pedido ahí, aparecerá aquí en menos de 100ms usando BroadcastChannel. No necesitas servidor.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+</div><!-- /body flex -->
+
+<!-- ══════════════ MODALS ══════════════ -->
+<div class="modal-overlay" id="modalAlerta">
+  <div class="modal">
+    <div class="modal-title">⚠️ Alertas activas</div>
+    <div class="modal-sub">3 alertas requieren atención inmediata</div>
+    <div class="alert-item critical"><span style="font-size:16px">🔴</span><div><div class="ai-title">Gansito c/6 · Lote 2024-A vence en 36 horas</div><div class="ai-desc">180 cajas · Asignar prioritariamente a Ruta Norte A (mayor volumen del SKU). Merma potencial: $33,300 MXN.</div></div></div>
+    <div class="alert-item warning"><span style="font-size:16px">⚠️</span><div><div class="ai-title">Ruta Norte B · Carlos M. lleva 44 min sin pedido</div><div class="ai-desc">Abarrotes El Sol · GPS confirmó check-in pero sin confirmación de pedido. Requiere contacto del supervisor.</div></div></div>
+    <div class="alert-item warning"><span style="font-size:16px">⚠️</span><div><div class="ai-title">Mantecadas c/8 · Stock bajo — 2.1 días</div><div class="ai-desc">Inventario: 420 cajas · Demanda proyectada: 200 cajas/día. Solicitar reposición a planta hoy.</div></div></div>
+    <div class="modal-actions">
+      <button class="btn-topbar btn-secondary" onclick="closeModal('modalAlerta')">Cerrar</button>
+      <button class="btn-topbar btn-primary" onclick="closeModal('modalAlerta');showToastMsg('✅ Alerta de Gansito escalada al gerente de bodega')">Escalar a bodega</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalPedidoManual">
+  <div class="modal">
+    <div class="modal-title">🔐 Pedido manual — Doble Autorización</div>
+    <div class="modal-sub">Requiere aprobación de Supervisor + Finanzas · El pedido manual es origen de robo hormiga</div>
+    <div style="background:var(--r50);border-radius:8px;border:1px solid var(--r300);padding:10px 12px;margin-bottom:16px;font-size:12px;color:var(--r700)">
+      ⚠️ <b>Seguridad patrimonial:</b> Este botón genera una solicitud de doble autorización. <b>Nadie mueve inventario solo.</b> La solicitud queda en el log de auditoría.
+    </div>
+    <div class="form-group">
+      <label class="form-label">Vendedor / Ruta</label>
+      <select class="form-input">
+        <option>Luis Rodríguez · Ruta Norte B</option>
+        <option>Ana García · Ruta Norte A</option>
+        <option>Carlos M. · Ruta Centro</option>
+        <option>Marco Torres · Ruta Sur A</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Cliente</label>
+      <input class="form-input" type="text" placeholder="Nombre del cliente o código">
+    </div>
+    <div class="form-group">
+      <label class="form-label">SKU principal</label>
+      <select class="form-input">
+        <option>Gansito c/6 · $185/caja</option>
+        <option>Pan Blanco Grande · $140/caja</option>
+        <option>Tortillinas Tía Rosa · $95/caja</option>
+        <option>Bimbollos c/6 · $110/caja</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Cantidad (cajas)</label>
+      <input class="form-input" type="number" value="5" min="1">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Motivo justificado</label>
+      <input class="form-input" type="text" placeholder="Ej: Cliente sin señal, pedido de emergencia HORECA">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Autorización Supervisor (PIN)</label>
+      <input class="form-input" type="password" placeholder="PIN del supervisor">
+    </div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:8px">La aprobación de Finanzas llegará por notificación en los próximos minutos.</div>
+    <div class="modal-actions">
+      <button class="btn-topbar btn-secondary" onclick="closeModal('modalPedidoManual')">Cancelar</button>
+      <button class="btn-topbar btn-danger" onclick="submitDoubleAuth()">Enviar solicitud</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+'use strict';
+
+// ══ BROADCAST CHANNEL ══════════════════════════════
+const CHANNEL_NAME = 'dsd-cedis-channel';
+let bc = null;
+let isOfflineMode = false;
+let lastSyncTime = Date.now();
+let syncInterval = null;
+
+function initBroadcastChannel() {
+  try {
+    bc = new BroadcastChannel(CHANNEL_NAME);
+    bc.onmessage = (event) => handleIncomingMessage(event.data);
+    bc.onmessageerror = () => showToastMsg('❌ Error en canal de mensajes', 'error');
+    console.log('✅ BroadcastChannel iniciado:', CHANNEL_NAME);
+    updateConnectionStatus(true);
+  } catch(e) {
+    console.warn('BroadcastChannel no disponible:', e);
+    updateConnectionStatus(false);
+  }
+}
+
+function handleIncomingMessage(data) {
+  lastSyncTime = Date.now();
+  updateConnectionStatus(true);
+
+  switch(data.type) {
+    case 'ORDER_CONFIRMED':
+      receiveOrder(data);
+      break;
+    case 'VISIT_CHECKIN':
+      addFeedItem(`Check-in GPS: ${data.vendedor} en ${data.cliente}`, `Visita #${data.visitNum} · ${data.hora}`, 'blue');
+      break;
+    case 'PHOTO_UPLOADED':
+      addFeedItem(`Foto de anaquel subida: ${data.cliente}`, `Share Bimbo: ${data.share}% · ${data.skus} SKUs`, 'green');
+      break;
+    case 'PING':
+      lastSyncTime = Date.now();
+      break;
+  }
+}
+
+function updateConnectionStatus(online) {
+  const dot = document.getElementById('sidebarConnDot');
+  const status = document.getElementById('connStatus');
+  const lastSync = document.getElementById('connLastSync');
+  const syncDot = document.getElementById('syncDot');
+  const syncLabel = document.getElementById('syncLabel');
+
+  if (dot) {
+    dot.className = `conn-dot ${online ? 'online' : 'offline'}`;
+  }
+  if (status) status.textContent = online ? 'App campo: conectada' : 'App campo: sin señal';
+  if (syncDot) syncDot.style.animationPlayState = online ? 'running' : 'paused';
+  if (syncLabel) syncLabel.textContent = online ? 'En línea · sync activo' : '⚠️ Sin conexión';
+}
+
+function forceSyncDemo() {
+  if (bc) {
+    bc.postMessage({ type: 'CEDIS_PING', timestamp: Date.now() });
+  }
+  showToastMsg('🔄 Ping enviado a app de campo...');
+  animateArrows();
+}
+
+function animateArrows() {
+  ['arrowLine1','arrowLine2','arrowLine3'].forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    setTimeout(() => {
+      el.classList.add('active');
+    }, i * 200);
+  });
+}
+
+// ══ STATE ══════════════════════════════════════════
+const STATE = {
+  pedidosCount: 38,
+  pendienteCount: 5,
+  procesandoCount: 2,
+  confirmadoCount: 31,
+  msgCount: 38,
+  feedItems: [],
+  orders: [],
+  connEvents: [],
+};
+
+// ══ DATA ═══════════════════════════════════════════
+const INVENTORY_DATA = [
+  { id:'gansito',     name:'Gansito c/6',          brand:'Bimbo',    stock:1840, available:1660, dias:9.2,  fefo:'ok',       lote:'2024-C · 12 días', buffer:8  },
+  { id:'pan_blanco',  name:'Pan Blanco Grande',     brand:'Bimbo',    stock:920,  available:840,  dias:4.1,  fefo:'ok',       lote:'2024-B · 5 días',  buffer:6  },
+  { id:'tortillinas', name:'Tortillinas Tía Rosa',  brand:'Bimbo',    stock:1240, available:1100, dias:5.8,  fefo:'ok',       lote:'2024-B · 6 días',  buffer:7  },
+  { id:'bimbollos',   name:'Bimbollos c/6',         brand:'Bimbo',    stock:680,  available:610,  dias:3.4,  fefo:'ok',       lote:'2024-C · 14 días', buffer:10 },
+  { id:'mantecadas',  name:'Mantecadas c/8',        brand:'Bimbo',    stock:420,  available:380,  dias:2.1,  fefo:'alert',    lote:'2024-A · 3 días',  buffer:5  },
+  { id:'donas',       name:'Donas Azúcar',          brand:'Bimbo',    stock:560,  available:500,  dias:2.8,  fefo:'alert',    lote:'2024-B · 4 días',  buffer:12 },
+  { id:'panque',      name:'Panqué Vainilla',       brand:'Bimbo',    stock:380,  available:340,  dias:3.2,  fefo:'ok',       lote:'2024-C · 18 días', buffer:8  },
+  { id:'wonder',      name:'Wonder Blanco',         brand:'Wonder',   stock:760,  available:700,  dias:4.8,  fefo:'ok',       lote:'2024-B · 7 días',  buffer:6  },
+  { id:'choco_roles', name:'Choco Roles',           brand:'Marinela', stock:480,  available:420,  dias:2.4,  fefo:'alert',    lote:'2024-A · 2 días',  buffer:15 },
+  { id:'gansito_lote2',name:'Gansito c/6 (lote A)',brand:'Bimbo',    stock:180,  available:180,  dias:0.9,  fefo:'critical', lote:'2024-A · 36 HORAS',buffer:8 },
+  { id:'barritas',    name:'Barritas Marinela',     brand:'Marinela', stock:280,  available:260,  dias:1.4,  fefo:'critical', lote:'2024-A · 1.5 días',buffer:15 },
+  { id:'roles_canela',name:'Roles de Canela',       brand:'Bimbo',    stock:320,  available:290,  dias:4.1,  fefo:'ok',       lote:'2024-C · 16 días', buffer:10 },
+];
+
+const ROUTES_DATA = [
+  { name:'Norte A', vendedor:'Ana G.',   initials:'AG', color:'#0F6E56', status:'dispatched', clients:30, visited:19, cajas:1840, vol:'$221K', salida:'5:42 AM' },
+  { name:'Norte B', vendedor:'Luis R.',  initials:'LR', color:'#185FA5', status:'dispatched', clients:30, visited:13, cajas:1640, vol:'$198K', salida:'5:55 AM' },
+  { name:'Centro',  vendedor:'Marco T.', initials:'MT', color:'#534AB7', status:'loading',    clients:32, visited:0,  cajas:0,    vol:'$0',    salida:'6:20 AM' },
+  { name:'Sur A',   vendedor:'Diana P.', initials:'DP', color:'#BA7517', status:'dispatched', clients:25, visited:16, cajas:1420, vol:'$187K', salida:'6:05 AM' },
+  { name:'Sur B',   vendedor:'Carlos M.',initials:'CM', color:'#E24B4A', status:'dispatched', clients:30, visited:11, cajas:1380, vol:'$141K', salida:'6:18 AM' },
+  { name:'Sur C',   vendedor:'Jorge R.', initials:'JR', color:'#993C1D', status:'pending',    clients:28, visited:0,  cajas:0,    vol:'$0',    salida:'7:00 AM' },
+];
+
+const INITIAL_ORDERS = [
+  { id:'P-1041', vendedor:'Ana G.',   ruta:'Norte A', cliente:'Abarrotes La Paz',    total:'$2,840', cajas:18, status:'confirmed', time:'10:12' },
+  { id:'P-1042', vendedor:'Luis R.',  ruta:'Norte B', cliente:'Fonda Doña Lupita',   total:'$1,580', cajas:12, status:'confirmed', time:'10:18' },
+  { id:'P-1043', vendedor:'Diana P.', ruta:'Sur A',   cliente:'Minisuper El Roble',  total:'$3,240', cajas:22, status:'processing',time:'10:24' },
+  { id:'P-1044', vendedor:'Carlos M.',ruta:'Sur B',   cliente:'Abarrotes El Sol',    total:'$940',   cajas:8,  status:'processing',time:'10:31' },
+  { id:'P-1045', vendedor:'Ana G.',   ruta:'Norte A', cliente:'Cremería Don Leche',  total:'$1,120', cajas:9,  status:'pending',  time:'10:38' },
+  { id:'P-1046', vendedor:'Luis R.',  ruta:'Norte B', cliente:'Super Del Norte',     total:'$4,280', cajas:28, status:'pending',  time:'10:42' },
+  { id:'P-1047', vendedor:'Jorge R.', ruta:'Sur C',   cliente:'Taquería Los Compa.', total:'$680',   cajas:6,  status:'pending',  time:'10:45' },
+];
+
+const INITIAL_FEED = [
+  { title:'Pedido confirmado · Ana G.', sub:'Abarrotes La Paz · $2,840 · 18 cajas', color:'#0F6E56', time:'10:12', isNew:false },
+  { title:'Check-in GPS · Luis R.', sub:'Fonda Doña Lupita · Ruta Norte B', color:'#185FA5', time:'10:18', isNew:false },
+  { title:'Foto de anaquel · Ana G.', sub:'Share Bimbo 54% · 15 SKUs detectados', color:'#534AB7', time:'10:22', isNew:false },
+  { title:'Cobro registrado · Diana P.', sub:'Minisuper El Roble · $3,200 efectivo', color:'#BA7517', time:'10:28', isNew:false },
+  { title:'Alerta FEFO · Bodega', sub:'Gansito Lote A · 180 cajas vencen en 36h', color:'#E24B4A', time:'10:30', isNew:false },
+  { title:'Pedido confirmado · Luis R.', sub:'Abarrotes Don Roberto · $1,580 · quincena', color:'#0F6E56', time:'10:38', isNew:true },
+  { title:'Sync completado · Norte B', sub:'3 pedidos subidos · latencia 124ms', color:'#185FA5', time:'10:41', isNew:true },
+];
+
+// ══ INIT ═══════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  initBroadcastChannel();
+  initTime();
+  renderFeed();
+  renderOrders();
+  renderInventory(INVENTORY_DATA);
+  renderRouteMini();
+  renderRouteCards();
+  renderAlerts();
+  renderTimeline();
+  renderLiquidaciones();
+  renderConnEvents();
+  initCharts();
+  startAutoSync();
+  startLastSyncTimer();
+  // v3
+  renderSargentoVendors();
+  renderSargentoTable();
+  renderSargentoAlerts();
+  renderFotoCompliance();
+  renderAuthQueue();
+  renderAuthHistory();
+  renderContenedorGrid();
+});
+
+function initTime() {
+  const update = () => {
+    const now = new Date();
+    const t = `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+    const el = document.getElementById('topTime');
+    if (el) el.textContent = t;
+  };
+  update();
+  setInterval(update, 1000);
+}
+
+function startLastSyncTimer() {
+  setInterval(() => {
+    const secs = Math.round((Date.now() - lastSyncTime) / 1000);
+    const el = document.getElementById('connLastSync');
+    if (el) el.textContent = `Último sync: hace ${secs < 60 ? secs+'s' : Math.floor(secs/60)+'m'}`;
+  }, 1000);
+}
+
+function startAutoSync() {
+  syncInterval = setInterval(() => {
+    if (!isOfflineMode && Math.random() > 0.7) {
+      const events = [
+        { title:`Check-in GPS · ${['Ana G.','Luis R.','Diana P.'][Math.floor(Math.random()*3)]}`,
+          sub:`${['Abarrotes Cruz','Tienda Roma','Minisuper Sur'][Math.floor(Math.random()*3)]} · GPS válido`,
+          color:'#185FA5' },
+        { title:`Sync offline · ${['Marco T.','Luis R.','Carlos M.'][Math.floor(Math.random()*3)]}`,
+          sub:`${Math.floor(Math.random()*3)+1} pedidos sincronizados · latencia ${100+Math.floor(Math.random()*80)}ms`,
+          color:'#0F6E56' },
+      ];
+      const ev = events[Math.floor(Math.random()*events.length)];
+      addFeedItem(ev.title, ev.sub, 'green');
+      lastSyncTime = Date.now();
+    }
+  }, 8000);
+}
+
+// ══ PAGES ══════════════════════════════════════════
+const PAGE_TITLES = {
+  dashboard:     ['Dashboard — Vista general', 'Centro de Distribución · Monterrey Norte · Turno matutino'],
+  pedidos:       ['Pedidos en tiempo real', 'Cola de pedidos · App de campo → CEDIS · Actualización automática'],
+  inventario:    ['Inventario WMS — Control FEFO', 'First Expired First Out · 47 SKUs · Actualización en tiempo real'],
+  despacho:      ['Despacho de rutas', 'Gestión de carga · 6 rutas hoy · Inicio 5:30 AM'],
+  reportes:      ['Reportes y analítica', 'Semana actual · Comparativa vs período anterior'],
+  conectividad:  ['Arquitectura de conectividad', 'Integración App campo ↔ CEDIS WMS ↔ ERP · Demo en tiempo real'],
+  // v3
+  sargento:      ['⏱ Sargento Monitor', 'Control de tiempos · Meta 7 min/visita · Alarma 80% y 100%'],
+  fotos:         ['📸 Cumplimiento Fotos', '"Foto o No Existe" · 4 fotos/visita · Afecta bono de ejecución'],
+  seguridad:     ['🔐 Seguridad Patrimonial', 'Doble Autorización · Nadie mueve inventario solo · Log de auditoría'],
+};
+
+function showPage(name, btn) {
+  document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+  const page = document.getElementById(`page-${name}`);
+  if (page) page.classList.add('active');
+  if (btn) btn.classList.add('active');
+  const [title, sub] = PAGE_TITLES[name] || ['',''];
+  document.getElementById('pageTitle').textContent = title;
+  document.getElementById('pageSub').textContent = sub;
+  if (name === 'reportes') renderReportCharts();
+}
+
+// ══ FEED ═══════════════════════════════════════════
+function renderFeed() {
+  const feed = document.getElementById('liveFeed');
+  if (!feed) return;
+  feed.innerHTML = '';
+  INITIAL_FEED.slice().reverse().forEach(item => {
+    feed.appendChild(createFeedItem(item.title, item.sub, item.color, item.time, item.isNew));
+  });
+}
+
+function createFeedItem(title, sub, color, time, isNew = true) {
+  const div = document.createElement('div');
+  div.className = `feed-item${isNew ? ' feed-new' : ''}`;
+  div.innerHTML = `
+    <div class="feed-dot" style="background:${color}"></div>
+    <div class="feed-content">
+      <div class="feed-title">${title}</div>
+      <div class="feed-sub">${sub}</div>
+    </div>
+    <div class="feed-time">${time || now()}</div>`;
+  return div;
+}
+
+function addFeedItem(title, sub, colorKey = 'green', time = null) {
+  const colors = { green:'#0F6E56', blue:'#185FA5', amber:'#BA7517', red:'#E24B4A', purple:'#534AB7' };
+  const color = colors[colorKey] || colors.green;
+  const t = time || now();
+  const feed = document.getElementById('liveFeed');
+  if (feed) feed.insertBefore(createFeedItem(title, sub, color, t, true), feed.firstChild);
+  const countEl = document.getElementById('feedCount');
+  if (countEl) {
+    const num = parseInt(countEl.textContent) + 1;
+    countEl.textContent = `${num} eventos`;
+  }
+  const connLog = document.getElementById('connEventLog');
+  if (connLog) connLog.insertBefore(createFeedItem(title, sub, color, t, true), connLog.firstChild);
+}
+
+function now() {
+  const d = new Date();
+  return `${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+
+// ══ ORDERS ══════════════════════════════════════════
+function renderOrders() {
+  const queue = document.getElementById('orderQueue');
+  if (!queue) return;
+  queue.innerHTML = '';
+  INITIAL_ORDERS.forEach(o => queue.appendChild(createOrderCard(o)));
+}
+
+function createOrderCard(order) {
+  const div = document.createElement('div');
+  const statusClass = order.status === 'confirmed' ? 'confirmed' : order.status === 'processing' ? 'processing' : '';
+  const statusBadge = order.status === 'confirmed'
+    ? '<span class="badge badge-green">✓ Confirmado</span>'
+    : order.status === 'processing'
+    ? '<span class="badge badge-blue">⚙ Procesando</span>'
+    : '<span class="badge badge-amber">⏳ Pendiente</span>';
+
+  div.className = `order-incoming ${statusClass}`;
+  div.innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+      <div style="font-size:12px;font-family:var(--mono);color:var(--text3)">${order.id}</div>
+      <div style="font-size:13px;font-weight:700;flex:1">${order.cliente}</div>
+      ${statusBadge}
+      <div style="font-size:11px;color:var(--text3)">${order.time}</div>
+    </div>
+    <div style="display:flex;gap:16px;font-size:11px;color:var(--text3)">
+      <span>👤 ${order.vendedor}</span>
+      <span>🛣️ ${order.ruta}</span>
+      <span>📦 ${order.cajas} cajas</span>
+      <span style="font-weight:700;color:var(--text)">💰 ${order.total}</span>
+    </div>
+    ${order.status === 'pending' ? `
+    <div style="display:flex;gap:6px;margin-top:10px">
+      <button class="btn-topbar btn-primary" style="padding:5px 12px;font-size:11px" onclick="processOrder(this,'${order.id}')">⚙ Procesar</button>
+      <button class="btn-topbar btn-secondary" style="padding:5px 12px;font-size:11px">Ver detalle</button>
+    </div>` : ''}`;
+  return div;
+}
+
+function processOrder(btn, orderId) {
+  const card = btn.closest('.order-incoming');
+  if (!card) return;
+  card.className = 'order-incoming processing';
+  card.querySelector('.badge').outerHTML = '<span class="badge badge-blue">⚙ Procesando</span>';
+  btn.parentElement.innerHTML = '<span style="font-size:11px;color:var(--b600)">⚙ Generando orden de picking...</span>';
+  setTimeout(() => {
+    card.className = 'order-incoming confirmed';
+    card.querySelector('.badge').outerHTML = '<span class="badge badge-green">✓ Confirmado</span>';
+    const actDiv = card.querySelector('[style*="gap:6px"]');
+    if (actDiv) actDiv.innerHTML = '<span style="font-size:11px;color:var(--g600)">✓ CFDI generado · En cola de carga</span>';
+    STATE.confirmadoCount++;
+    STATE.pendienteCount = Math.max(0, STATE.pendienteCount - 1);
+    updateOrderCounters();
+    showToastMsg(`✅ Pedido ${orderId} procesado · CFDI timbrado · Asignado a carga`);
+  }, 2000);
+}
+
+function updateOrderCounters() {
+  const p = document.getElementById('qPendiente');
+  const c = document.getElementById('qConfirmado');
+  if (p) { p.textContent = STATE.pendienteCount; p.classList.add('counter-anim'); setTimeout(()=>p.classList.remove('counter-anim'),400); }
+  if (c) { c.textContent = STATE.confirmadoCount; c.classList.add('counter-anim'); setTimeout(()=>c.classList.remove('counter-anim'),400); }
+}
+
+function simulateIncomingOrder() {
+  const names = ['Abarrotes El Pueblito','Super Familiar Reyes','Dulcería La Estrella','Fonda El Sazón','Cremería Norte'];
+  const vendedores = [
+    { name:'Luis R.', ruta:'Norte B' },
+    { name:'Ana G.',  ruta:'Norte A' },
+    { name:'Diana P.',ruta:'Sur A'   },
+  ];
+  const v = vendedores[Math.floor(Math.random()*vendedores.length)];
+  const cajas = 6 + Math.floor(Math.random()*22);
+  const total = '$' + (cajas * (140 + Math.floor(Math.random()*80))).toLocaleString('es-MX');
+  const orderId = 'P-' + (1048 + Math.floor(Math.random()*900));
+  const cliente = names[Math.floor(Math.random()*names.length)];
+
+  const newOrder = {
+    id: orderId, vendedor: v.name, ruta: v.ruta,
+    cliente, total, cajas, status:'pending', time: now()
+  };
+
+  // Add to queue
+  const queue = document.getElementById('orderQueue');
+  if (queue) queue.insertBefore(createOrderCard(newOrder), queue.firstChild);
+
+  // Update counters
+  STATE.pedidosCount++;
+  STATE.pendienteCount++;
+  STATE.msgCount++;
+  const kpiEl = document.getElementById('kpiPedidos');
+  if (kpiEl) { kpiEl.textContent = STATE.pedidosCount; kpiEl.classList.add('counter-anim'); setTimeout(()=>kpiEl.classList.remove('counter-anim'),400); }
+  const pdBadge = document.getElementById('pedidosBadge');
+  if (pdBadge) pdBadge.textContent = STATE.pendienteCount;
+  const msgEl = document.getElementById('msgCount');
+  if (msgEl) msgEl.textContent = STATE.msgCount;
+  updateOrderCounters();
+
+  addFeedItem(`📱 Pedido recibido: ${cliente}`, `${v.vendedor} · ${v.ruta} · ${cajas} cajas · ${total}`, 'green');
+  animateArrows();
+  showToastMsg(`📦 Nuevo pedido: ${cliente} · ${total} · ${v.ruta}`);
+
+  // Broadcast to field app
+  if (bc) {
+    bc.postMessage({ type:'CEDIS_ORDER_ACK', orderId, timestamp: Date.now() });
+  }
+}
+
+function receiveOrder(data) {
+  const newOrder = {
+    id: data.orderId || 'P-' + Math.floor(Math.random()*9000+1000),
+    vendedor: data.vendedor || 'App Campo',
+    ruta: data.ruta || 'Ruta activa',
+    cliente: data.cliente || 'Cliente',
+    total: data.total || '$0',
+    cajas: data.cajas || 0,
+    status: 'pending',
+    time: now()
+  };
+  const queue = document.getElementById('orderQueue');
+  if (queue) queue.insertBefore(createOrderCard(newOrder), queue.firstChild);
+  STATE.pedidosCount++;
+  STATE.pendienteCount++;
+  STATE.msgCount++;
+  const kpiEl = document.getElementById('kpiPedidos');
+  if (kpiEl) kpiEl.textContent = STATE.pedidosCount;
+  const pdBadge = document.getElementById('pedidosBadge');
+  if (pdBadge) pdBadge.textContent = STATE.pendienteCount;
+  updateOrderCounters();
+  animateArrows();
+  addFeedItem(`📱 Pedido desde campo: ${newOrder.cliente}`, `${newOrder.vendedor} · ${newOrder.total}`, 'green');
+  showToastMsg(`📱 Pedido recibido desde App de Campo: ${newOrder.cliente}`);
+}
+
+// ══ INVENTORY ══════════════════════════════════════
+function renderInventory(data) {
+  const tbody = document.getElementById('inventoryTable');
+  if (!tbody) return;
+  tbody.innerHTML = data.map(s => {
+    const fefoClass = s.fefo === 'critical' ? 'fefo-critical' : s.fefo === 'alert' ? 'fefo-warn' : 'fefo-ok';
+    const fefoTxt = s.fefo === 'critical' ? '🔴 CRÍTICO' : s.fefo === 'alert' ? '⚠ Alerta' : '✓ OK';
+    const stockColor = s.dias < 2 ? 'var(--r500)' : s.dias < 3 ? 'var(--a600)' : 'var(--g600)';
+    const stockPct = Math.min(100, (s.dias / 7) * 100);
+    return `<tr>
+      <td class="td-bold">${s.name}</td>
+      <td><span class="tag">${s.brand}</span></td>
+      <td>
+        <div style="font-weight:700">${s.stock.toLocaleString()} cajas</div>
+        <div class="progress progress-sm" style="margin-top:4px;width:80px">
+          <div class="progress-fill" style="width:${stockPct}%;background:${stockColor}"></div>
+        </div>
+      </td>
+      <td style="color:${stockColor};font-weight:700">${s.available.toLocaleString()} cajas</td>
+      <td style="font-weight:700;color:${stockColor}">${s.dias}d</td>
+      <td><span class="fefo-pill ${fefoClass}">${fefoTxt}</span></td>
+      <td class="td-mono" style="font-size:11px">${s.lote}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="font-size:12px;color:var(--text3)">+${s.buffer}%</span>
+          <button style="padding:3px 8px;border:1px solid var(--border2);border-radius:4px;font-size:10px;font-weight:600;background:var(--surface);cursor:pointer;font-family:var(--font)" onclick="showToastMsg('Buffer de ${s.name} actualizado')">Ajustar</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function filterInventory(val) {
+  const search = (document.getElementById('invSearch')?.value || '').toLowerCase();
+  const filter = document.getElementById('invFilter')?.value || 'all';
+  let data = INVENTORY_DATA;
+  if (search) data = data.filter(s => s.name.toLowerCase().includes(search) || s.brand.toLowerCase().includes(search));
+  if (filter === 'critical') data = data.filter(s => s.fefo === 'critical');
+  if (filter === 'alert') data = data.filter(s => s.fefo === 'alert');
+  if (filter === 'ok') data = data.filter(s => s.fefo === 'ok');
+  renderInventory(data);
+}
+
+// ══ ROUTES ══════════════════════════════════════════
+function renderRouteMini() {
+  const el = document.getElementById('routesMini');
+  if (!el) return;
+  el.innerHTML = ROUTES_DATA.slice(0,4).map(r => {
+    const pct = r.total > 0 ? Math.round(r.visited/r.clients*100) : 0;
+    const statusLabel = r.status === 'dispatched' ? '🚚 En ruta' : r.status === 'loading' ? '⚙ Cargando' : '⏳ Pendiente';
+    const statusBadge = r.status === 'dispatched' ? 'badge-green' : r.status === 'loading' ? 'badge-amber' : 'badge-gray';
+    return `<div style="background:var(--gray50);border:1px solid var(--border);border-radius:8px;padding:10px 12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <div style="font-size:13px;font-weight:700">Ruta ${r.name}</div>
+        <span class="badge ${statusBadge}" style="font-size:9px">${statusLabel}</span>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:6px">${r.vendedor} · ${r.visited}/${r.clients}</div>
+      <div class="progress"><div class="progress-fill" style="width:${pct}%;background:${r.color}"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderRouteCards() {
+  const el = document.getElementById('routeCards');
+  if (!el) return;
+  el.innerHTML = ROUTES_DATA.map(r => {
+    const pct = r.clients > 0 ? Math.round(r.visited/r.clients*100) : 0;
+    const statusClass = r.status === 'dispatched' ? 'dispatched' : r.status === 'loading' ? 'loading' : 'pending';
+    const statusLabel = r.status === 'dispatched' ? '🚚 En ruta' : r.status === 'loading' ? '⚙ Cargando' : '⏳ Pendiente';
+    const statusBadge = r.status === 'dispatched' ? 'badge-green' : r.status === 'loading' ? 'badge-amber' : 'badge-gray';
+    return `<div class="route-card ${statusClass}">
+      <div class="route-header">
+        <div>
+          <div class="route-name">Ruta ${r.name}</div>
+          <div class="route-meta">Salida: ${r.salida}</div>
+        </div>
+        <span class="badge ${statusBadge}">${statusLabel}</span>
+      </div>
+      <div class="route-vendedor">
+        <div class="vendedor-chip">
+          <div class="avatar-sm" style="background:${r.color}">${r.initials}</div>
+          <span>${r.vendedor}</span>
+        </div>
+        <span style="font-size:11px;color:var(--text3);margin-left:auto">${r.clients} clientes</span>
+      </div>
+      <div style="margin-top:10px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:4px">
+          <span>Avance ${r.visited}/${r.clients}</span>
+          <span style="font-weight:700;color:var(--text)">${r.vol}</span>
+        </div>
+        <div class="progress"><div class="progress-fill" style="width:${pct}%;background:${r.color}"></div></div>
+      </div>
+      ${r.status === 'loading' ? `
+      <div style="margin-top:10px">
+        <div style="font-size:11px;color:var(--a700);font-weight:600;margin-bottom:4px">Carga en andén 3 · 61% completada</div>
+        <div class="progress"><div class="progress-fill" style="width:61%;background:var(--a500)"></div></div>
+        <button class="btn-topbar btn-primary" style="padding:6px 14px;font-size:12px;margin-top:8px;width:100%" onclick="showToastMsg('✅ Despacho de Ruta ${r.name} confirmado · Camioneta lista')">Confirmar despacho</button>
+      </div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function renderAlerts() {
+  const el = document.getElementById('alertsList');
+  if (!el) return;
+  const alerts = [
+    { type:'critical', title:'Gansito Lote A · vence en 36h', desc:'180 cajas · Asignar a Ruta Norte A prioritariamente' },
+    { type:'warning',  title:'Mantecadas · stock 2.1 días', desc:'Solicitar reposición a planta hoy' },
+    { type:'warning',  title:'Carlos M. · 44 min sin pedido', desc:'Ruta Sur B · GPS en Abarrotes El Sol' },
+  ];
+  el.innerHTML = alerts.map(a => `
+    <div class="alert-item ${a.type}">
+      <span style="font-size:16px">${a.type === 'critical' ? '🔴' : '⚠️'}</span>
+      <div>
+        <div class="ai-title">${a.title}</div>
+        <div class="ai-desc">${a.desc}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderTimeline() {
+  const el = document.getElementById('timelineDespacho');
+  if (!el) return;
+  const events = [
+    { time:'10:00 PM', event:'Cierre de pedidos · 124 pedidos recibidos', color:'#534AB7', done:true },
+    { time:'11:30 PM', event:'WMS generó órdenes de picking · 6 rutas', color:'#185FA5', done:true },
+    { time:'12:00 AM', event:'Inicio de picking en bodega', color:'#0F6E56', done:true },
+    { time:'2:00 AM',  event:'Verificación FEFO · asignación de lotes', color:'#1D9E75', done:true },
+    { time:'3:30 AM',  event:'Inicio de carga en camionetas', color:'#BA7517', done:true },
+    { time:'5:30 AM',  event:'4 camionetas despachadas', color:'#0F6E56', done:true },
+    { time:'6:20 AM',  event:'Ruta Centro en carga · andén 3', color:'#E87800', done:false },
+    { time:'7:00 AM',  event:'Ruta Sur C · pendiente despacho', color:'#888780', done:false },
+  ];
+  el.innerHTML = events.map(e => `
+    <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px">
+      <div style="font-size:10px;font-weight:700;font-family:var(--mono);color:var(--text3);min-width:52px;padding-top:1px">${e.time}</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:${e.color};flex-shrink:0;margin-top:3px;${e.done?'':'opacity:.4'}"></div>
+      <div style="font-size:12px;color:${e.done ? 'var(--text)' : 'var(--text3)'};line-height:1.4">${e.event}</div>
+    </div>`).join('');
+}
+
+function renderLiquidaciones() {
+  const el = document.getElementById('liquidaciones');
+  if (!el) return;
+  const liq = [
+    { ruta:'Norte A · Ana G.',  hora:'Abierta',  pendiente:19, total:'$221K', status:'open' },
+    { ruta:'Norte B · Luis R.', hora:'Abierta',  pendiente:13, total:'$198K', status:'open' },
+    { ruta:'Sur A · Diana P.',  hora:'Abierta',  pendiente:16, total:'$187K', status:'open' },
+    { ruta:'Sur B · Carlos M.', hora:'Abierta',  pendiente:11, total:'$141K', status:'open' },
+  ];
+  el.innerHTML = liq.map(l => `
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--gray100)">
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:700">${l.ruta}</div>
+        <div style="font-size:11px;color:var(--text3)">${l.pendiente} clientes visitados · ${l.total}</div>
+      </div>
+      <span class="badge badge-blue">Activa</span>
+      <button style="padding:4px 8px;border:1px solid var(--border2);border-radius:5px;font-size:10px;font-weight:600;cursor:pointer;background:var(--surface);font-family:var(--font)" onclick="showToastMsg('Liquidación de ${l.ruta} · Cierre automático a las 6:00 PM')">Ver</button>
+    </div>`).join('');
+}
+
+function renderConnEvents() {
+  const el = document.getElementById('connEventLog');
+  if (!el) return;
+  el.innerHTML = '';
+  INITIAL_FEED.slice().reverse().forEach(item => {
+    const div = createFeedItem(
+      `[${item.time}] ${item.title}`,
+      item.sub,
+      item.color,
+      item.time,
+      item.isNew
+    );
+    el.appendChild(div);
+  });
+}
+
+// ══ CHARTS ══════════════════════════════════════════
+let chartsInit = false;
+function initCharts() {
+  if (chartsInit) return;
+  chartsInit = true;
+
+  // Pedidos por hora
+  const ctxP = document.getElementById('chartPedidos');
+  if (ctxP) {
+    new Chart(ctxP, {
+      type:'line',
+      data:{
+        labels:['6AM','7AM','8AM','9AM','10AM','11AM','12PM'],
+        datasets:[
+          { label:'Hoy', data:[4,8,12,18,14,10,6], borderColor:'#0F6E56', backgroundColor:'rgba(15,122,74,.08)', tension:.4, fill:true, borderWidth:2.5, pointRadius:3 },
+          { label:'Ayer', data:[3,7,10,15,12,9,5], borderColor:'#B5BCB8', backgroundColor:'transparent', tension:.4, borderWidth:1.5, borderDash:[4,2], pointRadius:2 },
+        ]
+      },
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'top',labels:{font:{family:'DM Sans',size:11},boxWidth:10}}}, scales:{ y:{beginAtZero:true, grid:{color:'rgba(0,0,0,.04)'}, ticks:{font:{family:'DM Sans',size:11}}}, x:{grid:{display:false}, ticks:{font:{family:'DM Sans',size:11}}} } }
+    });
+  }
+
+  // Status donut
+  const ctxS = document.getElementById('chartStatus');
+  if (ctxS) {
+    new Chart(ctxS, {
+      type:'doughnut',
+      data:{
+        labels:['Confirmados','Procesando','Pendientes'],
+        datasets:[{ data:[31,2,5], backgroundColor:['#0F6E56','#185FA5','#E87800'], borderWidth:0, hoverOffset:4 }]
+      },
+      options:{ responsive:true, maintainAspectRatio:false, cutout:'65%', plugins:{ legend:{ position:'bottom', labels:{ font:{ family:'DM Sans', size:11 }, boxWidth:10 } } } }
+    });
+  }
+}
+
+function renderReportCharts() {
+  const days = ['L','M','M','J','V','S','D'];
+  const opts = { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ labels:{ font:{ family:'DM Sans', size:11 }, boxWidth:10 } } }, scales:{ y:{ beginAtZero:true, grid:{ color:'rgba(0,0,0,.04)' }, ticks:{ font:{ family:'DM Sans', size:11 } } }, x:{ grid:{ display:false }, ticks:{ font:{ family:'DM Sans', size:11 } } } } };
+
+  const fr = document.getElementById('chartFillRate');
+  if (fr && !fr.dataset.rendered) {
+    fr.dataset.rendered = '1';
+    new Chart(fr, { type:'bar', data:{ labels:days, datasets:[
+      { label:'Esta semana %', data:[97.8,98.4,97.2,98.9,98.2,99.1,98.6], backgroundColor:'rgba(15,122,74,.8)', borderRadius:4 },
+      { label:'Semana ant %', data:[96.4,97.1,96.8,97.4,97.0,98.2,97.5], backgroundColor:'rgba(15,122,74,.2)', borderRadius:4 },
+    ]}, options:{...opts, scales:{...opts.scales, y:{...opts.scales.y, min:94, max:100}}} });
+  }
+  const mr = document.getElementById('chartMerma');
+  if (mr && !mr.dataset.rendered) {
+    mr.dataset.rendered = '1';
+    new Chart(mr, { type:'line', data:{ labels:days, datasets:[
+      { label:'Merma % hoy', data:[1.4,1.2,1.6,1.1,1.1,0.9,1.0], borderColor:'#E24B4A', backgroundColor:'rgba(226,75,74,.08)', fill:true, tension:.4, borderWidth:2, pointRadius:3 },
+      { label:'Meta 1.5%', data:[1.5,1.5,1.5,1.5,1.5,1.5,1.5], borderColor:'#B5BCB8', borderDash:[6,3], borderWidth:1.5, pointRadius:0 },
+    ]}, options:{...opts, scales:{...opts.scales, y:{...opts.scales.y, min:0, max:3}}} });
+  }
+  const ts = document.getElementById('chartTopSkus');
+  if (ts && !ts.dataset.rendered) {
+    ts.dataset.rendered = '1';
+    new Chart(ts, { type:'bar', indexAxis:'y', data:{ labels:['Gansito c/6','Tortillinas','Pan Blanco','Bimbollos','Donas Azúcar','Choco Roles','Mantecadas','Wonder','Panqué','Barritas'], datasets:[{ label:'Cajas semana', data:[1840,1240,920,780,640,520,480,380,320,280], backgroundColor:'rgba(26,94,200,.75)', borderRadius:3 }]}, options:{...opts, indexAxis:'y', scales:{...opts.scales, x:{...opts.scales.x, grid:{color:'rgba(0,0,0,.04)'}}, y:{grid:{display:false}, ticks:{font:{family:'DM Sans',size:11}}}}} });
+  }
+  const rr = document.getElementById('chartRutas');
+  if (rr && !rr.dataset.rendered) {
+    rr.dataset.rendered = '1';
+    new Chart(rr, { type:'radar', data:{ labels:['Cobertura','Efectividad','Vol. vs Meta','Ticket prom.','Tiempo ruta'], datasets:[
+      { label:'Ana G.', data:[100,92,118,88,90], borderColor:'#0F6E56', backgroundColor:'rgba(15,122,74,.1)', pointRadius:3 },
+      { label:'Luis R.', data:[96,88,112,85,87], borderColor:'#185FA5', backgroundColor:'rgba(26,94,200,.1)', pointRadius:3 },
+      { label:'Carlos M.', data:[84,76,92,78,65], borderColor:'#E24B4A', backgroundColor:'rgba(226,75,74,.1)', pointRadius:3 },
+    ]}, options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ labels:{ font:{ family:'DM Sans', size:11 }, boxWidth:10 } } }, scales:{ r:{ beginAtZero:true, max:120, ticks:{ font:{ family:'DM Sans', size:10 } }, pointLabels:{ font:{ family:'DM Sans', size:11 } } } } } });
+  }
+}
+
+// ══ MODALS ══════════════════════════════════════════
+function showModal(id) {
+  const m = document.getElementById(id);
+  if (m) m.classList.add('show');
+}
+function closeModal(id) {
+  const m = document.getElementById(id);
+  if (m) m.classList.remove('show');
+}
+
+// ══ TOAST ═══════════════════════════════════════════
+let toastCount = 0;
+function showToastMsg(msg, type = 'success') {
+  const container = document.getElementById('toastContainer');
+  if (!container) return;
+  const div = document.createElement('div');
+  div.className = `toast${type === 'error' ? ' error' : type === 'warning' ? ' warning' : ''}`;
+  div.innerHTML = `<span>${msg}</span>`;
+  container.appendChild(div);
+  setTimeout(() => { div.style.opacity = '0'; div.style.transform = 'translateX(16px)'; div.style.transition = 'all .3s ease'; setTimeout(()=>div.remove(), 350); }, 3500);
+  if (++toastCount > 5) container.firstChild?.remove();
+}
+
+// ══ OFFLINE TOGGLE ══════════════════════════════════
+function toggleOffline() {
+  isOfflineMode = !isOfflineMode;
+  const dot = document.getElementById('sidebarConnDot');
+  const btnText = document.getElementById('offlineBtnText');
+  const syncDot = document.getElementById('syncDot');
+  const syncLabel = document.getElementById('syncLabel');
+
+  if (isOfflineMode) {
+    dot?.classList.replace('online','offline');
+    if (btnText) btnText.textContent = 'Restaurar conexión';
+    if (syncDot) syncDot.style.animation = 'none';
+    if (syncLabel) syncLabel.textContent = '⚠️ Sin conexión · modo offline';
+    document.getElementById('connStatus').textContent = 'App campo: SIN SEÑAL';
+    addFeedItem('⚠️ Conexión interrumpida con App de Campo', 'Los pedidos se guardan localmente en los dispositivos', 'amber');
+    showToastMsg('⚠️ Conexión interrumpida — modo offline simulado', 'warning');
+    ['arrowLine1','arrowLine2'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('active');
+    });
+  } else {
+    dot?.classList.replace('offline','online');
+    if (btnText) btnText.textContent = 'Simular desconexión';
+    if (syncDot) syncDot.style.animation = '';
+    if (syncLabel) syncLabel.textContent = 'En línea · sync activo';
+    document.getElementById('connStatus').textContent = 'App campo: conectada';
+    addFeedItem('✅ Conexión restaurada', 'Sincronizando pedidos offline pendientes... 3 pedidos en cola', 'green');
+    showToastMsg('✅ Conexión restaurada · Sincronizando pedidos offline...');
+    lastSyncTime = Date.now();
+    animateArrows();
+  }
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('show'); });
+});
+
+// ══ V3 — SARGENTO MONITOR ════════════════════════════
+
+const SARGENTO_VENDORS = [
+  { name:'Ana G.',   initials:'AG', color:'#0F6E56', client:'Farmacia San José',    secs:214, budget:420, status:'ok' },
+  { name:'Luis R.',  initials:'LR', color:'#185FA5', client:'Minisuper El Roble',   secs:380, budget:420, status:'warn' },
+  { name:'Carlos M.',initials:'CM', color:'#E24B4A', client:'Abarrotes El Sol',     secs:0,   budget:420, status:'idle' },
+  { name:'Diana P.', initials:'DP', color:'#BA7517', client:'Super Del Norte',      secs:142, budget:420, status:'ok' },
+  { name:'Marco T.', initials:'MT', color:'#534AB7', client:'Taquería Los Compa.', secs:510, budget:420, status:'critical' },
+  { name:'Jorge R.', initials:'JR', color:'#993C1D', client:'Cremería Norte',       secs:0,   budget:420, status:'idle' },
+];
+
+function renderSargentoVendors() {
+  const el = document.getElementById('sargentoVendorList');
+  if (!el) return;
+  el.innerHTML = SARGENTO_VENDORS.map(v => {
+    if (v.status === 'idle') return '';
+    const pct = Math.min(v.secs / v.budget, 1);
+    const mins = Math.floor(v.secs / 60);
+    const secs = String(v.secs % 60).padStart(2,'0');
+    const statusClass = v.status === 'critical' ? 'critical' : v.status === 'warn' ? 'warn' : 'ok';
+    const timerColor = v.status === 'critical' ? 'var(--r300)' : v.status === 'warn' ? 'var(--a300)' : 'var(--g300)';
+    const statusText = v.status === 'critical' ? 'TIEMPO' : v.status === 'warn' ? '⚠ 80%' : '✓ OK';
+    return `<div class="vendor-live-row ${statusClass}">
+      <div class="vl-avatar" style="background:${v.color}">${v.initials}</div>
+      <div style="flex:1;min-width:0">
+        <div class="vl-name">${v.name}</div>
+        <div class="vl-client">${v.client}</div>
+      </div>
+      <div class="vl-timer" style="color:${timerColor}">${mins}:${secs}</div>
+      <div class="vl-status ${v.status === 'critical' ? 'vl-critical' : v.status === 'warn' ? 'vl-warn' : 'vl-ok'}">${statusText}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderSargentoTable() {
+  const el = document.getElementById('sargentoTable');
+  if (!el) return;
+  const data = [
+    { name:'Ana G.',   visits:19, avg:'5:12', max:'9:40', eff:94 },
+    { name:'Luis R.',  visits:13, avg:'5:42', max:'11:20',eff:91 },
+    { name:'Diana P.', visits:16, avg:'4:58', max:'8:15', eff:97 },
+    { name:'Carlos M.',visits:11, avg:'8:24', max:'44:00',eff:58 },
+    { name:'Marco T.', visits:17, avg:'6:10', max:'12:30',eff:88 },
+    { name:'Jorge R.', visits:14, avg:'7:02', max:'10:20',eff:82 },
+  ];
+  el.innerHTML = data.map(d => {
+    const effColor = d.eff >= 90 ? 'var(--g600)' : d.eff >= 75 ? 'var(--a600)' : 'var(--r500)';
+    const effBadge = d.eff >= 90 ? 'badge-green' : d.eff >= 75 ? 'badge-amber' : 'badge-red';
+    return `<tr>
+      <td class="td-bold">${d.name}</td>
+      <td>${d.visits}</td>
+      <td style="font-family:var(--mono);font-weight:600">${d.avg}</td>
+      <td style="font-family:var(--mono);color:${d.max > '10:00' ? 'var(--r500)' : 'var(--text)'}">${d.max}</td>
+      <td><span class="badge ${effBadge}">${d.eff}%</span></td>
+      <td><div class="progress progress-sm" style="width:70px"><div class="progress-fill" style="width:${d.eff}%;background:${effColor}"></div></div></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderSargentoAlerts() {
+  const el = document.getElementById('sargentoAlertsList');
+  if (!el) return;
+  el.innerHTML = `
+    <div class="alert-item critical" style="margin-bottom:8px">
+      <span style="font-size:16px">🔴</span>
+      <div><div class="ai-title">Marco T. · Visita de 12:30 en Super Del Norte</div><div class="ai-desc">Sobre el meta de 7 min. Tiempo acumulado: 2 visitas &gt;10 min hoy. Revisar si hay problema de cobranza.</div></div>
+    </div>
+    <div class="alert-item warning">
+      <span style="font-size:16px">⚠️</span>
+      <div><div class="ai-title">Carlos M. · Visita de 44 min sin pedido confirmado</div><div class="ai-desc">Abarrotes El Sol · GPS confirma presencia pero sin orden levantada. Supervisor contactado a las 10:31.</div></div>
+    </div>`;
+}
+
+// ══ V3 — FOTO COMPLIANCE ════════════════════════════
+
+const FOTO_COMPLIANCE_DATA = [
+  { name:'Ana G.',   fotos:76, total:76, pct:100 },
+  { name:'Diana P.', fotos:62, total:64, pct:97  },
+  { name:'Luis R.',  fotos:49, total:52, pct:94  },
+  { name:'Marco T.', fotos:54, total:68, pct:79  },
+  { name:'Jorge R.', fotos:35, total:56, pct:63  },
+  { name:'Carlos M.',fotos:21, total:44, pct:48  },
+];
+
+function renderFotoCompliance() {
+  const el = document.getElementById('fotoComplianceList');
+  if (!el) return;
+  el.innerHTML = FOTO_COMPLIANCE_DATA.map(d => {
+    const color = d.pct >= 90 ? 'var(--g500)' : d.pct >= 70 ? 'var(--a500)' : 'var(--r500)';
+    const badge = d.pct >= 90 ? 'badge-green' : d.pct >= 70 ? 'badge-amber' : 'badge-red';
+    return `<div class="foto-compliance-row">
+      <div class="foto-ven-name">${d.name}</div>
+      <div class="foto-count">${d.fotos}/${d.total} fotos</div>
+      <div class="foto-mini-bar"><div class="foto-mini-fill" style="width:${d.pct}%;background:${color}"></div></div>
+      <div class="foto-pct"><span class="badge ${badge}">${d.pct}%</span></div>
+    </div>`;
+  }).join('');
+}
+
+// ══ V3 — SECURITY / DOUBLE AUTH ════════════════════════
+
+const AUTH_QUEUE_DATA = [
+  { id:'AUTH-041', tipo:'Pedido Manual', vendedor:'Carlos M.', cliente:'Abarrotes El Sol', sku:'Pan Blanco · 5 cajas', motivo:'Cliente sin señal — emergencia', status:'pending', time:'10:44' },
+];
+const AUTH_HISTORY_DATA = [
+  { id:'AUTH-039', tipo:'Pedido Manual', vendedor:'Luis R.',   status:'approved', approver:'Sup. García + Fin. Torres', time:'9:22' },
+  { id:'AUTH-040', tipo:'Ajuste inventario', vendedor:'Bodega',status:'approved', approver:'Sup. García + Fin. Torres', time:'10:05' },
+];
+
+function renderAuthQueue() {
+  const el = document.getElementById('authQueue');
+  if (!el) return;
+  if (!AUTH_QUEUE_DATA.length) { el.innerHTML = '<div style="padding:12px;text-align:center;color:var(--text3);font-size:13px">✅ Sin solicitudes pendientes</div>'; return; }
+  el.innerHTML = AUTH_QUEUE_DATA.map((a,i) => `
+    <div class="auth-request-card" id="authCard-${i}">
+      <div class="auth-header">
+        <span class="auth-icon">🔐</span>
+        <div style="flex:1"><div class="auth-title">${a.tipo} · ${a.vendedor}</div></div>
+        <span class="auth-time">${a.time}</span>
+      </div>
+      <div class="auth-detail">
+        <b>Cliente:</b> ${a.cliente} · <b>Producto:</b> ${a.sku}<br>
+        <b>Motivo:</b> ${a.motivo}
+      </div>
+      <div class="auth-actions">
+        <button class="auth-btn auth-btn-approve" onclick="approveAuth(${i},'${a.id}')">✓ Aprobar (Sup.)</button>
+        <button class="auth-btn auth-btn-deny" onclick="denyAuth(${i},'${a.id}')">✗ Rechazar</button>
+      </div>
+    </div>`).join('');
+}
+
+function renderAuthHistory() {
+  const el = document.getElementById('authHistory');
+  if (!el) return;
+  el.innerHTML = AUTH_HISTORY_DATA.map(a => `
+    <div class="data-row">
+      <span class="data-key">${a.id} · ${a.tipo} · ${a.vendedor}</span>
+      <span style="display:flex;align-items:center;gap:6px">
+        <span class="badge badge-green">✓ ${a.status}</span>
+        <span style="font-size:10px;color:var(--text3)">${a.time}</span>
+      </span>
+    </div>`).join('');
+}
+
+function approveAuth(idx, id) {
+  const card = document.getElementById(`authCard-${idx}`);
+  if (card) { card.className = 'auth-request-card approved'; card.querySelector('.auth-actions').innerHTML = '<span style="font-size:12px;color:var(--g600);font-weight:700">✓ Aprobado — esperando 2a firma de Finanzas...</span>'; }
+  const badge = document.getElementById('authQueueBadge');
+  if (badge) { const n = Math.max(0, (parseInt(badge.textContent)||1)-1); badge.textContent = n > 0 ? `${n} pendiente` : 'Sin pendientes'; }
+  const pending = document.getElementById('authPending');
+  if (pending) pending.textContent = '0';
+  showToastMsg(`✅ ${id} aprobado por Supervisor · Notificando a Finanzas para 2da firma`);
+  setTimeout(() => { const card2 = document.getElementById(`authCard-${idx}`); if(card2) card2.querySelector('.auth-actions').innerHTML = '<span style="font-size:12px;color:var(--g600);font-weight:700">✅ AUTORIZADO — 2 firmas completadas · Pedido procesado</span>'; }, 2000);
+}
+
+function denyAuth(idx, id) {
+  const card = document.getElementById(`authCard-${idx}`);
+  if (card) { card.className = 'auth-request-card denied'; card.querySelector('.auth-actions').innerHTML = '<span style="font-size:12px;color:var(--r700);font-weight:700">✗ Rechazado — notificando al vendedor</span>'; }
+  showToastMsg(`❌ ${id} rechazado · Vendedor notificado`, 'error');
+}
+
+function submitDoubleAuth() {
+  closeModal('modalPedidoManual');
+  const badge = document.getElementById('authBadge');
+  if (badge) badge.textContent = (parseInt(badge.textContent)||0) + 1;
+  showToastMsg('🔐 Solicitud enviada · Esperando aprobación de Supervisor + Finanzas');
+  addFeedItem('🔐 Solicitud de pedido manual enviada', 'Esperando doble autorización — nadie mueve inventario solo', 'amber');
+}
+
+// ══ V3 — CONTENEDOR GRID ════════════════════════════
+
+function renderContenedorGrid() {
+  const el = document.getElementById('contenedorGrid');
+  if (!el) return;
+  const clients = [
+    {n:'Don Roberto',s:'filled'},{n:'Fda Lupita',s:'filled'},{n:'Mini Roble',s:'filled'},
+    {n:'Farm. José',s:'filled'},{n:'Pap. Cruz',s:'filled'},{n:'T. Roma',s:'filled'},
+    {n:'Ab. Esp.',s:'filled'},{n:'Mini Cumb',s:'filled'},{n:'Carnic.',s:'filled'},
+    {n:'Taquería',s:'filled'},{n:'S. García',s:'filled'},{n:'G\'lupana',s:'filled'},
+    {n:'Tortill.',s:'filled'},{n:'Ab. Roberto2',s:'loading'},{n:'Cenaduría',s:'loading'},
+    {n:'S. Norte',s:'empty'},{n:'Farm. Juárez',s:'empty'},{n:'Ab. Sol',s:'empty'},
+    {n:'Mini Tec',s:'empty'},{n:'Lonchería',s:'empty'},{n:'T. Barrio',s:'empty'},
+    {n:'S. Colonia',s:'empty'},{n:'Dulcería',s:'empty'},{n:'Cremería',s:'empty'},
+    {n:'Ab. y Más',s:'empty'},{n:'S. Flash',s:'empty'},{n:'T. Barda',s:'empty'},
+    {n:'T. Amigo',s:'empty'},{n:'Crem. Cumb',s:'empty'},{n:'Mini Fam.',s:'empty'},
+  ];
+  el.innerHTML = clients.map(c => `
+    <div class="contenedor-cell ${c.s}" title="${c.n}" onclick="showToastMsg('${c.s === 'filled' ? '✅' : c.s === 'loading' ? '⚙' : '⏳'} ${c.n}')">
+      ${c.s === 'filled' ? '✓' : c.s === 'loading' ? '⚙' : '○'}
+      <div class="contenedor-cell-name">${c.n}</div>
+    </div>`).join('');
+}
+
+// ══ V3 — CONSOLE LOG ════════════════════════════════
+
+console.log('🏭 Mr. Ruta CEDIS WMS v3 iniciado · Canal BroadcastChannel:', CHANNEL_NAME);
+console.log('⏱ Sargento Monitor: 6 vendedores monitoreados en tiempo real');
+console.log('📸 Foto Compliance: meta >90% · actualmente 78%');
+console.log('🔐 Doble Autorización: activa · 1 solicitud pendiente');
+console.log('📱 Para demo en vivo: abrir Mr. Ruta App v3 en otra pestaña');
+</script>
+</body>
+</html>
