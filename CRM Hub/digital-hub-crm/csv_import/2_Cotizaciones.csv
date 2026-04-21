@@ -1,0 +1,2 @@
+Folio,Cliente,Telefono,Email,Direccion,Items,Subtotal,IVA,Monto,Moneda,Estado,Fecha creación,Fecha vencimiento,ValidezDias,Notas,CondicionesPago
+COT-001,Empresa Ejemplo,528112345678,ejemplo@empresa.com,Calle Ejemplo 123,"[{""cantidad"":1,""descripcion"":""Servicio"",""precioUnitario"":1000}]",1000,160,1160,MXN,Borrador,2026-01-01,2026-01-30,30,Notas de ejemplo,Pago a 30 días

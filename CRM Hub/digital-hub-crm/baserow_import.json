@@ -1,0 +1,327 @@
+[
+{
+  "type": "database",
+  "name": "CRM Mr. Ruta",
+  "order": 1,
+  "tables": [
+
+    {
+      "id": 1,
+      "name": "Clientes",
+      "order": 1,
+      "fields": [
+        {
+          "id": 1, "type": "text", "name": "Nombre",
+          "order": 0, "primary": true, "text_default": ""
+        },
+        {
+          "id": 2, "type": "text", "name": "Empresa",
+          "order": 1, "primary": false, "text_default": ""
+        },
+        {
+          "id": 3, "type": "email", "name": "Email",
+          "order": 2, "primary": false
+        },
+        {
+          "id": 4, "type": "text", "name": "Teléfono",
+          "order": 3, "primary": false, "text_default": ""
+        },
+        {
+          "id": 5, "type": "text", "name": "WhatsApp",
+          "order": 4, "primary": false, "text_default": ""
+        },
+        {
+          "id": 6, "type": "single_select", "name": "Estado",
+          "order": 5, "primary": false,
+          "select_options": [
+            { "id": 1,  "value": "Prospecto",      "color": "blue",   "order": 1 },
+            { "id": 2,  "value": "Contactado",      "color": "orange", "order": 2 },
+            { "id": 3,  "value": "En negociación",  "color": "yellow", "order": 3 },
+            { "id": 4,  "value": "Cliente",         "color": "green",  "order": 4 },
+            { "id": 5,  "value": "Inactivo",        "color": "gray",   "order": 5 }
+          ]
+        },
+        {
+          "id": 7, "type": "text", "name": "Fuente",
+          "order": 6, "primary": false, "text_default": ""
+        },
+        {
+          "id": 8, "type": "long_text", "name": "Notas",
+          "order": 7, "primary": false
+        },
+        {
+          "id": 9, "type": "date", "name": "Fecha creación",
+          "order": 8, "primary": false,
+          "date_format": "ISO", "date_include_time": false, "date_time_format": "24"
+        },
+        {
+          "id": 10, "type": "date", "name": "Última interacción",
+          "order": 9, "primary": false,
+          "date_format": "ISO", "date_include_time": false, "date_time_format": "24"
+        }
+      ],
+      "views": [
+        {
+          "id": 1, "type": "grid", "name": "Grid", "order": 1,
+          "filter_type": "AND", "filters_disabled": false,
+          "row_identifier_type": "id", "public": false,
+          "field_options": []
+        }
+      ],
+      "rows": []
+    },
+
+    {
+      "id": 2,
+      "name": "Cotizaciones",
+      "order": 2,
+      "fields": [
+        {
+          "id": 11, "type": "text", "name": "Folio",
+          "order": 0, "primary": true, "text_default": ""
+        },
+        {
+          "id": 12, "type": "text", "name": "Cliente",
+          "order": 1, "primary": false, "text_default": ""
+        },
+        {
+          "id": 13, "type": "text", "name": "Telefono",
+          "order": 2, "primary": false, "text_default": ""
+        },
+        {
+          "id": 14, "type": "email", "name": "Email",
+          "order": 3, "primary": false
+        },
+        {
+          "id": 15, "type": "text", "name": "Direccion",
+          "order": 4, "primary": false, "text_default": ""
+        },
+        {
+          "id": 16, "type": "long_text", "name": "Items",
+          "order": 5, "primary": false
+        },
+        {
+          "id": 17, "type": "number", "name": "Subtotal",
+          "order": 6, "primary": false,
+          "number_decimal_places": 2, "number_negative": false
+        },
+        {
+          "id": 18, "type": "number", "name": "IVA",
+          "order": 7, "primary": false,
+          "number_decimal_places": 2, "number_negative": false
+        },
+        {
+          "id": 19, "type": "number", "name": "Monto",
+          "order": 8, "primary": false,
+          "number_decimal_places": 2, "number_negative": false
+        },
+        {
+          "id": 20, "type": "single_select", "name": "Moneda",
+          "order": 9, "primary": false,
+          "select_options": [
+            { "id": 6, "value": "MXN", "color": "green", "order": 1 },
+            { "id": 7, "value": "USD", "color": "blue",  "order": 2 }
+          ]
+        },
+        {
+          "id": 21, "type": "single_select", "name": "Estado",
+          "order": 10, "primary": false,
+          "select_options": [
+            { "id": 8,  "value": "Borrador",     "color": "gray",   "order": 1 },
+            { "id": 9,  "value": "Enviada",       "color": "blue",   "order": 2 },
+            { "id": 10, "value": "En revisión",   "color": "yellow", "order": 3 },
+            { "id": 11, "value": "Aprobada",      "color": "green",  "order": 4 },
+            { "id": 12, "value": "Rechazada",     "color": "red",    "order": 5 },
+            { "id": 13, "value": "Expirada",      "color": "gray",   "order": 6 }
+          ]
+        },
+        {
+          "id": 22, "type": "date", "name": "Fecha creación",
+          "order": 11, "primary": false,
+          "date_format": "ISO", "date_include_time": false, "date_time_format": "24"
+        },
+        {
+          "id": 23, "type": "date", "name": "Fecha vencimiento",
+          "order": 12, "primary": false,
+          "date_format": "ISO", "date_include_time": false, "date_time_format": "24"
+        },
+        {
+          "id": 24, "type": "number", "name": "ValidezDias",
+          "order": 13, "primary": false,
+          "number_decimal_places": 0, "number_negative": false
+        },
+        {
+          "id": 25, "type": "long_text", "name": "Notas",
+          "order": 14, "primary": false
+        },
+        {
+          "id": 26, "type": "text", "name": "CondicionesPago",
+          "order": 15, "primary": false, "text_default": ""
+        },
+        {
+          "id": 27, "type": "file", "name": "Archivo adjunto",
+          "order": 16, "primary": false
+        }
+      ],
+      "views": [
+        {
+          "id": 2, "type": "grid", "name": "Grid", "order": 1,
+          "filter_type": "AND", "filters_disabled": false,
+          "row_identifier_type": "id", "public": false,
+          "field_options": []
+        }
+      ],
+      "rows": []
+    },
+
+    {
+      "id": 3,
+      "name": "Tareas",
+      "order": 3,
+      "fields": [
+        {
+          "id": 28, "type": "text", "name": "Título",
+          "order": 0, "primary": true, "text_default": ""
+        },
+        {
+          "id": 29, "type": "long_text", "name": "Descripción",
+          "order": 1, "primary": false
+        },
+        {
+          "id": 30, "type": "single_select", "name": "Prioridad",
+          "order": 2, "primary": false,
+          "select_options": [
+            { "id": 14, "value": "Alta",  "color": "red",    "order": 1 },
+            { "id": 15, "value": "Media", "color": "yellow", "order": 2 },
+            { "id": 16, "value": "Baja",  "color": "green",  "order": 3 }
+          ]
+        },
+        {
+          "id": 31, "type": "single_select", "name": "Estado",
+          "order": 3, "primary": false,
+          "select_options": [
+            { "id": 17, "value": "Pendiente",   "color": "blue",   "order": 1 },
+            { "id": 18, "value": "En proceso",  "color": "orange", "order": 2 },
+            { "id": 19, "value": "Completada",  "color": "green",  "order": 3 },
+            { "id": 20, "value": "Cancelada",   "color": "red",    "order": 4 }
+          ]
+        },
+        {
+          "id": 32, "type": "text", "name": "Relacionado con",
+          "order": 4, "primary": false, "text_default": ""
+        },
+        {
+          "id": 33, "type": "date", "name": "Fecha límite",
+          "order": 5, "primary": false,
+          "date_format": "ISO", "date_include_time": true, "date_time_format": "24"
+        },
+        {
+          "id": 34, "type": "date", "name": "Fecha creación",
+          "order": 6, "primary": false,
+          "date_format": "ISO", "date_include_time": false, "date_time_format": "24"
+        },
+        {
+          "id": 35, "type": "date", "name": "Fecha completada",
+          "order": 7, "primary": false,
+          "date_format": "ISO", "date_include_time": false, "date_time_format": "24"
+        },
+        {
+          "id": 36, "type": "boolean", "name": "Recordatorio",
+          "order": 8, "primary": false
+        },
+        {
+          "id": 37, "type": "number", "name": "Número",
+          "order": 9, "primary": false,
+          "number_decimal_places": 0, "number_negative": false
+        }
+      ],
+      "views": [
+        {
+          "id": 3, "type": "grid", "name": "Grid", "order": 1,
+          "filter_type": "AND", "filters_disabled": false,
+          "row_identifier_type": "id", "public": false,
+          "field_options": []
+        }
+      ],
+      "rows": []
+    },
+
+    {
+      "id": 4,
+      "name": "Reuniones",
+      "order": 4,
+      "fields": [
+        {
+          "id": 38, "type": "text", "name": "Título",
+          "order": 0, "primary": true, "text_default": ""
+        },
+        {
+          "id": 39, "type": "text", "name": "Cliente",
+          "order": 1, "primary": false, "text_default": ""
+        },
+        {
+          "id": 40, "type": "date", "name": "Fecha",
+          "order": 2, "primary": false,
+          "date_format": "ISO", "date_include_time": false, "date_time_format": "24"
+        },
+        {
+          "id": 41, "type": "text", "name": "Hora",
+          "order": 3, "primary": false, "text_default": ""
+        },
+        {
+          "id": 42, "type": "number", "name": "Duración (min)",
+          "order": 4, "primary": false,
+          "number_decimal_places": 0, "number_negative": false
+        },
+        {
+          "id": 43, "type": "single_select", "name": "Tipo",
+          "order": 5, "primary": false,
+          "select_options": [
+            { "id": 21, "value": "Primera reunión",          "color": "blue",   "order": 1 },
+            { "id": 22, "value": "Seguimiento",              "color": "yellow", "order": 2 },
+            { "id": 23, "value": "Presentación propuesta",   "color": "orange", "order": 3 },
+            { "id": 24, "value": "Cierre",                   "color": "green",  "order": 4 }
+          ]
+        },
+        {
+          "id": 44, "type": "single_select", "name": "Estado",
+          "order": 6, "primary": false,
+          "select_options": [
+            { "id": 25, "value": "Programada",    "color": "blue",   "order": 1 },
+            { "id": 26, "value": "Completada",    "color": "green",  "order": 2 },
+            { "id": 27, "value": "Cancelada",     "color": "red",    "order": 3 },
+            { "id": 28, "value": "Reprogramada",  "color": "yellow", "order": 4 }
+          ]
+        },
+        {
+          "id": 45, "type": "number", "name": "Estimado_$",
+          "order": 7, "primary": false,
+          "number_decimal_places": 2, "number_negative": false
+        },
+        {
+          "id": 46, "type": "url", "name": "Ubicación/Link",
+          "order": 8, "primary": false
+        },
+        {
+          "id": 47, "type": "long_text", "name": "Notas previas",
+          "order": 9, "primary": false
+        },
+        {
+          "id": 48, "type": "long_text", "name": "Notas posteriores",
+          "order": 10, "primary": false
+        }
+      ],
+      "views": [
+        {
+          "id": 4, "type": "grid", "name": "Grid", "order": 1,
+          "filter_type": "AND", "filters_disabled": false,
+          "row_identifier_type": "id", "public": false,
+          "field_options": []
+        }
+      ],
+      "rows": []
+    }
+
+  ]
+}
+]
