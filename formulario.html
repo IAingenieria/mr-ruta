@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mr. Ruta — Formulario Operativo DeliSanas</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Raleway:wght@700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "background":"#f7f9ff","on-primary":"#ffffff","on-secondary-container":"#6b4b00",
+        "secondary-fixed":"#ffdeaa","outline":"#71787f","surface-container-lowest":"#ffffff",
+        "outline-variant":"#c0c7cf","on-surface-variant":"#40484e","inverse-primary":"#8fcdfd",
+        "surface":"#f7f9ff","on-background":"#001d33","secondary":"#7d5700",
+        "primary-container":"#005983","surface-variant":"#cee5ff","surface-container-low":"#edf4ff",
+        "surface-bright":"#f7f9ff","on-secondary":"#ffffff","on-secondary-fixed":"#271900",
+        "secondary-container":"#feb71d","surface-container":"#e3efff",
+        "on-surface":"#001d33","primary":"#004161","surface-container-high":"#d9eaff",
+        "surface-container-highest":"#cee5ff"
+      },
+      fontFamily: {
+        "headline": ["Raleway","Inter","sans-serif"],
+        "body": ["Inter","sans-serif"]
+      }
+    }
+  }
+}
+</script>
+<style>
+.material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24 }
+.header-anchor { letter-spacing: -0.02em }
+
+.section-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 20px; background: #004161;
+  border-radius: 10px 10px 0 0; color: #fff; margin-bottom: 0;
+}
+.section-body {
+  background: #fff; border: 1.5px solid #c0c7cf;
+  border-top: none; border-radius: 0 0 10px 10px;
+  margin-bottom: 20px; overflow: hidden;
+}
+.q-row {
+  display: grid; grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid #e3efff;
+  transition: background .15s;
+}
+.q-row:last-child { border-bottom: none }
+.q-row:hover { background: #f7f9ff }
+.q-label {
+  padding: 14px 16px; font-size: 13px; color: #40484e;
+  border-right: 1px solid #e3efff; line-height: 1.5;
+  display: flex; align-items: flex-start; gap: 8px;
+}
+.q-input {
+  padding: 10px 12px;
+}
+.q-input textarea {
+  width: 100%; resize: vertical; min-height: 44px;
+  background: transparent; border: none; outline: none;
+  font-size: 13px; font-family: Inter, sans-serif;
+  color: #001d33; line-height: 1.5;
+  border-radius: 6px; padding: 4px 6px;
+  transition: background .15s;
+}
+.q-input textarea:focus {
+  background: #edf4ff; box-shadow: inset 0 0 0 1.5px #004161;
+}
+.q-input textarea::placeholder { color: #c0c7cf; font-style: italic }
+
+.header-meta input {
+  background: #edf4ff; border: 1.5px solid #c0c7cf;
+  border-radius: 8px; padding: 8px 12px; font-size: 13px;
+  font-family: Inter, sans-serif; color: #001d33; width: 100%;
+  transition: border-color .15s;
+}
+.header-meta input:focus {
+  outline: none; border-color: #004161; background: #fff;
+}
+
+.saved-toast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 100;
+  background: #004161; color: white; padding: 10px 18px;
+  border-radius: 10px; font-size: 13px; font-weight: 700;
+  box-shadow: 0 4px 20px rgba(0,0,0,.2);
+  opacity: 0; transform: translateY(8px);
+  transition: all .3s ease; pointer-events: none;
+}
+.saved-toast.show { opacity: 1; transform: none }
+
+@media (max-width: 640px) {
+  .q-row { grid-template-columns: 1fr }
+  .q-label { border-right: none; border-bottom: 1px solid #e3efff; padding-bottom: 8px }
+}
+
+@media print {
+  nav, .no-print { display: none !important }
+  body { background: white }
+  .section-header { background: #004161 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact }
+  .q-input textarea { border: 1px solid #e3efff !important; min-height: 32px }
+  .header-meta input { border: 1px solid #c0c7cf !important }
+  .saved-toast { display: none }
+  .section-body { break-inside: avoid }
+}
+</style>
+</head>
+<body class="bg-background text-on-background font-body">
+
+<!-- NAV -->
+<nav class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-slate-100 no-print">
+  <div class="flex justify-between items-center w-full px-6 py-3 max-w-7xl mx-auto">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary text-2xl" style="font-variation-settings:'FILL' 1;">route</span>
+      <span class="text-xl font-black text-sky-900 header-anchor">Mr. Ruta</span>
+      <span class="text-slate-300 mx-2">|</span>
+      <span class="text-sm font-bold text-on-surface-variant">Formulario Operativo</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <button onclick="saveNotes()" class="flex items-center gap-1.5 px-4 py-1.5 bg-surface-container-low border border-outline-variant/40 rounded-lg text-sm font-bold text-on-surface-variant hover:bg-primary/8 hover:text-primary transition-all">
+        <span class="material-symbols-outlined text-sm" style="font-size:16px">save</span>
+        Guardar
+      </button>
+      <button onclick="exportTxt()" class="flex items-center gap-1.5 px-4 py-1.5 bg-secondary-container text-on-secondary-fixed rounded-lg text-sm font-bold hover:opacity-90 transition-all">
+        <span class="material-symbols-outlined text-sm" style="font-size:16px">download</span>
+        Exportar .txt
+      </button>
+      <button onclick="window.print()" class="flex items-center gap-1.5 px-4 py-1.5 bg-primary text-white rounded-lg text-sm font-bold hover:opacity-90 transition-all hide-mobile">
+        <span class="material-symbols-outlined text-sm" style="font-size:16px">print</span>
+        Imprimir
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="pt-24 pb-8 px-6 bg-surface-container-low">
+  <div class="max-w-5xl mx-auto">
+    <div class="flex items-center gap-2 text-xs text-on-surface-variant mb-4">
+      <span class="material-symbols-outlined text-sm text-primary">route</span>
+      <span class="font-bold text-primary">Mr. Ruta</span>
+      <span>›</span>
+      <span>Visita Operativa</span>
+    </div>
+    <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-6">
+      <div>
+        <div class="inline-flex items-center gap-2 bg-primary/8 text-primary px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase border border-primary/20 mb-3">
+          <span class="material-symbols-outlined text-sm">assignment</span>
+          Presentación Estratégica · DeliSanas Norteñas
+        </div>
+        <h1 class="text-3xl md:text-4xl font-black text-primary leading-tight header-anchor">
+          Formulario de<br>Visita Operativa
+        </h1>
+        <p class="text-on-surface-variant text-sm mt-2">Mr. Ruta — El Cerebro de Tu Logística</p>
+      </div>
+      <!-- Meta fields -->
+      <div class="header-meta grid grid-cols-1 gap-3 min-w-[280px]">
+        <div>
+          <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wide block mb-1">Fecha</label>
+          <input id="meta-fecha" type="date" placeholder="dd/mm/aaaa"/>
+        </div>
+        <div>
+          <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wide block mb-1">Asistentes</label>
+          <input id="meta-asistentes" type="text" placeholder="Erasmo, Luis, Javier, Luis Humberto"/>
+        </div>
+      </div>
+    </div>
+    <!-- Summary badges -->
+    <div class="flex flex-wrap gap-3">
+      <div class="flex items-center gap-2 px-3 py-1.5 bg-white rounded-full border border-outline-variant/30 text-on-surface-variant text-xs">
+        <span class="material-symbols-outlined text-primary text-sm">list_alt</span>9 secciones · 72 preguntas
+      </div>
+      <div class="flex items-center gap-2 px-3 py-1.5 bg-white rounded-full border border-outline-variant/30 text-on-surface-variant text-xs">
+        <span class="material-symbols-outlined text-primary text-sm">mic</span>Registro de audio complementario
+      </div>
+      <div class="flex items-center gap-2 px-3 py-1.5 bg-white rounded-full border border-outline-variant/30 text-on-surface-variant text-xs">
+        <span class="material-symbols-outlined text-primary text-sm">save</span>Autoguardado en dispositivo
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTIONS -->
+<section class="py-8 px-6">
+<div class="max-w-5xl mx-auto" id="formArea">
+
+  <!-- ── SECCIÓN 1 ── -->
+  <div class="section-header">
+    <span class="material-symbols-outlined text-secondary-container">assignment</span>
+    <div>
+      <div class="font-black text-base">1. Información Operativa Básica</div>
+      <div class="text-xs text-blue-200 mt-0.5">Clientes, rutas, tiempos y control administrativo</div>
+    </div>
+    <div class="ml-auto text-xs text-blue-200 font-bold">22 preguntas</div>
+  </div>
+  <div class="section-body">
+    <!-- rows -->
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">1</span>¿Tienen la información de clientes en sistema con número de cliente y datos completos con geolocalización?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s1q1"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">2</span>¿Tienen en el sistema el recorrido diario por ruta?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s1q2"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">3</span>Número total de rutas (propias + externas)</div><div class="q-input"><textarea placeholder="Nota…" data-key="s1q3"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">4</span>Horario de inicio y fin de cada ruta (promedio)</div><div class="q-input"><textarea placeholder="Nota…" data-key="s1q4"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">5</span>Duración promedio de ruta en horas por día</div><div class="q-input"><textarea placeholder="Nota…" data-key="s1q5"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">6</span>Horas efectivas de visita (frente al cliente)</div><div class="q-input"><textarea placeholder="Nota…" data-key="s1q6"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">7</span>Número de clientes visitados promedio por día por ruta</div><div class="q-input"><textarea placeholder="Nota…" data-key="s1q7"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">8</span>Ticket promedio por cliente ($MXN)</div><div class="q-input"><textarea placeholder="Nota…" data-key="s1q8"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">9</span>¿Tienen en el sistema la venta histórica por cliente para asignarle categoría oro, plata o bronce?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s1q9"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">10</span>¿Se fijan cuotas a los vendedores por semana, quincena o mes de clientes nuevos?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s1q10"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">11</span>¿Cuando el vendedor informa de un cliente cerrado temporal o definitivo, se realiza investigación administrativa?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s1q11"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">12</span>¿Se realizan visitas a clientes para evaluar el nivel de servicio del vendedor y evaluar nuevas oportunidades de negocio?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s1q12"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">13</span>¿Tienen como sistema de trabajo, juntas de preparación de salida a rutas con objetivos por ruta?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s1q13"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">14</span>¿Tienen en comodato con los clientes racks o mobiliario para exhibir los productos de DeliSanas?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s1q14"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">15</span>¿Cómo llevan administrativamente el control de los racks o exhibidores en comodato con clientes?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s1q15"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">16</span>¿El cierre de ruta "Arqueo" es diario? ¿Si hay diferencias en dinero y producto, se cobran al vendedor?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s1q16"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">17</span>¿Si la ruta trae devoluciones por caducado, dañado, no pedido, cómo es el procedimiento administrativo?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s1q17"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">18</span>¿Si un cliente pide factura por su compra, cómo es el procedimiento administrativo y entrega?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s1q18"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">19</span>¿Antes de salir el vehículo a ruta y al regreso a fábrica, hay revisión de mantenimiento y puntos críticos de seguridad?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s1q19"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">20</span>¿A la salida y entrada del vehículo de la fábrica, se revisa por parte de vigilancia (seguridad y carrocería)?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s1q20"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">21</span>¿Las unidades salen con candado del CEDIS?</div><div class="q-input"><textarea placeholder="Sí / No…" data-key="s1q21"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">22</span>¿Llevan en sistema el programa de mantenimiento de vehículos?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s1q22"></textarea></div></div>
+  </div>
+
+  <!-- ── SECCIÓN 2 ── -->
+  <div class="section-header">
+    <span class="material-symbols-outlined text-secondary-container">local_shipping</span>
+    <div>
+      <div class="font-black text-base">2. Características de las Unidades de Reparto</div>
+      <div class="text-xs text-blue-200 mt-0.5">Flota, carga y comunicación</div>
+    </div>
+    <div class="ml-auto text-xs text-blue-200 font-bold">5 preguntas</div>
+  </div>
+  <div class="section-body">
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">1</span>Número de unidades por tipo de motor (Gasolina / Diésel / Eléctrico)</div><div class="q-input"><textarea placeholder="Nota…" data-key="s2q1"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">2</span>¿Las unidades tienen racks o espacio abierto?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s2q2"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">3</span>Preparación de pedidos (por cliente / consolidado)</div><div class="q-input"><textarea placeholder="Nota…" data-key="s2q3"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">4</span>% de ocupación promedio del área de carga</div><div class="q-input"><textarea placeholder="Nota…" data-key="s2q4"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">5</span>¿Las unidades cuentan con sistema de comunicación a Torre de Control?</div><div class="q-input"><textarea placeholder="Sí / No…" data-key="s2q5"></textarea></div></div>
+  </div>
+
+  <!-- ── SECCIÓN 3 ── -->
+  <div class="section-header">
+    <span class="material-symbols-outlined text-secondary-container">storefront</span>
+    <div>
+      <div class="font-black text-base">3. Procesos Comerciales y Logísticos</div>
+      <div class="text-xs text-blue-200 mt-0.5">Proceso de venta, evidencia y control de pedidos</div>
+    </div>
+    <div class="ml-auto text-xs text-blue-200 font-bold">11 preguntas</div>
+  </div>
+  <div class="section-body">
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">1</span>Describe el proceso actual desde que el vendedor llega a una tienda hasta que se va en 5 pasos.</div><div class="q-input"><textarea placeholder="Paso 1: …" style="min-height:80px" data-key="s3q1"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">2</span>¿Hay algún proceso documentado para la venta y entrega que todos los vendedores sigan?</div><div class="q-input"><textarea placeholder="Sí / No…" data-key="s3q2"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">3</span>¿Se realiza inventario físico en cada visita?</div><div class="q-input"><textarea placeholder="Sí / No…" data-key="s3q3"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">4</span>¿Se documentan rechazos con evidencia?</div><div class="q-input"><textarea placeholder="Sí / No…" data-key="s3q4"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">5</span>¿Cómo sabes si un cliente tiene huecos en su anaquel?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s3q5"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">6</span>¿Se tiene estadística del tiempo en minutos para atender a clientes detalle y conveniencia?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s3q6"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">7</span>¿Cuánto estimas que pierdes en ventas por huecos no detectados?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s3q7"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">8</span>¿Existen pedidos manuales sin autorización por crédito vencido del cliente?</div><div class="q-input"><textarea placeholder="Sí / No…" data-key="s3q8"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">9</span>¿Reciben pago de pedidos por transferencia?</div><div class="q-input"><textarea placeholder="Sí / No…" data-key="s3q9"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">10</span>¿Operan con crédito? ¿Cuántos días?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s3q10"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">11</span>¿Tienen tablero diario con indicadores de venta, devolución y clientes nuevos por vendedor?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s3q11"></textarea></div></div>
+  </div>
+
+  <!-- ── SECCIÓN 4 ── -->
+  <div class="section-header">
+    <span class="material-symbols-outlined text-secondary-container">group</span>
+    <div>
+      <div class="font-black text-base">4. Perfil del Equipo de Vendedores</div>
+      <div class="text-xs text-blue-200 mt-0.5">Estructura, motivación y herramientas del equipo</div>
+    </div>
+    <div class="ml-auto text-xs text-blue-200 font-bold">10 preguntas</div>
+  </div>
+  <div class="section-body">
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">1</span>Número total de vendedores (propios + externos)</div><div class="q-input"><textarea placeholder="Nota…" data-key="s4q1"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">2</span>Edad promedio</div><div class="q-input"><textarea placeholder="Nota…" data-key="s4q2"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">3</span>Años de antigüedad promedio en la empresa</div><div class="q-input"><textarea placeholder="Nota…" data-key="s4q3"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">4</span>Rotación anual aproximada (%)</div><div class="q-input"><textarea placeholder="Nota…" data-key="s4q4"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">5</span>¿Los vendedores tienen celular propio o de la empresa?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s4q5"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">6</span>¿Actualmente usan alguna App en su día a día? ¿Cuál?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s4q6"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">7</span>Composición del salario actual (% fijo / % variable)</div><div class="q-input"><textarea placeholder="Nota…" data-key="s4q7"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">8</span>¿Hay algún vendedor familiar del dueño? ¿Cuántos?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s4q8"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">9</span>¿Qué crees que los motivaría a trabajar mejor?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s4q9"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">10</span>¿Cómo es el registro de asistencia con entrada y salida del personal?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s4q10"></textarea></div></div>
+  </div>
+
+  <!-- ── SECCIÓN 5 ── -->
+  <div class="section-header">
+    <span class="material-symbols-outlined text-secondary-container">restaurant</span>
+    <div>
+      <div class="font-black text-base">5. Clientes HORECA</div>
+      <div class="text-xs text-blue-200 mt-0.5">Hoteles, restaurantes y cafeterías</div>
+    </div>
+    <div class="ml-auto text-xs text-blue-200 font-bold">5 preguntas</div>
+  </div>
+  <div class="section-body">
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">1</span>Número de clientes HORECA actuales</div><div class="q-input"><textarea placeholder="Nota…" data-key="s5q1"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">2</span>% de ventas totales que representa HORECA</div><div class="q-input"><textarea placeholder="Nota…" data-key="s5q2"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">3</span>¿Los clientes HORECA piden factura con IVA?</div><div class="q-input"><textarea placeholder="Sí / No…" data-key="s5q3"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">4</span>¿Aceptarían que Telemarketing les marque el día anterior para confirmar pedido?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s5q4"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">5</span>¿Qué días de la semana compran?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s5q5"></textarea></div></div>
+  </div>
+
+  <!-- ── SECCIÓN 6 ── -->
+  <div class="section-header">
+    <span class="material-symbols-outlined text-secondary-container">account_balance</span>
+    <div>
+      <div class="font-black text-base">6. Estrategia Fiscal y Recuperación de IVA</div>
+      <div class="text-xs text-blue-200 mt-0.5">CFDI 4.0, tasa 0%, acreditamiento y exportaciones</div>
+    </div>
+    <div class="ml-auto text-xs text-blue-200 font-bold">7 preguntas</div>
+  </div>
+  <div class="section-body">
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">1</span>¿Qué productos tienen tasa 0% (exentos) y cuáles tasa 16%?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s6q1"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">2</span>¿Están acreditando el IVA del diésel de la flota?</div><div class="q-input"><textarea placeholder="Sí / No…" data-key="s6q2"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">3</span>¿Están acreditando el IVA del maíz, empaques y materias primas?</div><div class="q-input"><textarea placeholder="Sí / No…" data-key="s6q3"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">4</span>¿Exportan actualmente?</div><div class="q-input"><textarea placeholder="Sí / No…" data-key="s6q4"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">5</span>¿Venden algún producto complementario con tasa 16% (salsas, chile en polvo)?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s6q5"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">6</span>¿Los distribuidores externos facturan con IVA trasladado?</div><div class="q-input"><textarea placeholder="Sí / No…" data-key="s6q6"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">7</span>¿El sistema actual permite facturar por separado exentos vs gravados?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s6q7"></textarea></div></div>
+  </div>
+
+  <!-- ── SECCIÓN 7 ── -->
+  <div class="section-header">
+    <span class="material-symbols-outlined text-secondary-container">devices</span>
+    <div>
+      <div class="font-black text-base">7. Integración Tecnológica Actual</div>
+      <div class="text-xs text-blue-200 mt-0.5">ERP, WMS, GPS y KPIs actuales</div>
+    </div>
+    <div class="ml-auto text-xs text-blue-200 font-bold">4 preguntas</div>
+  </div>
+  <div class="section-body">
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">1</span>ERP / WMS actual (¿tienen?)</div><div class="q-input"><textarea placeholder="Nota…" data-key="s7q1"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">2</span>Nivel de conectividad (GPS, geofencing, visibilidad en tiempo real)</div><div class="q-input"><textarea placeholder="Nota…" data-key="s7q2"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">3</span>¿Tienen dashboard con KPIs? ¿Cuáles?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s7q3"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">4</span>¿La evidencia es obligatoria en visitas?</div><div class="q-input"><textarea placeholder="Sí / No…" data-key="s7q4"></textarea></div></div>
+  </div>
+
+  <!-- ── SECCIÓN 8 ── -->
+  <div class="section-header">
+    <span class="material-symbols-outlined text-secondary-container">payments</span>
+    <div>
+      <div class="font-black text-base">8. Impacto Financiero Esperado</div>
+      <div class="text-xs text-blue-200 mt-0.5">Fill Rate, tiempos, devoluciones y eficiencia de rutas</div>
+    </div>
+    <div class="ml-auto text-xs text-blue-200 font-bold">5 preguntas</div>
+  </div>
+  <div class="section-body">
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">1</span>Kilometraje promedio actual por ruta (km/día)</div><div class="q-input"><textarea placeholder="Nota…" data-key="s8q1"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">2</span>¿Hay rutas que consideres ineficientes? ¿Cuáles?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s8q2"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">3</span>¿Cuál es el fill rate estimado actual (% de pedidos completos)? ¿Cómo saben si un cliente está satisfecho?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s8q3"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">4</span>¿Cuál es el tiempo promedio de visita actual (minutos)?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s8q4"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">5</span>¿Cuánto estimas que pierdes al año por devoluciones sin evidencia?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s8q5"></textarea></div></div>
+  </div>
+
+  <!-- ── SECCIÓN 9 ── -->
+  <div class="section-header">
+    <span class="material-symbols-outlined text-secondary-container">warning</span>
+    <div>
+      <div class="font-black text-base">9. Riesgos y Objeciones</div>
+      <div class="text-xs text-blue-200 mt-0.5">Resistencia al cambio y contingencias</div>
+    </div>
+    <div class="ml-auto text-xs text-blue-200 font-bold">3 preguntas</div>
+  </div>
+  <div class="section-body">
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">1</span>¿Hay resistencia cultural identificada a cambios tecnológicos?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s9q1"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">2</span>¿Qué pasaría si la App falla un día entero? ¿Hay plan B?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s9q2"></textarea></div></div>
+    <div class="q-row"><div class="q-label"><span class="text-primary font-black text-xs flex-shrink-0 mt-0.5">3</span>¿Qué vendedor crees que pondrá más resistencia?</div><div class="q-input"><textarea placeholder="Nota…" data-key="s9q3"></textarea></div></div>
+  </div>
+
+  <!-- Notas generales -->
+  <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/20 shadow-sm p-6 mb-8">
+    <div class="flex items-center gap-3 mb-4">
+      <span class="material-symbols-outlined text-primary text-xl">edit_note</span>
+      <div class="font-black text-primary">Notas Generales de la Visita</div>
+    </div>
+    <textarea id="notas-generales" placeholder="Observaciones adicionales, acuerdos, próximos pasos, compromisos…"
+      class="w-full bg-surface-container-low rounded-xl p-4 text-sm font-body text-on-surface border-none outline-none focus:ring-2 focus:ring-primary resize-y"
+      style="min-height:120px"></textarea>
+  </div>
+
+</div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-slate-50 border-t border-slate-200 py-6 px-6 no-print">
+  <div class="max-w-5xl mx-auto flex items-center justify-between flex-wrap gap-4">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings:'FILL' 1;">route</span>
+      <span class="font-black text-primary text-sm">Mr. Ruta</span>
+      <span class="text-slate-400 text-xs ml-2">· Formulario Operativo DeliSanas</span>
+    </div>
+    <span class="text-xs text-slate-400">© 2026 Mr. Ruta · Hecho en México 🇲🇽</span>
+  </div>
+</footer>
+
+<!-- Toast -->
+<div class="saved-toast" id="toast">
+  <span class="material-symbols-outlined text-sm align-middle mr-1" style="font-size:15px">check_circle</span>
+  Notas guardadas localmente
+</div>
+
+<script>
+const STORAGE_KEY = 'mrruta_formulario_delisanas';
+
+function saveNotes() {
+  const data = {};
+  document.querySelectorAll('textarea[data-key]').forEach(el => {
+    if (el.value.trim()) data[el.dataset.key] = el.value;
+  });
+  data['meta-fecha'] = document.getElementById('meta-fecha').value;
+  data['meta-asistentes'] = document.getElementById('meta-asistentes').value;
+  data['notas-generales'] = document.getElementById('notas-generales').value;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  showToast();
+}
+
+function loadNotes() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) return;
+  try {
+    const data = JSON.parse(raw);
+    document.querySelectorAll('textarea[data-key]').forEach(el => {
+      if (data[el.dataset.key]) el.value = data[el.dataset.key];
+    });
+    if (data['meta-fecha']) document.getElementById('meta-fecha').value = data['meta-fecha'];
+    if (data['meta-asistentes']) document.getElementById('meta-asistentes').value = data['meta-asistentes'];
+    if (data['notas-generales']) document.getElementById('notas-generales').value = data['notas-generales'];
+  } catch(e) {}
+}
+
+function showToast() {
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// Autoguardar al escribir (debounce 2s)
+let autoTimer;
+document.getElementById('formArea').addEventListener('input', () => {
+  clearTimeout(autoTimer);
+  autoTimer = setTimeout(saveNotes, 2000);
+});
+document.getElementById('notas-generales').addEventListener('input', () => {
+  clearTimeout(autoTimer);
+  autoTimer = setTimeout(saveNotes, 2000);
+});
+
+// Cargar al iniciar
+loadNotes();
+
+function exportTxt() {
+  const fecha = document.getElementById('meta-fecha').value || '—';
+  const asistentes = document.getElementById('meta-asistentes').value || '—';
+
+  const secciones = [
+    { titulo: '1. Información Operativa Básica', preguntas: [
+      'Clientes en sistema con geolocalización','Recorrido diario por ruta en sistema',
+      'Número total de rutas','Horario inicio y fin de ruta','Duración promedio de ruta (hrs/día)',
+      'Horas efectivas de visita','Clientes visitados promedio/día/ruta','Ticket promedio por cliente',
+      'Venta histórica por cliente (oro/plata/bronce)','Cuotas de clientes nuevos a vendedores',
+      'Investigación por cliente cerrado','Visitas de evaluación de servicio',
+      'Juntas de preparación de salida','Racks en comodato con clientes',
+      'Control administrativo de racks','Arqueo diario y cobro de diferencias',
+      'Procedimiento de devoluciones','Procedimiento de facturación a cliente',
+      'Revisión de mantenimiento al salir/entrar','Revisión de vigilancia al salir/entrar',
+      'Unidades salen con candado del CEDIS','Programa de mantenimiento en sistema'
+    ]},
+    { titulo: '2. Características de las Unidades de Reparto', preguntas: [
+      'Unidades por tipo de motor','Racks o espacio abierto',
+      'Preparación de pedidos','% ocupación área de carga','Sistema de comunicación a Torre de Control'
+    ]},
+    { titulo: '3. Procesos Comerciales y Logísticos', preguntas: [
+      'Proceso de visita en 5 pasos','Proceso documentado de venta y entrega',
+      'Inventario físico en cada visita','Rechazos documentados con evidencia',
+      'Detección de huecos en anaquel','Estadística de tiempo de atención',
+      'Pérdida estimada por huecos no detectados','Pedidos manuales sin autorización',
+      'Pago por transferencia','Operación con crédito (días)','Tablero diario con indicadores'
+    ]},
+    { titulo: '4. Perfil del Equipo de Vendedores', preguntas: [
+      'Total de vendedores','Edad promedio','Antigüedad promedio',
+      'Rotación anual (%)','Celular propio o empresa','App actual en uso',
+      'Composición de salario','Vendedores familiares del dueño',
+      'Motivadores del equipo','Registro de asistencia'
+    ]},
+    { titulo: '5. Clientes HORECA', preguntas: [
+      'Número de clientes HORECA','% de ventas que representa HORECA',
+      'HORECA piden factura con IVA','Aceptarían Telemarketing para confirmar pedido','Días de compra'
+    ]},
+    { titulo: '6. Estrategia Fiscal y Recuperación de IVA', preguntas: [
+      'Productos tasa 0% vs tasa 16%','Acreditamiento IVA diésel',
+      'Acreditamiento IVA maíz/empaques/materias primas','Exportaciones actuales',
+      'Productos complementarios tasa 16%','Distribuidores externos facturan con IVA',
+      'Sistema permite facturar exentos vs gravados por separado'
+    ]},
+    { titulo: '7. Integración Tecnológica Actual', preguntas: [
+      'ERP / WMS actual','Conectividad GPS/geofencing/tiempo real',
+      'Dashboard con KPIs','Evidencia obligatoria en visitas'
+    ]},
+    { titulo: '8. Impacto Financiero Esperado', preguntas: [
+      'Kilometraje promedio por ruta','Rutas ineficientes',
+      'Fill rate estimado y medición de satisfacción','Tiempo promedio de visita (min)',
+      'Pérdida anual por devoluciones sin evidencia'
+    ]},
+    { titulo: '9. Riesgos y Objeciones', preguntas: [
+      'Resistencia cultural a cambio tecnológico','Plan B si la App falla','Vendedor con más resistencia esperada'
+    ]}
+  ];
+
+  let txt = '══════════════════════════════════════════════════\n';
+  txt += '  MR. RUTA — Formulario de Visita Operativa\n';
+  txt += '  DeliSanas Norteñas\n';
+  txt += '══════════════════════════════════════════════════\n\n';
+  txt += `Fecha:       ${fecha}\n`;
+  txt += `Asistentes:  ${asistentes}\n\n`;
+
+  secciones.forEach((sec, si) => {
+    txt += `──────────────────────────────────────────────────\n`;
+    txt += `${sec.titulo}\n`;
+    txt += `──────────────────────────────────────────────────\n`;
+    sec.preguntas.forEach((preg, qi) => {
+      const key = `s${si + 1}q${qi + 1}`;
+      const el = document.querySelector(`textarea[data-key="${key}"]`);
+      const val = el && el.value.trim() ? el.value.trim() : '—';
+      txt += `\n${qi + 1}. ${preg}\n   ${val.replace(/\n/g, '\n   ')}\n`;
+    });
+    txt += '\n';
+  });
+
+  const notas = document.getElementById('notas-generales').value.trim();
+  if (notas) {
+    txt += `──────────────────────────────────────────────────\n`;
+    txt += `Notas Generales\n`;
+    txt += `──────────────────────────────────────────────────\n`;
+    txt += `\n${notas}\n\n`;
+  }
+
+  txt += `══════════════════════════════════════════════════\n`;
+  txt += `Generado por Mr. Ruta · ${new Date().toLocaleString('es-MX')}\n`;
+
+  const filename = `MrRuta_Operativo_${fecha || 'sin-fecha'}.txt`;
+
+  // En móvil usa Web Share API si está disponible
+  if (navigator.share && /Mobi|Android/i.test(navigator.userAgent)) {
+    const file = new File([txt], filename, { type: 'text/plain' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({ files: [file], title: 'Mr. Ruta — Formulario Operativo' });
+      return;
+    }
+  }
+
+  // Fallback: descarga directa
+  const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// Set today's date if empty
+const fechaEl = document.getElementById('meta-fecha');
+if (!fechaEl.value) fechaEl.value = new Date().toISOString().split('T')[0];
+</script>
+</body>
+</html>
