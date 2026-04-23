@@ -1,24 +1,1448 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Goodman Tech - CRM</title>
-    <meta name="description" content="Goodman Tech - Sistema de gestión de clientes y cotizaciones" />
-    <meta name="author" content="Goodman Tech" />
+<!DOCTYPE html>
+<html class="light" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mr. Ruta — La plataforma que transforma tu fuerza de ventas en campo</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Raleway:wght@700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "background":"#f7f9ff","on-primary":"#ffffff","on-secondary-container":"#6b4b00",
+        "secondary-fixed":"#ffdeaa","on-error-container":"#93000a","surface-dim":"#c1ddfc",
+        "outline":"#71787f","surface-container-lowest":"#ffffff","on-error":"#ffffff",
+        "tertiary-fixed-dim":"#a1cde1","on-tertiary-fixed-variant":"#1e4c5d",
+        "on-secondary-fixed-variant":"#5f4100","on-tertiary-fixed":"#001f29",
+        "on-tertiary":"#ffffff","surface-tint":"#19648e","primary-fixed":"#cae6ff",
+        "inverse-on-surface":"#e8f2ff","tertiary-fixed":"#bde9fe","outline-variant":"#c0c7cf",
+        "on-surface-variant":"#40484e","inverse-primary":"#8fcdfd","surface":"#f7f9ff",
+        "on-background":"#001d33","secondary-fixed-dim":"#ffba2d","error":"#ba1a1a",
+        "secondary":"#7d5700","primary-container":"#005983","surface-variant":"#cee5ff",
+        "surface-container-low":"#edf4ff","on-tertiary-container":"#a2cee3",
+        "surface-bright":"#f7f9ff","on-secondary":"#ffffff","tertiary-container":"#2d596a",
+        "on-primary-fixed":"#001e30","error-container":"#ffdad6","on-surface":"#001d33",
+        "on-secondary-fixed":"#271900","secondary-container":"#feb71d",
+        "surface-container":"#e3efff","tertiary":"#104252","inverse-surface":"#15324b",
+        "surface-container-highest":"#cee5ff","primary-fixed-dim":"#8fcdfd",
+        "on-primary-container":"#90cfff","on-primary-fixed-variant":"#004b70",
+        "primary":"#004161","surface-container-high":"#d9eaff"
+      },
+      borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},
+      fontFamily:{"headline":["Raleway","Inter","sans-serif"],"body":["Inter","sans-serif"],"label":["Inter","sans-serif"]}
+    }
+  }
+}
+</script>
+<style>
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.bg-glass{backdrop-filter:blur(20px);background-color:rgba(247,249,255,0.85)}
+.header-anchor{letter-spacing:-0.02em}
 
-    <meta property="og:title" content="Goodman Tech - CRM" />
-    <meta property="og:description" content="Goodman Tech - Sistema de gestión de clientes y cotizaciones" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+/* Multi-page routing */
+.page{display:none}
+.page.active{display:block;animation:pgIn .3s ease}
+@keyframes pgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.nav-link-active{color:#004161!important;border-bottom:2px solid #feb71d}
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@Lovable" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-  </head>
+/* Module tabs */
+.mod-tab{border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
+.mod-tab.active{border-bottom-color:#004161;color:#004161;font-weight:700}
+.mod-panel{display:none;animation:pgIn .25s ease}
+.mod-panel.active{display:block}
 
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+/* Tech scroll tabs */
+.tech-tab{border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
+.tech-tab.active{border-bottom-color:#004161;color:#004161;font-weight:700}
+.tech-panel{display:none;animation:pgIn .2s ease}
+.tech-panel.active{display:block}
+
+/* Ticker */
+.ticker-track{display:flex;gap:48px;animation:ticker 24s linear infinite;white-space:nowrap}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-item{display:inline-flex;align-items:center;gap:8px;flex-shrink:0;font-size:12px;font-weight:600;color:#40484e}
+.ticker-dot{width:4px;height:4px;border-radius:50%;background:#feb71d;flex-shrink:0}
+
+/* Probability bars */
+.prob-fill{transition:width 1.2s ease}
+
+/* Arch flow animation */
+.arch-line{width:36px;height:2px;background:#c0c7cf;position:relative;overflow:hidden}
+.arch-line.live::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:#004161;animation:flowArc 1.5s linear infinite}
+@keyframes flowArc{to{left:200%}}
+
+/* Fade in on scroll */
+.fade-in{opacity:0;transform:translateY(18px);transition:all .5s ease}
+.fade-in.visible{opacity:1;transform:none}
+
+/* Phone mockup */
+.phone-frame{background:#0a0e0b;border-radius:24px;border:1px solid rgba(255,255,255,.1);overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.35)}
+.sku-row-phone{display:flex;align-items:center;gap:6px;padding:7px 10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:7px;margin-bottom:4px}
+.qty-btn-phone{width:26px;height:26px;border-radius:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#f0ede4}
+
+/* Network result */
+#netResult,#netResultHome{transition:all .2s ease}
+
+input[type=range]{accent-color:#004161}
+</style>
+</head>
+<body class="bg-background text-on-background font-body">
+
+<!-- ═══════════════════ TOP NAV (Stitch exact) ═══════════════════ -->
+<nav class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-slate-100">
+  <div class="flex justify-between items-center w-full px-8 py-4 max-w-7xl mx-auto">
+    <div class="flex items-center gap-2 cursor-pointer" onclick="showPage('home')">
+      <span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings:'FILL' 1;">route</span>
+      <span class="text-2xl font-black text-sky-900 header-anchor">Mr. Ruta</span>
+    </div>
+    <div class="hidden md:flex items-center gap-6">
+      <button id="nav-home" onclick="navTo('home',this)" class="nav-btn text-sky-700 border-b-2 border-amber-500 pb-0.5 font-bold text-sm transition-all">Inicio</button>
+      <button id="nav-problema" onclick="navTo('problema',this)" class="nav-btn text-slate-600 hover:text-sky-900 font-bold text-sm transition-all">El Problema</button>
+      <button id="nav-solucion" onclick="navTo('solucion',this)" class="nav-btn text-slate-600 hover:text-sky-900 font-bold text-sm transition-all">Módulos</button>
+      <button id="nav-inteligencia" onclick="navTo('inteligencia',this)" class="nav-btn text-slate-600 hover:text-sky-900 font-bold text-sm transition-all">IA & Datos</button>
+      <button id="nav-tecnologia" onclick="navTo('tecnologia',this)" class="nav-btn text-slate-600 hover:text-sky-900 font-bold text-sm transition-all">Tecnología</button>
+      <button id="nav-roi" onclick="navTo('roi',this)" class="nav-btn text-slate-600 hover:text-sky-900 font-bold text-sm transition-all">ROI</button>
+      <a href="http://localhost:8084/cuestionario" class="nav-btn text-slate-600 hover:text-sky-900 font-bold text-sm transition-all flex items-center gap-1.5 px-3 py-1 bg-primary/8 border border-primary/20 rounded-full text-primary hover:bg-primary hover:text-white">
+        <span class="material-symbols-outlined text-sm" style="font-size:15px">assignment</span>
+        Evaluate
+      </a>
+    </div>
+    <div class="flex items-center gap-4">
+      <button onclick="window.location.href='/crm'" class="px-5 py-2 border-2 border-slate-700 rounded-lg text-slate-700 font-bold hover:bg-slate-700 hover:text-white transition-all active:scale-95 duration-150 text-sm">Login</button>
+      <button onclick="navTo('demo')" class="bg-secondary-container text-on-secondary-fixed px-6 py-2 rounded-lg font-bold shadow-sm hover:opacity-90 active:scale-95 duration-150 text-sm">Solicitar Demo</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════
+     PAGE 1 — INICIO
+═══════════════════════════════════════════════════ -->
+<div class="page active" id="page-home">
+
+<!-- Hero Section (Stitch pattern) -->
+<section class="pt-32 pb-20 px-8 bg-surface-container-low overflow-hidden">
+  <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+    <div class="space-y-8">
+      <div class="inline-flex items-center gap-2 bg-primary/8 text-primary px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase border border-primary/20">
+        <span style="width:6px;height:6px;border-radius:50%;background:#feb71d;display:inline-block"></span>
+        Para distribuidoras de consumo masivo en México
+      </div>
+      <h1 class="text-5xl md:text-6xl font-black text-primary leading-[1.1] header-anchor">
+        Tu fuerza de ventas trabaja a ciegas.<br>
+        <span class="text-secondary">Ya no más.</span>
+      </h1>
+      <p class="text-on-surface-variant text-lg leading-relaxed max-w-xl">
+        La plataforma que convierte cada visita de tu vendedor en una operación de precisión milimétrica. Pedido sugerido por IA, argumento contextual en pantalla, CEDIS conectado en tiempo real.
+      </p>
+      <div class="flex flex-wrap gap-4">
+        <button onclick="navTo('demo')" class="bg-gradient-to-br from-primary to-primary-container text-on-primary px-8 py-4 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all">
+          Ver demo en vivo →
+        </button>
+        <button onclick="navTo('roi')" class="border-2 border-primary text-primary px-8 py-4 rounded-xl font-bold hover:bg-primary/5 transition-all">
+          Calcular mi ROI
+        </button>
+      </div>
+      <div class="flex items-center gap-5 flex-wrap pt-1">
+        <div class="text-sm text-on-surface-variant"><strong class="text-on-surface">+23%</strong> ticket promedio</div>
+        <div class="w-px h-4 bg-outline-variant"></div>
+        <div class="text-sm text-on-surface-variant"><strong class="text-on-surface">-95%</strong> merma FEFO</div>
+        <div class="w-px h-4 bg-outline-variant"></div>
+        <div class="text-sm text-on-surface-variant"><strong class="text-on-surface">0</strong> pedidos perdidos sin señal</div>
+      </div>
+    </div>
+
+    <!-- Hero visual — phone mockup (Stitch right-side card pattern) -->
+    <div class="relative">
+      <div class="bg-surface-container-lowest p-6 rounded-2xl shadow-2xl relative z-10 border border-outline-variant/10 flex justify-center">
+        <div class="phone-frame" style="width:248px">
+          <div style="background:#073d1e;padding:9px 14px;color:#fff;font-size:12px;font-weight:700;display:flex;justify-content:space-between;align-items:center">
+            <span>Captura de pedido</span>
+            <span style="font-size:10px;color:rgba(255,255,255,.65)">⏱ 0:42</span>
+          </div>
+          <div style="background:rgba(255,255,255,.05);padding:8px 12px;font-size:10px;color:rgba(255,255,255,.65);font-style:italic;border-bottom:1px solid rgba(255,255,255,.06)">
+            💡 "Don Roberto, le volaron los Gansitos — y hoy es quincena. Le traigo 5 cajas..."
+          </div>
+          <div style="padding:10px 12px;background:#070a08">
+            <div style="font-size:8px;font-weight:800;color:#8c9490;letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px">⭐ Alta confianza — 95%+</div>
+            <div class="sku-row-phone">
+              <div style="width:6px;height:6px;border-radius:2px;background:#0f6e56;flex-shrink:0"></div>
+              <div style="flex:1"><div style="font-size:11px;font-weight:700;color:#f0ede4">Gansito c/6 <span style="font-size:7px;background:rgba(168,245,99,.15);color:#a8f563;padding:1px 4px;border-radius:3px;font-weight:800">↑×5</span></div><div style="font-size:9px;color:#5a6460">Último: 4 · quincena hoy</div></div>
+              <div style="display:flex;align-items:center;gap:3px">
+                <div class="qty-btn-phone">−</div>
+                <div style="width:18px;text-align:center;font-size:13px;font-weight:800;color:#a8f563">5</div>
+                <div class="qty-btn-phone">+</div>
+              </div>
+            </div>
+            <div class="sku-row-phone">
+              <div style="width:6px;height:6px;border-radius:2px;background:#185fa5;flex-shrink:0"></div>
+              <div style="flex:1"><div style="font-size:11px;font-weight:700;color:#f0ede4">Pan Blanco Gde <span style="font-size:7px;background:rgba(168,245,99,.15);color:#a8f563;padding:1px 4px;border-radius:3px;font-weight:800">×3</span></div><div style="font-size:9px;color:#5a6460">estable</div></div>
+              <div style="display:flex;align-items:center;gap:3px">
+                <div class="qty-btn-phone">−</div>
+                <div style="width:18px;text-align:center;font-size:13px;font-weight:800;color:#f0ede4">3</div>
+                <div class="qty-btn-phone">+</div>
+              </div>
+            </div>
+            <div class="sku-row-phone">
+              <div style="width:6px;height:6px;border-radius:2px;background:#534ab7;flex-shrink:0"></div>
+              <div style="flex:1"><div style="font-size:11px;font-weight:700;color:#f0ede4">Tortillinas <span style="font-size:7px;background:rgba(168,245,99,.15);color:#a8f563;padding:1px 4px;border-radius:3px;font-weight:800">×4</span></div><div style="font-size:9px;color:#5a6460">siempre</div></div>
+              <div style="display:flex;align-items:center;gap:3px">
+                <div class="qty-btn-phone">−</div>
+                <div style="width:18px;text-align:center;font-size:13px;font-weight:800;color:#f0ede4">4</div>
+                <div class="qty-btn-phone">+</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding-top:7px;border-top:1px solid rgba(255,255,255,.07)">
+              <div><div style="font-size:8px;color:#5a6460">Total pedido</div><div style="font-size:18px;font-weight:800;color:#f0ede4">$1,580</div></div>
+              <div style="background:#feb71d;color:#271900;font-size:10px;font-weight:800;padding:6px 12px;border-radius:6px">✓ Confirmar</div>
+            </div>
+          </div>
+        </div>
+        <div class="absolute -top-4 -right-4 bg-secondary-container text-on-secondary-fixed p-3 rounded-xl font-black text-sm shadow-lg border-2 border-white">
+          +23% ticket promedio
+        </div>
+      </div>
+      <div class="absolute -bottom-10 -left-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Ticker -->
+<div class="bg-surface-container border-y border-outline-variant/20 overflow-hidden py-3">
+  <div class="ticker-track">
+    <span class="ticker-item"><span class="ticker-dot"></span>Pedido sugerido por inteligencia artificial</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Argumento contextual generado en 4 segundos</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Offline-first · 100% sin señal</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Foto de anaquel con visión artificial · 91-94% precisión</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>CEDIS conectado en tiempo real</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>CFDI timbrado en menos de 2 segundos</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Control FEFO automatizado · -95% merma</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Pedido sugerido por inteligencia artificial</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Argumento contextual generado en 4 segundos</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Offline-first · 100% sin señal</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Foto de anaquel con visión artificial · 91-94% precisión</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>CEDIS conectado en tiempo real</span>
+  </div>
+</div>
+
+<!-- Pain Points (Stitch pattern preserved) -->
+<section class="py-24 px-8 bg-surface">
+  <div class="max-w-7xl mx-auto">
+    <div class="mb-16 text-center max-w-3xl mx-auto">
+      <span class="text-secondary font-bold tracking-widest uppercase text-sm mb-4 block">El Desafío</span>
+      <h2 class="text-4xl font-bold text-on-background header-anchor">¿Te suena conocido?</h2>
+      <p class="text-on-surface-variant mt-4">Cada día que tu fuerza de ventas opera sin tecnología, estás dejando dinero sobre la mesa.</p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-8">
+      <div class="group bg-surface-container-lowest p-10 rounded-xl border-t-4 border-primary shadow-sm hover:shadow-md transition-all relative overflow-hidden fade-in">
+        <span class="absolute right-4 bottom-0 text-9xl font-black text-surface-dim/30 pointer-events-none select-none">01</span>
+        <span class="material-symbols-outlined text-primary text-4xl mb-6 block">record_voice_over</span>
+        <h3 class="text-2xl font-bold text-primary mb-4">El vendedor entra y pregunta "¿qué le ponemos?"</h3>
+        <p class="text-on-surface-variant leading-relaxed relative z-10 text-sm">Sin datos, sin argumento, sin contexto. El cliente decide solo y siempre pide menos de lo que podría comprar. Pérdida promedio: 18% por visita.</p>
+      </div>
+      <div class="group bg-surface-container-lowest p-10 rounded-xl border-t-4 border-primary shadow-sm hover:shadow-md transition-all relative overflow-hidden fade-in">
+        <span class="absolute right-4 bottom-0 text-9xl font-black text-surface-dim/30 pointer-events-none select-none">02</span>
+        <span class="material-symbols-outlined text-primary text-4xl mb-6 block">visibility_off</span>
+        <h3 class="text-2xl font-bold text-primary mb-4">No sabes qué pasa en la ruta — ahora mismo</h3>
+        <p class="text-on-surface-variant leading-relaxed relative z-10 text-sm">¿Cuántos clientes visitó? ¿Cuánto lleva vendido? ¿Está realmente entrando a las tiendas? Lo descubres 8 horas después.</p>
+      </div>
+      <div class="group bg-surface-container-lowest p-10 rounded-xl border-t-4 border-primary shadow-sm hover:shadow-md transition-all relative overflow-hidden fade-in">
+        <span class="absolute right-4 bottom-0 text-9xl font-black text-surface-dim/30 pointer-events-none select-none">03</span>
+        <span class="material-symbols-outlined text-primary text-4xl mb-6 block">inventory_2</span>
+        <h3 class="text-2xl font-bold text-primary mb-4">El producto se vence en bodega sin control FEFO</h3>
+        <p class="text-on-surface-variant leading-relaxed relative z-10 text-sm">Un CEDIS mediano pierde 80-120 cajas semanales. A $185/caja = $22,200 MXN por semana en merma. -95% con Mr. Ruta.</p>
+      </div>
+      <div class="group bg-surface-container-lowest p-10 rounded-xl border-t-4 border-secondary shadow-sm hover:shadow-md transition-all relative overflow-hidden fade-in">
+        <span class="absolute right-4 bottom-0 text-9xl font-black text-surface-dim/30 pointer-events-none select-none">04</span>
+        <span class="material-symbols-outlined text-secondary text-4xl mb-6 block">timer_off</span>
+        <h3 class="text-2xl font-bold text-primary mb-4">La liquidación diaria dura 2.5 horas en papel</h3>
+        <p class="text-on-surface-variant leading-relaxed relative z-10 text-sm">Cuadrar efectivo, devoluciones y facturas manualmente. Con Mr. Ruta: 8 minutos, cuadre automático, CFDI ya emitido.</p>
+      </div>
+      <div class="group bg-surface-container-lowest p-10 rounded-xl border-t-4 border-secondary shadow-sm hover:shadow-md transition-all relative overflow-hidden fade-in">
+        <span class="absolute right-4 bottom-0 text-9xl font-black text-surface-dim/30 pointer-events-none select-none">05</span>
+        <span class="material-symbols-outlined text-secondary text-4xl mb-6 block">trending_down</span>
+        <h3 class="text-2xl font-bold text-primary mb-4">La competencia gana share — te enteras 3 semanas después</h3>
+        <p class="text-on-surface-variant leading-relaxed relative z-10 text-sm">Sin foto de anaquel ni alerta automática. Mr. Ruta detecta caídas de share con 8 días de anticipación vs. reportes mensuales.</p>
+      </div>
+      <div class="group bg-surface-container-lowest p-10 rounded-xl border-t-4 border-secondary shadow-sm hover:shadow-md transition-all relative overflow-hidden fade-in">
+        <span class="absolute right-4 bottom-0 text-9xl font-black text-surface-dim/30 pointer-events-none select-none">06</span>
+        <span class="material-symbols-outlined text-secondary text-4xl mb-6 block">person_off</span>
+        <h3 class="text-2xl font-bold text-primary mb-4">El vendedor estrella se va y se lleva 200 clientes</h3>
+        <p class="text-on-surface-variant leading-relaxed relative z-10 text-sm">El historial, los acuerdos, las preferencias — todo en su cabeza, nada en tu sistema. El sustituto tarda 3-6 meses en recuperar.</p>
+      </div>
+    </div>
+    <div class="text-center mt-12">
+      <button onclick="navTo('problema')" class="border-2 border-primary text-primary px-8 py-3 rounded-xl font-bold hover:bg-primary/5 transition-all text-sm">Ver cuánto te está costando exactamente →</button>
+    </div>
+  </div>
+</section>
+
+<!-- Feature Rows (Stitch alternating pattern) -->
+<section class="py-24 space-y-32">
+  <!-- Feature 1 — Pedido Sugerido -->
+  <div class="max-w-7xl mx-auto px-8 grid md:grid-cols-2 gap-16 items-center">
+    <div class="order-2 md:order-1">
+      <div class="bg-surface-container-low rounded-3xl p-6 overflow-hidden shadow-inner">
+        <!-- Interactive argument comparison -->
+        <div class="mb-3 inline-flex items-center gap-2 bg-primary/10 text-primary px-3 py-1.5 rounded-full text-xs font-bold">
+          <span class="material-symbols-outlined text-sm">psychology</span> Argumento contextual — IA
+        </div>
+        <div class="bg-error/8 border border-error/20 rounded-xl p-4 mb-3">
+          <div class="text-xs font-black text-error uppercase mb-2">❌ Sin sistema — vendedor genérico</div>
+          <div class="text-sm italic border-l-3 border-error/40 pl-3 text-on-surface">"¿Qué le ponemos hoy, don Roberto?"</div>
+          <div class="text-xs text-on-surface-variant mt-2">El cliente decide solo. Sin contexto, pide lo mismo o menos. Pérdida: 18% de venta potencial.</div>
+        </div>
+        <div class="bg-primary/5 border border-primary/20 rounded-xl p-4">
+          <div class="text-xs font-black text-primary uppercase mb-2">✅ Con Mr. Ruta — vendedor de élite</div>
+          <div class="text-sm italic border-l-3 border-primary/40 pl-3 text-on-surface">"Don Roberto, la semana pasada le volaron los Gansitos — y hoy es quincena. Le traigo 5 cajas, ¿le acomodo las mismas Tortillinas de siempre?"</div>
+          <div class="text-xs text-on-surface-variant mt-2">Historial real + contexto del día → +18-20 puntos de aceptación.</div>
+        </div>
+      </div>
+    </div>
+    <div class="order-1 md:order-2 space-y-6">
+      <div class="inline-flex items-center gap-3 bg-primary/10 text-primary px-4 py-2 rounded-full font-bold text-sm">
+        <span class="material-symbols-outlined text-lg">auto_fix_high</span>
+        Motor de pedido sugerido
+      </div>
+      <h3 class="text-4xl font-bold text-primary header-anchor">De "¿qué le ponemos?" a propuesta de precisión</h3>
+      <p class="text-on-surface-variant text-lg leading-relaxed">El motor analiza 6 señales simultáneas y genera el argumento correcto antes de que el vendedor entre a la tienda. En 6-8 semanas conoce a cada cliente mejor que el vendedor más antiguo.</p>
+      <ul class="space-y-3">
+        <li class="flex items-center gap-3 text-on-surface text-sm"><span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings:'FILL' 1;">check_circle</span>Historial de las últimas 8 visitas por SKU y cliente</li>
+        <li class="flex items-center gap-3 text-on-surface text-sm"><span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings:'FILL' 1;">check_circle</span>Quincena, clima, promociones y tipo de canal</li>
+        <li class="flex items-center gap-3 text-on-surface text-sm"><span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings:'FILL' 1;">check_circle</span>Inventario estimado del cliente — alerta de quiebre inminente</li>
+      </ul>
+      <div class="p-5 bg-surface-container rounded-2xl border-l-4 border-secondary">
+        <p class="font-black text-2xl text-secondary">+18%</p>
+        <p class="text-sm text-on-surface-variant mt-1">en tasa de aceptación del pedido con argumento contextual vs. sin sistema. Medido en campo México.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feature 2 — Offline -->
+  <div class="max-w-7xl mx-auto px-8 grid md:grid-cols-2 gap-16 items-center">
+    <div class="space-y-6">
+      <div class="inline-flex items-center gap-3 bg-secondary-container/20 text-secondary px-4 py-2 rounded-full font-bold text-sm">
+        <span class="material-symbols-outlined text-lg">signal_wifi_off</span>
+        Offline-first real
+      </div>
+      <h3 class="text-4xl font-bold text-primary header-anchor">100% funcional sin señal. El teléfono ES la fuente de verdad.</h3>
+      <p class="text-on-surface-variant text-lg leading-relaxed">En una ruta de 30 clientes, entre 4 y 9 se visitan en zona sin señal. Mr. Ruta funciona exactamente igual — los pedidos se guardan localmente y se sincronizan solos al recuperar conexión.</p>
+      <div class="p-6 bg-surface-container rounded-2xl border-l-4 border-secondary">
+        <p class="italic text-on-surface text-sm">"Apagamos el WiFi durante la demo. La app siguió funcionando. Los pedidos aparecieron solos en el CEDIS cuando reconectamos. Eso fue suficiente para tomar la decisión."</p>
+        <p class="mt-3 font-bold text-primary text-sm">— Director de Distribución · Empresa MTY</p>
+      </div>
+    </div>
+    <div class="relative">
+      <div class="bg-surface-container-low rounded-3xl p-6 overflow-hidden shadow-inner">
+        <div class="mb-3 text-xs font-bold text-on-surface-variant uppercase tracking-widest">Simulador — ve cómo reacciona la app en cada condición de red</div>
+        <div class="mb-2 text-xs font-bold text-primary uppercase tracking-wide">Estado actual de la conexión</div>
+        <div class="space-y-2 mb-4">
+          <div onclick="setNetHome('4g',this)" class="net-btn-home flex items-center gap-3 p-3 bg-white rounded-xl border border-outline-variant/20 cursor-pointer hover:border-primary/40 transition-all">
+            <div style="width:8px;height:8px;border-radius:50%;background:#16a34a;flex-shrink:0"></div>
+            <div class="flex-1 text-xs"><strong>4G — Conexión buena</strong><div class="text-on-surface-variant">Sync instantáneo · 124ms latencia</div></div>
+            <span class="text-xs font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded-full">ACTIVO</span>
+          </div>
+          <div onclick="setNetHome('2g',this)" class="net-btn-home flex items-center gap-3 p-3 bg-white rounded-xl border border-outline-variant/20 cursor-pointer hover:border-primary/40 transition-all">
+            <div style="width:8px;height:8px;border-radius:50%;background:#d97706;flex-shrink:0"></div>
+            <div class="flex-1 text-xs"><strong>2G — Señal débil</strong><div class="text-on-surface-variant">Sync en background · app no se detiene</div></div>
+            <span class="text-xs font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">LENTO</span>
+          </div>
+          <div onclick="setNetHome('offline',this)" class="net-btn-home flex items-center gap-3 p-3 bg-white rounded-xl border border-outline-variant/20 cursor-pointer hover:border-primary/40 transition-all">
+            <div style="width:8px;height:8px;border-radius:50%;background:#dc2626;flex-shrink:0"></div>
+            <div class="flex-1 text-xs"><strong>Sin señal — Offline total</strong><div class="text-on-surface-variant">SQLite local · 0 pedidos perdidos</div></div>
+            <span class="text-xs font-bold text-red-700 bg-red-50 px-2 py-0.5 rounded-full">OFFLINE</span>
+          </div>
+        </div>
+        <div id="netResultHome" class="p-3 bg-white rounded-xl border border-outline-variant/20 text-xs text-on-surface-variant leading-relaxed min-h-12">
+          Toca una condición de red para ver cómo responde la app del vendedor.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Statistics Bar (Stitch exact) -->
+<section class="bg-primary text-on-primary py-20">
+  <div class="max-w-7xl mx-auto px-8 grid grid-cols-2 md:grid-cols-4 gap-12 text-center">
+    <div><div class="text-5xl font-black text-secondary-container mb-2">+23%</div><div class="text-primary-fixed uppercase tracking-widest text-xs font-bold">Ticket promedio</div></div>
+    <div><div class="text-5xl font-black text-secondary-container mb-2">-95%</div><div class="text-primary-fixed uppercase tracking-widest text-xs font-bold">Merma FEFO</div></div>
+    <div><div class="text-5xl font-black text-secondary-container mb-2">38min</div><div class="text-primary-fixed uppercase tracking-widest text-xs font-bold">Ahorrados/vendedor/día</div></div>
+    <div><div class="text-5xl font-black text-secondary-container mb-2">8min</div><div class="text-primary-fixed uppercase tracking-widest text-xs font-bold">Liquidación diaria</div></div>
+  </div>
+</section>
+
+<!-- Case Study (Stitch Analítica Predictiva pattern) -->
+<section class="py-24 space-y-32">
+  <div class="max-w-7xl mx-auto px-8 grid md:grid-cols-2 gap-16 items-center">
+    <div class="space-y-6">
+      <div class="inline-flex items-center gap-3 bg-secondary-container/20 text-secondary px-4 py-2 rounded-full font-bold text-sm">
+        <span class="material-symbols-outlined text-lg">emoji_events</span>
+        Caso de éxito — Zona MTY Norte
+      </div>
+      <h3 class="text-4xl font-bold text-primary header-anchor">+15 puntos de share recuperados en 6 semanas</h3>
+      <p class="text-on-surface-variant text-lg leading-relaxed">Marinela ganó share silenciosamente durante 3 semanas. La foto de anaquel de Mr. Ruta lo detectó en 8 días. El argumento de negociación de exhibidores lo revirtió. El CEDIS midió el ROI en tiempo real.</p>
+      <div class="p-6 bg-surface-container rounded-2xl border-l-4 border-secondary">
+        <p class="italic text-on-surface text-sm">"La app detectó en 3 semanas lo que normalmente descubrimos en el reporte mensual. Para entonces ya habríamos perdido 6 semanas de ventas."</p>
+        <p class="mt-3 font-bold text-primary text-sm">— Luis R. · Gerente de Zona · Distribuidora MTY Norte</p>
+      </div>
+    </div>
+    <div class="relative">
+      <div class="bg-surface-container-low rounded-3xl p-6 overflow-hidden shadow-inner">
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div class="bg-white rounded-xl p-5 text-center border border-outline-variant/10">
+            <div class="text-3xl font-black text-secondary mb-1">+15pts</div>
+            <div class="text-xs text-on-surface-variant">Share recuperado</div>
+          </div>
+          <div class="bg-white rounded-xl p-5 text-center border border-outline-variant/10">
+            <div class="text-3xl font-black text-secondary mb-1">4.2×</div>
+            <div class="text-xs text-on-surface-variant">ROI exhibidores</div>
+          </div>
+          <div class="bg-white rounded-xl p-5 text-center border border-outline-variant/10">
+            <div class="text-3xl font-black text-secondary mb-1">6sem</div>
+            <div class="text-xs text-on-surface-variant">Para ver resultados</div>
+          </div>
+          <div class="bg-white rounded-xl p-5 text-center border border-outline-variant/10">
+            <div class="text-3xl font-black text-secondary mb-1">-95%</div>
+            <div class="text-xs text-on-surface-variant">Merma FEFO</div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl p-4 border border-outline-variant/10">
+          <div class="text-xs font-bold text-on-surface-variant mb-2">Timeline del caso:</div>
+          <div class="space-y-2">
+            <div class="flex items-start gap-2"><div style="width:8px;height:8px;border-radius:50%;background:#dc2626;margin-top:3px;flex-shrink:0"></div><div class="text-xs"><strong>Semana 0:</strong> Foto detecta caída de share 52%→41%</div></div>
+            <div class="flex items-start gap-2"><div style="width:8px;height:8px;border-radius:50%;background:#d97706;margin-top:3px;flex-shrink:0"></div><div class="text-xs"><strong>Sem 1-2:</strong> 6 de 8 exhibidores negociados en 4 días</div></div>
+            <div class="flex items-start gap-2"><div style="width:8px;height:8px;border-radius:50%;background:#004161;margin-top:3px;flex-shrink:0"></div><div class="text-xs"><strong>Semana 6:</strong> Share 56% · $9,840/sem incremental</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROI Calculator Preview (Stitch pattern) -->
+<section class="py-24 px-8 bg-surface-container-low">
+  <div class="max-w-5xl mx-auto bg-surface-container-lowest rounded-3xl shadow-xl overflow-hidden grid md:grid-cols-5 border border-outline-variant/10">
+    <div class="md:col-span-3 p-12 space-y-8">
+      <h3 class="text-3xl font-bold text-primary">Calculadora rápida de pérdida</h3>
+      <div class="space-y-6">
+        <div>
+          <div class="flex justify-between mb-2">
+            <label class="font-bold text-on-surface-variant text-sm">Número de vendedores</label>
+            <span class="text-primary font-bold" id="hVend">50</span>
+          </div>
+          <input class="w-full h-2 bg-surface-container rounded-lg appearance-none cursor-pointer accent-primary" max="500" min="5" value="50" type="range" id="hSlVend" oninput="calcHomeROI()">
+        </div>
+        <div>
+          <div class="flex justify-between mb-2">
+            <label class="font-bold text-on-surface-variant text-sm">Clientes / vendedor / día</label>
+            <span class="text-primary font-bold" id="hClien">30</span>
+          </div>
+          <input class="w-full h-2 bg-surface-container rounded-lg appearance-none cursor-pointer accent-primary" max="50" min="15" value="30" type="range" id="hSlClien" oninput="calcHomeROI()">
+        </div>
+        <div>
+          <div class="flex justify-between mb-2">
+            <label class="font-bold text-on-surface-variant text-sm">Ticket promedio (MXN)</label>
+            <span class="text-primary font-bold" id="hTicketLbl">$1,800</span>
+          </div>
+          <input class="w-full h-2 bg-surface-container rounded-lg appearance-none cursor-pointer accent-primary" max="15000" min="300" value="1800" type="range" id="hSlTicket" oninput="calcHomeROI()">
+        </div>
+      </div>
+    </div>
+    <div class="md:col-span-2 bg-secondary-container p-12 flex flex-col justify-center items-center text-center">
+      <span class="text-on-secondary-fixed text-xs uppercase font-bold tracking-widest mb-2">Pérdida estimada por año</span>
+      <div class="text-5xl font-black text-on-secondary-fixed mb-3" id="hROIResult">$0</div>
+      <p class="text-on-secondary-fixed/80 text-xs mb-6">Ventas no capturadas por falta de argumento y sistema.</p>
+      <button onclick="navTo('roi')" class="bg-primary text-white px-8 py-3 rounded-xl font-bold hover:scale-105 transition-transform text-sm">
+        Ver ROI completo →
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Comparison Table (Stitch exact) -->
+<section class="py-24 px-8 bg-white">
+  <div class="max-w-4xl mx-auto">
+    <h2 class="text-3xl font-bold text-primary text-center mb-10 header-anchor">Un día de ruta: sin sistema vs con Mr. Ruta</h2>
+    <div class="overflow-hidden rounded-2xl border border-outline-variant/20 shadow-sm">
+      <table class="w-full border-collapse">
+        <thead class="bg-primary text-on-primary">
+          <tr>
+            <th class="p-6 text-left font-black text-lg">Situación</th>
+            <th class="p-6 text-center font-bold">Sin Mr. Ruta</th>
+            <th class="p-6 text-center font-bold bg-primary-container">Con Mr. Ruta</th>
+          </tr>
+        </thead>
+        <tbody class="text-on-surface">
+          <tr class="border-b border-surface-container">
+            <td class="p-5 font-bold text-sm">Argumento para cada cliente</td>
+            <td class="p-5 text-center text-error text-sm">"¿Qué le ponemos?" (improviso)</td>
+            <td class="p-5 text-center font-bold text-primary bg-primary/5 text-sm">Argumento IA en 4 segundos</td>
+          </tr>
+          <tr class="border-b border-surface-container bg-surface-container-low">
+            <td class="p-5 font-bold text-sm">Tiempo de captura por cliente</td>
+            <td class="p-5 text-center text-error text-sm">~138 segundos</td>
+            <td class="p-5 text-center font-bold text-primary bg-primary/5 text-sm">~35 segundos</td>
+          </tr>
+          <tr class="border-b border-surface-container">
+            <td class="p-5 font-bold text-sm">Sin conexión a internet</td>
+            <td class="p-5 text-center text-error text-sm">Pedidos en papel / perdidos</td>
+            <td class="p-5 text-center font-bold text-primary bg-primary/5 text-sm">App funciona igual · 0 perdidos</td>
+          </tr>
+          <tr class="border-b border-surface-container bg-surface-container-low">
+            <td class="p-5 font-bold text-sm">Liquidación diaria</td>
+            <td class="p-5 text-center text-error text-sm">2.5 horas en papel</td>
+            <td class="p-5 text-center font-bold text-primary bg-primary/5 text-sm">8 minutos · cuadre automático</td>
+          </tr>
+          <tr class="border-b border-surface-container">
+            <td class="p-5 font-bold text-sm">Control de merma FEFO</td>
+            <td class="p-5 text-center text-error text-sm">$22,200/sem en pérdidas</td>
+            <td class="p-5 text-center font-bold text-primary bg-primary/5 text-sm">-95% merma · FEFO automático</td>
+          </tr>
+          <tr>
+            <td class="p-5 font-bold text-sm">Visibilidad del supervisor</td>
+            <td class="p-5 text-center text-error text-sm">Reportes del día siguiente</td>
+            <td class="p-5 text-center font-bold text-primary bg-primary/5 text-sm">Tiempo real · GPS + KPIs</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Contact teaser (Stitch contact pattern) -->
+<section class="py-24 px-8 bg-surface-container-low">
+  <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+    <div class="space-y-8">
+      <h2 class="text-5xl font-black text-primary header-anchor">¿Listo para transformar tu operación de distribución?</h2>
+      <p class="text-xl text-on-surface-variant leading-relaxed">Nuestros especialistas en DSD te muestran la app funcionando con datos reales de tu industria en 30 minutos.</p>
+      <div class="flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm">
+        <div class="w-12 h-12 bg-secondary-container rounded-full flex items-center justify-center flex-shrink-0">
+          <span class="material-symbols-outlined text-on-secondary-fixed">support_agent</span>
+        </div>
+        <div>
+          <div class="font-bold text-primary">Respuesta en menos de 2 horas</div>
+          <div class="text-sm text-on-surface-variant">Un ejecutivo que conoce la distribución en México — no un bot.</div>
+        </div>
+      </div>
+      <button onclick="navTo('demo')" class="bg-gradient-to-br from-primary to-primary-container text-on-primary px-8 py-4 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all">
+        Agendar mi demo de 30 minutos →
+      </button>
+    </div>
+    <div class="bg-surface-container-lowest p-10 rounded-3xl shadow-2xl border border-outline-variant/10">
+      <h3 class="text-xl font-bold text-primary mb-6">Lo que verás en 30 minutos:</h3>
+      <div class="space-y-4">
+        <div class="flex items-start gap-3"><span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">check_circle</span><div class="text-sm"><strong>La app en tu celular</strong> — capturas un pedido con argumento contextual activado</div></div>
+        <div class="flex items-start gap-3"><span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">check_circle</span><div class="text-sm"><strong>El CEDIS recibe el pedido</strong> — en tiempo real, menos de 2 segundos</div></div>
+        <div class="flex items-start gap-3"><span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">check_circle</span><div class="text-sm"><strong>Apagamos el WiFi</strong> — la app sigue funcionando y los pedidos se sincronizan solos</div></div>
+        <div class="flex items-start gap-3"><span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">check_circle</span><div class="text-sm"><strong>El ROI calculado</strong> con los datos exactos de tu operación</div></div>
+        <div class="flex items-start gap-3"><span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">check_circle</span><div class="text-sm"><strong>Plan de implementación</strong> — fases, tiempos, integraciones con tus sistemas</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div><!-- /page-home -->
+
+<!-- ═══════════════════════════════════════════════════
+     PAGE 2 — EL PROBLEMA
+═══════════════════════════════════════════════════ -->
+<div class="page" id="page-problema">
+<section class="pt-32 pb-16 px-8 bg-surface-container-low">
+  <div class="max-w-7xl mx-auto">
+    <span class="text-secondary font-bold tracking-widest uppercase text-sm mb-4 block">El Costo del Caos</span>
+    <h1 class="text-5xl font-black text-primary header-anchor mb-4">¿Cuánto dinero pierdes cada día<br>que no tienes sistema?</h1>
+    <p class="text-on-surface-variant text-lg max-w-xl">No es retórica. Es un número exacto. Y probablemente es más grande de lo que crees.</p>
+  </div>
+</section>
+<section class="py-16 px-8">
+  <div class="max-w-7xl mx-auto grid md:grid-cols-5 gap-12 items-start">
+    <div class="md:col-span-3">
+      <h2 class="text-2xl font-bold text-primary mb-6">Los 8 puntos de sangrado de una operación sin sistema</h2>
+      <div class="divide-y divide-outline-variant/20 text-sm text-on-surface-variant">
+        <div class="py-4 flex gap-4 items-start"><span class="text-xl flex-shrink-0">💸</span><div><strong class="text-on-surface">Ventas perdidas por falta de argumento</strong> — El vendedor pregunta "¿qué le ponemos?" en lugar de proponer. El cliente pide menos del potencial real. Promedio: 18% menos por visita.</div></div>
+        <div class="py-4 flex gap-4 items-start"><span class="text-xl flex-shrink-0">🕐</span><div><strong class="text-on-surface">Tiempo muerto en captura de pedido</strong> — Sin pedido sugerido, un vendedor tarda 138 segundos promedio por cliente. Con sistema: 35 segundos. 30 clientes = 38 minutos perdidos por día.</div></div>
+        <div class="py-4 flex gap-4 items-start"><span class="text-xl flex-shrink-0">🚗</span><div><strong class="text-on-surface">Kilómetros de más por rutas sin optimizar</strong> — Una ruta manual recorre 800–1,400 km extras por semana vs. una optimizada. Combustible, tiempo, desgaste del vehículo.</div></div>
+        <div class="py-4 flex gap-4 items-start"><span class="text-xl flex-shrink-0">📦</span><div><strong class="text-on-surface">Merma por FEFO ignorado</strong> — Sin control de caducidades, un CEDIS mediano pierde 80–120 cajas semanales. A $185/caja = $22,200 MXN por semana.</div></div>
+        <div class="py-4 flex gap-4 items-start"><span class="text-xl flex-shrink-0">👻</span><div><strong class="text-on-surface">Visitas fantasma sin verificación</strong> — Sin check-in GPS ni timer, el vendedor puede registrar visitas que nunca ocurrieron. En promedio, 12-18% de las visitas reportadas no son verificables.</div></div>
+        <div class="py-4 flex gap-4 items-start"><span class="text-xl flex-shrink-0">📉</span><div><strong class="text-on-surface">Share de competencia que crece en silencio</strong> — Sin foto de anaquel, la competencia puede ganar 8-15 puntos de share en 3 semanas antes de que lo notes en tus reportes mensuales.</div></div>
+        <div class="py-4 flex gap-4 items-start"><span class="text-xl flex-shrink-0">💼</span><div><strong class="text-on-surface">Conocimiento del cliente que vive en la cabeza del vendedor</strong> — Cuando se va, se lleva el historial de 200 clientes. El sustituto empieza desde cero: 3-6 meses para recuperar productividad.</div></div>
+        <div class="py-4 flex gap-4 items-start"><span class="text-xl flex-shrink-0">📋</span><div><strong class="text-on-surface">Liquidación diaria de 2.5 horas en papel</strong> — Cuadrar efectivo, devoluciones y facturas manualmente consume tiempo que podría ser venta o análisis estratégico.</div></div>
+      </div>
+    </div>
+    <!-- Calculator (Stitch ROI card pattern) -->
+    <div class="md:col-span-2 sticky top-20">
+      <div class="bg-surface-container-lowest rounded-3xl shadow-xl border border-outline-variant/10 overflow-hidden">
+        <div class="p-8 space-y-5">
+          <h3 class="text-2xl font-bold text-primary">💰 Calculadora de pérdida diaria</h3>
+          <div>
+            <div class="flex justify-between mb-1"><label class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Número de vendedores</label><span class="text-primary font-bold text-sm" id="pVend">50</span></div>
+            <input type="range" class="w-full h-2 bg-surface-container rounded-lg appearance-none cursor-pointer accent-primary" min="5" max="500" value="50" id="pSlVend" oninput="calcPain()">
+          </div>
+          <div>
+            <div class="flex justify-between mb-1"><label class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Clientes / vendedor / día</label><span class="text-primary font-bold text-sm" id="pClien">30</span></div>
+            <input type="range" class="w-full h-2 bg-surface-container rounded-lg appearance-none cursor-pointer accent-primary" min="15" max="50" value="30" id="pSlClien" oninput="calcPain()">
+          </div>
+          <div>
+            <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wide block mb-1">Ticket promedio (MXN)</label>
+            <input type="number" class="w-full bg-surface-container-low border-none rounded-xl p-3 focus:ring-2 focus:ring-primary text-sm font-bold" value="1800" id="pTicket" oninput="calcPain()">
+          </div>
+          <div>
+            <div class="flex justify-between mb-1"><label class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Visitas sin pedido (%)</label><span class="text-error font-bold text-sm" id="pInef">22%</span></div>
+            <input type="range" class="w-full h-2 bg-surface-container rounded-lg appearance-none cursor-pointer accent-primary" min="5" max="50" value="22" id="pSlInef" oninput="calcPain()">
+          </div>
+        </div>
+        <div class="p-8 bg-error/5 border-t border-error/20 text-center">
+          <div class="text-xs font-bold text-error uppercase tracking-widest mb-2">Pérdida estimada — solo hoy</div>
+          <div class="text-5xl font-black text-error mb-4" id="pResultDia">$0</div>
+          <div class="grid grid-cols-2 gap-3 mb-4">
+            <div class="bg-white rounded-xl p-3 text-center border border-outline-variant/10">
+              <div class="text-xl font-black text-primary" id="pResultMes">$0</div>
+              <div class="text-xs text-on-surface-variant mt-1">Por mes</div>
+            </div>
+            <div class="bg-white rounded-xl p-3 text-center border border-outline-variant/10">
+              <div class="text-xl font-black text-primary" id="pResultAnual">$0</div>
+              <div class="text-xs text-on-surface-variant mt-1">Por año</div>
+            </div>
+          </div>
+          <div class="text-xs text-on-surface-variant mb-4">Con Mr. Ruta, recuperas el 65-80% en los primeros 90 días.</div>
+          <button onclick="navTo('roi')" class="w-full bg-secondary-container text-on-secondary-fixed py-3 rounded-xl font-bold hover:opacity-90 transition-all text-sm">Ver ROI completo →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</div><!-- /page-problema -->
+
+<!-- ═══════════════════════════════════════════════════
+     PAGE 3 — MÓDULOS / SOLUCIÓN
+═══════════════════════════════════════════════════ -->
+<div class="page" id="page-solucion">
+<section class="pt-32 pb-10 px-8 bg-surface-container-low">
+  <div class="max-w-7xl mx-auto">
+    <span class="text-secondary font-bold tracking-widest uppercase text-sm mb-4 block">Los Módulos</span>
+    <h1 class="text-5xl font-black text-primary header-anchor mb-4">Todo lo que necesita tu operación.<br>En un solo sistema.</h1>
+    <p class="text-on-surface-variant text-lg max-w-xl">Desde la planificación matutina del vendedor hasta el cierre en el CEDIS.</p>
+  </div>
+</section>
+<section class="py-10 px-8">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex gap-0 border-b border-outline-variant/30 mb-10 overflow-x-auto">
+      <button class="mod-tab active px-6 py-3 font-bold text-sm text-primary" onclick="switchMod('preruta',this)">01 Pre-ruta</button>
+      <button class="mod-tab px-6 py-3 font-bold text-sm text-on-surface-variant hover:text-primary" onclick="switchMod('campo',this)">02 En campo</button>
+      <button class="mod-tab px-6 py-3 font-bold text-sm text-on-surface-variant hover:text-primary" onclick="switchMod('monitoreo',this)">03 Monitoreo</button>
+      <button class="mod-tab px-6 py-3 font-bold text-sm text-on-surface-variant hover:text-primary" onclick="switchMod('cierre',this)">04 Cierre</button>
+      <button class="mod-tab px-6 py-3 font-bold text-sm text-on-surface-variant hover:text-primary" onclick="switchMod('intelig',this)">05 Inteligencia</button>
+    </div>
+
+    <!-- 01 -->
+    <div class="mod-panel active" id="mod-preruta">
+      <div class="bg-surface-container-low border border-outline-variant/20 rounded-2xl p-8 mb-8">
+        <div class="grid md:grid-cols-3 gap-6">
+          <div><span class="material-symbols-outlined text-primary text-3xl mb-3 block">wb_sunny</span><h4 class="font-bold text-primary mb-2">Briefing inteligente del día</h4><p class="text-on-surface-variant text-sm leading-relaxed">Metas, clientes prioritarios, alertas de zona, condiciones especiales (quincena, clima, promociones) — en una pantalla antes de arrancar.</p></div>
+          <div class="border-x border-outline-variant/20 px-6"><span class="material-symbols-outlined text-secondary text-3xl mb-3 block">auto_fix_high</span><h4 class="font-bold text-primary mb-2">Pedido sugerido precalculado</h4><p class="text-on-surface-variant text-sm leading-relaxed">Para cada cliente, ya calculó qué ofrecer y en qué cantidad. El vendedor solo confirma o ajusta. Tasa de aceptación sin modificar: 70%+ al mes 1.</p></div>
+          <div><span class="material-symbols-outlined text-primary text-3xl mb-3 block">local_shipping</span><h4 class="font-bold text-primary mb-2">Carga óptima calculada</h4><p class="text-on-surface-variant text-sm leading-relaxed">El WMS calcula exactamente qué cargar por SKU: pedidos confirmados + buffer inteligente individual (5% estables, 20% estacionales).</p></div>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
+        <div class="bg-surface-container-lowest rounded-xl p-5 text-center border border-outline-variant/10"><div class="text-4xl font-black text-secondary">-38m</div><div class="text-xs text-on-surface-variant mt-1">Por vendedor por día en captura</div></div>
+        <div class="bg-surface-container-lowest rounded-xl p-5 text-center border border-outline-variant/10"><div class="text-4xl font-black text-secondary">70%+</div><div class="text-xs text-on-surface-variant mt-1">Sugerencias sin modificar al mes 1</div></div>
+        <div class="bg-surface-container-lowest rounded-xl p-5 text-center border border-outline-variant/10"><div class="text-4xl font-black text-secondary">3seg</div><div class="text-xs text-on-surface-variant mt-1">Precarga matutina completa en 3G</div></div>
+        <div class="bg-surface-container-lowest rounded-xl p-5 text-center border border-outline-variant/10"><div class="text-4xl font-black text-secondary">0</div><div class="text-xs text-on-surface-variant mt-1">Pedidos perdidos por falta de señal</div></div>
+      </div>
+    </div>
+
+    <!-- 02 -->
+    <div class="mod-panel" id="mod-campo">
+      <div class="grid md:grid-cols-2 gap-10 mb-8">
+        <div>
+          <h3 class="text-2xl font-bold text-primary mb-5">El argumento que convierte cada visita</h3>
+          <div class="bg-error/6 border border-error/20 rounded-xl p-5 mb-4">
+            <div class="text-xs font-black text-error uppercase mb-2">❌ Sin sistema — vendedor genérico</div>
+            <div class="text-sm italic border-l-4 border-error/40 pl-4 text-on-surface mb-2">"¿Qué le ponemos hoy, don Roberto?"</div>
+            <div class="text-xs text-on-surface-variant">El cliente decide solo. Sin contexto, tenderá a pedir lo mismo o menos que la semana pasada. El vendedor es un tomador de pedidos, no un vendedor.</div>
+          </div>
+          <div class="bg-primary/5 border border-primary/20 rounded-xl p-5">
+            <div class="text-xs font-black text-primary uppercase mb-2">✅ Con Mr. Ruta — vendedor de élite</div>
+            <div class="text-sm italic border-l-4 border-primary/40 pl-4 text-on-surface mb-2">"Don Roberto, la semana pasada le volaron los Gansitos — y hoy es quincena. Le traigo 5 cajas, ¿le acomodo las mismas Tortillinas de siempre?"</div>
+            <div class="text-xs text-on-surface-variant">Usa historial real + momento del mes. La venta empieza desde "sí". Diferencia: +18-20 puntos de aceptación.</div>
+          </div>
+        </div>
+        <div>
+          <h3 class="text-2xl font-bold text-primary mb-4">Timer de 90 segundos — productividad sin presión</h3>
+          <div class="bg-surface-container-lowest rounded-2xl overflow-hidden border border-outline-variant/10 shadow-sm">
+            <div class="p-5 border-b border-outline-variant/10 text-center bg-surface-container-low">
+              <div class="text-6xl font-black font-mono" id="timerVal" style="color:#004161">0:00</div>
+              <div class="text-xs text-on-surface-variant mt-1" id="timerSt">Inicia la simulación</div>
+            </div>
+            <div class="p-5 space-y-2">
+              <div id="tn0" class="flex items-center gap-3 p-3 rounded-lg bg-surface-container-low"><div style="width:8px;height:8px;border-radius:50%;background:#16a34a;flex-shrink:0"></div><div class="flex-1 text-xs"><strong>0 – 45s · Verde</strong> — Zona ideal, opera con calma</div><span class="text-xs font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded-full">OK</span></div>
+              <div id="tn1" class="flex items-center gap-3 p-3 rounded-lg bg-surface-container-low"><div style="width:8px;height:8px;border-radius:50%;background:#2563eb;flex-shrink:0"></div><div class="flex-1 text-xs"><strong>45 – 75s · Azul</strong> — Momento de confirmar el pedido</div><span class="text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full">CONFIRMAR</span></div>
+              <div id="tn2" class="flex items-center gap-3 p-3 rounded-lg bg-surface-container-low"><div style="width:8px;height:8px;border-radius:50%;background:#d97706;flex-shrink:0"></div><div class="flex-1 text-xs"><strong>75 – 90s · Ámbar</strong> — Vibración suave 200ms</div><span class="text-xs font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">ALERTA</span></div>
+              <div id="tn3" class="flex items-center gap-3 p-3 rounded-lg bg-surface-container-low"><div style="width:8px;height:8px;border-radius:50%;background:#dc2626;flex-shrink:0"></div><div class="flex-1 text-xs"><strong>+90s · Rojo</strong> — Registrar causa, alerta supervisor</div><span class="text-xs font-bold text-red-700 bg-red-50 px-2 py-0.5 rounded-full">EXTENDIDA</span></div>
+              <div class="flex gap-2 mt-3">
+                <button onclick="startTimer()" id="timerBtn" class="flex-1 bg-secondary-container text-on-secondary-fixed py-2.5 rounded-xl font-bold text-sm hover:opacity-90 transition-all">▶ Iniciar simulación</button>
+                <button onclick="resetTimer()" class="px-4 py-2.5 border-2 border-primary text-primary rounded-xl font-bold text-sm hover:bg-primary/5 transition-all">↺</button>
+              </div>
+            </div>
+          </div>
+          <div class="bg-surface-container-low rounded-xl p-4 mt-3 border-l-4 border-secondary text-xs text-on-surface-variant">
+            <strong class="text-primary">¿Por qué no debe sonar en los primeros 90 segundos?</strong> El sonido en un cliente genera vergüenza — el vendedor desactiva las notificaciones. Un timer que nadie activa no sirve de nada.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 03 -->
+    <div class="mod-panel" id="mod-monitoreo">
+      <div class="grid md:grid-cols-3 gap-6 mb-6">
+        <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/10 shadow-sm"><span class="material-symbols-outlined text-primary text-3xl mb-3 block">map</span><h4 class="font-bold text-primary mb-2">Mapa en tiempo real</h4><p class="text-on-surface-variant text-sm">GPS de todos los vendedores actualizado cada 30 segundos. Semáforo de estado: verde (OK), ámbar (lento), rojo (alerta o sin movimiento).</p></div>
+        <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/10 border-t-4 border-t-secondary shadow-sm"><span class="material-symbols-outlined text-secondary text-3xl mb-3 block">notifications_active</span><h4 class="font-bold text-primary mb-2">Alertas automáticas proactivas</h4><p class="text-on-surface-variant text-sm">Visita de 8 segundos (check-in fantasma), vendedor parado +20 min, promedio de tiempo que proyecta no terminar la ruta. Sin buscar.</p></div>
+        <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/10 shadow-sm"><span class="material-symbols-outlined text-primary text-3xl mb-3 block">analytics</span><h4 class="font-bold text-primary mb-2">KPIs del día en tiempo real</h4><p class="text-on-surface-variant text-sm">Cobertura, efectividad, volumen vs. meta, ticket promedio — para cada vendedor y la zona completa. Sin esperar el reporte.</p></div>
+      </div>
+      <div class="bg-error/5 border border-error/20 rounded-xl p-6">
+        <h4 class="font-bold text-primary mb-2">🚨 La visita de 8 segundos — el dato más valioso del módulo</h4>
+        <p class="text-on-surface-variant text-sm">Sin timer, el vendedor puede hacer check-in GPS desde la banqueta y seguir manejando. El sistema detecta visitas de menos de 30 segundos y las marca como "sospechosas" automáticamente. El supervisor recibe la alerta — no el regaño en el reporte de la semana.</p>
+      </div>
+    </div>
+
+    <!-- 04 -->
+    <div class="mod-panel" id="mod-cierre">
+      <div class="grid md:grid-cols-2 gap-10">
+        <div>
+          <h3 class="text-2xl font-bold text-primary mb-5">De 2.5 horas de papel a 8 minutos</h3>
+          <div class="space-y-3 text-sm">
+            <div class="flex items-start gap-3"><span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">check_circle</span><div><strong>CFDI timbrado ante el SAT</strong> en menos de 2 segundos al confirmar el pedido en campo — sin acción adicional.</div></div>
+            <div class="flex items-start gap-3"><span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">check_circle</span><div><strong>Devoluciones con foto, motivo y lote</strong> — reingresa automáticamente al inventario del WMS del CEDIS.</div></div>
+            <div class="flex items-start gap-3"><span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">check_circle</span><div><strong>Cuadre automático</strong>: facturas − devoluciones + cobros = saldo del vendedor. Las diferencias quedan para auditoría.</div></div>
+            <div class="flex items-start gap-3"><span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">check_circle</span><div><strong>El gerente tiene el cierre completo</strong> de todas las rutas antes de que los camiones entren al CEDIS.</div></div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="bg-surface-container-lowest rounded-xl p-5 text-center border border-outline-variant/10"><div class="text-4xl font-black text-secondary">-95%</div><div class="text-xs text-on-surface-variant mt-2">Tiempo de liquidación vs. manual</div></div>
+          <div class="bg-surface-container-lowest rounded-xl p-5 text-center border border-outline-variant/10"><div class="text-4xl font-black text-secondary">$0</div><div class="text-xs text-on-surface-variant mt-2">Diferencias no explicadas en cuadre</div></div>
+          <div class="bg-surface-container-lowest rounded-xl p-5 text-center border border-outline-variant/10"><div class="text-4xl font-black text-secondary">100%</div><div class="text-xs text-on-surface-variant mt-2">Trazabilidad de devoluciones por lote</div></div>
+          <div class="bg-surface-container-lowest rounded-xl p-5 text-center border border-outline-variant/10"><div class="text-4xl font-black text-secondary">2seg</div><div class="text-xs text-on-surface-variant mt-2">Para timbre CFDI desde campo</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 05 -->
+    <div class="mod-panel" id="mod-intelig">
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/10"><span class="material-symbols-outlined text-primary text-3xl mb-3 block">leaderboard</span><h4 class="font-bold text-primary mb-2">Scoring de clientes</h4><p class="text-on-surface-variant text-sm">Score de potencial de venta y riesgo crediticio. El vendedor sabe dónde invertir más tiempo y cuáles clientes cobrar primero.</p></div>
+        <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/10 border-t-4 border-t-secondary"><span class="material-symbols-outlined text-secondary text-3xl mb-3 block">manage_search</span><h4 class="font-bold text-primary mb-2">Inteligencia de competencia</h4><p class="text-on-surface-variant text-sm">Foto de anaquel de todas las rutas → mapa de share de competencia por zona, con 8 días de anticipación vs. reportes mensuales.</p></div>
+        <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/10"><span class="material-symbols-outlined text-primary text-3xl mb-3 block">emoji_events</span><h4 class="font-bold text-primary mb-2">Gamificación efectiva</h4><p class="text-on-surface-variant text-sm">Rankings por zona (no globales), rachas con multiplicadores x1.5, logros permanentes. +12-18% más cobertura de ruta.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+</div><!-- /page-solucion -->
+
+<!-- ═══════════════════════════════════════════════════
+     PAGE 4 — IA & DATOS
+═══════════════════════════════════════════════════ -->
+<div class="page" id="page-inteligencia">
+<section class="pt-32 pb-10 px-8 bg-surface-container-low">
+  <div class="max-w-7xl mx-auto">
+    <span class="text-secondary font-bold tracking-widest uppercase text-sm mb-4 block">Motor de IA</span>
+    <h1 class="text-5xl font-black text-primary header-anchor mb-4">El pedido que se auto-mejora<br>con cada visita</h1>
+    <p class="text-on-surface-variant text-lg max-w-xl">No es un algoritmo estático. En 6-8 semanas conoce a cada cliente mejor que el vendedor más antiguo.</p>
+  </div>
+</section>
+<section class="py-12 px-8">
+  <div class="max-w-7xl mx-auto">
+    <!-- Feature row: 6 signals (Stitch feature row pattern) -->
+    <div class="grid md:grid-cols-2 gap-12 items-start mb-20">
+      <div>
+        <div class="inline-flex items-center gap-3 bg-primary/10 text-primary px-4 py-2 rounded-full font-bold text-sm mb-6">
+          <span class="material-symbols-outlined text-lg">psychology</span>Las 6 señales del motor
+        </div>
+        <h3 class="text-3xl font-bold text-primary header-anchor mb-6">Inteligencia que se construye visita a visita</h3>
+        <div class="space-y-3">
+          <div class="flex gap-4 p-4 bg-surface-container-lowest rounded-xl border border-outline-variant/10 hover:border-primary/30 transition-all">
+            <span class="material-symbols-outlined text-primary text-xl flex-shrink-0 mt-0.5">history</span>
+            <div><div class="font-bold text-sm text-on-surface">Historial de compra — últimas 8 visitas</div><div class="text-xs text-on-surface-variant mt-1">Un SKU comprado 6/8 visitas tiene 95%+ de probabilidad. Frecuencia, cantidad promedio, variación.</div></div>
+          </div>
+          <div class="flex gap-4 p-4 bg-surface-container-lowest rounded-xl border border-outline-variant/10 hover:border-primary/30 transition-all">
+            <span class="material-symbols-outlined text-secondary text-xl flex-shrink-0 mt-0.5">calendar_month</span>
+            <div><div class="font-bold text-sm text-on-surface">Día de la semana y quincena</div><div class="text-xs text-on-surface-variant mt-1">Los lunes y días de quincena generan pedidos significativamente mayores. El motor ajusta automáticamente.</div></div>
+          </div>
+          <div class="flex gap-4 p-4 bg-surface-container-lowest rounded-xl border border-outline-variant/10 hover:border-primary/30 transition-all">
+            <span class="material-symbols-outlined text-primary text-xl flex-shrink-0 mt-0.5">thermostat</span>
+            <div><div class="font-bold text-sm text-on-surface">Clima y estacionalidad</div><div class="text-xs text-on-surface-variant mt-1">+28°C incrementa demanda de bebidas frías 25-40%. Integra clima actual y calendario estacional de marketing.</div></div>
+          </div>
+          <div class="flex gap-4 p-4 bg-surface-container-lowest rounded-xl border border-outline-variant/10 hover:border-primary/30 transition-all">
+            <span class="material-symbols-outlined text-secondary text-xl flex-shrink-0 mt-0.5">sell</span>
+            <div><div class="font-bold text-sm text-on-surface">Promociones activas del día</div><div class="text-xs text-on-surface-variant mt-1">Una promo "3×2 en Gansito" sube la sugerencia y la prioriza. Configurado centralmente, propagado automáticamente.</div></div>
+          </div>
+          <div class="flex gap-4 p-4 bg-surface-container-lowest rounded-xl border border-outline-variant/10 hover:border-primary/30 transition-all">
+            <span class="material-symbols-outlined text-primary text-xl flex-shrink-0 mt-0.5">store</span>
+            <div><div class="font-bold text-sm text-on-surface">Tipo de canal del cliente</div><div class="text-xs text-on-surface-variant mt-1">Tiendita, OXXO, fonda, farmacia — cada canal tiene un modelo calibrado. No un algoritmo genérico para todos.</div></div>
+          </div>
+          <div class="flex gap-4 p-4 bg-surface-container-lowest rounded-xl border border-outline-variant/10 hover:border-primary/30 transition-all">
+            <span class="material-symbols-outlined text-error text-xl flex-shrink-0 mt-0.5">inventory</span>
+            <div><div class="font-bold text-sm text-on-surface">Inventario estimado del cliente</div><div class="text-xs text-on-surface-variant mt-1">Último pedido − (días × tasa de venta) = inventario estimado. A menos de 1 día: alerta de quiebre inminente.</div></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="inline-flex items-center gap-3 bg-secondary-container/20 text-secondary px-4 py-2 rounded-full font-bold text-sm mb-6">
+          <span class="material-symbols-outlined text-lg">sort</span>Orden por probabilidad
+        </div>
+        <h3 class="text-3xl font-bold text-primary header-anchor mb-4">El orden importa tanto como las cantidades</h3>
+        <p class="text-on-surface-variant text-sm mb-5">150-400 SKUs en el catálogo. En orden alfabético, el vendedor busca 2-3 minutos por cliente. Ordenados por probabilidad de aceptación, 35 segundos.</p>
+        <div class="bg-surface-container-lowest rounded-2xl overflow-hidden border border-outline-variant/10 shadow-sm">
+          <div class="bg-primary/8 px-5 py-3 border-b border-primary/15 text-xs font-black text-primary uppercase tracking-widest">Bloque 1 — Alta confianza (&gt;85%) — cantidades prellenadas</div>
+          <div class="p-5 space-y-2.5">
+            <div class="flex items-center gap-3"><span class="text-xs text-on-surface-variant w-28 flex-shrink-0">Gansito c/6</span><div class="flex-1 h-2 bg-surface-container rounded-full overflow-hidden"><div class="h-full bg-primary rounded-full prob-fill" style="width:97%"></div></div><span class="text-xs font-bold text-primary w-8 text-right flex-shrink-0">97%</span></div>
+            <div class="flex items-center gap-3"><span class="text-xs text-on-surface-variant w-28 flex-shrink-0">Pan Blanco Gde</span><div class="flex-1 h-2 bg-surface-container rounded-full overflow-hidden"><div class="h-full bg-primary rounded-full prob-fill" style="width:94%"></div></div><span class="text-xs font-bold text-primary w-8 text-right flex-shrink-0">94%</span></div>
+            <div class="flex items-center gap-3"><span class="text-xs text-on-surface-variant w-28 flex-shrink-0">Tortillinas</span><div class="flex-1 h-2 bg-surface-container rounded-full overflow-hidden"><div class="h-full bg-primary rounded-full prob-fill" style="width:91%"></div></div><span class="text-xs font-bold text-primary w-8 text-right flex-shrink-0">91%</span></div>
+            <div class="text-xs text-on-surface-variant">Cubre 80-85% del valor del pedido. El vendedor solo confirma cantidades.</div>
+          </div>
+          <div class="bg-secondary-container/10 px-5 py-3 border-y border-secondary-container/20 text-xs font-black text-secondary uppercase tracking-widest">Bloque 2 — Oportunidad incremental (40-85%)</div>
+          <div class="p-5 space-y-2.5">
+            <div class="flex items-center gap-3"><span class="text-xs text-on-surface-variant w-28 flex-shrink-0">Donas Bimbo 🆕</span><div class="flex-1 h-2 bg-surface-container rounded-full overflow-hidden"><div class="h-full bg-secondary-container rounded-full prob-fill" style="width:65%"></div></div><span class="text-xs font-bold text-secondary w-8 text-right flex-shrink-0">65%</span></div>
+            <div class="text-xs text-on-surface-variant">Sin cantidad prellenada. El vendedor agrega activamente. Aquí está el crecimiento del ticket.</div>
+          </div>
+          <div class="px-5 py-3 border-t border-outline-variant/20 text-xs font-bold text-on-surface-variant bg-surface-container-low">Bloque 3 — Baja rotación (&lt;40%) — colapsado, disponible al tocar</div>
+        </div>
+
+        <!-- Photo AI summary -->
+        <div class="bg-surface-container-low rounded-xl p-5 mt-5 border border-outline-variant/20">
+          <div class="flex items-center gap-2 mb-3"><span class="material-symbols-outlined text-primary text-xl">photo_camera</span><h4 class="font-bold text-sm text-primary">Foto de anaquel — 8 segundos = 7 minutos de checklist</h4></div>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div><span class="font-bold text-on-surface">Precisión en campo:</span> <span class="text-primary font-mono">91-94% mAP50</span></div>
+            <div><span class="font-bold text-on-surface">SKUs catalogados:</span> <span class="text-primary font-mono">800+ México</span></div>
+            <div><span class="font-bold text-on-surface">Tiempo de análisis:</span> <span class="text-primary font-mono">3-5 segundos</span></div>
+            <div><span class="font-bold text-on-surface">Detección competidor:</span> <span class="text-primary font-mono">8 días anticip.</span></div>
+            <div><span class="font-bold text-on-surface">OCR precios:</span> <span class="text-primary font-mono">60% de visitas</span></div>
+            <div><span class="font-bold text-on-surface">Modelo offline:</span> <span class="text-primary font-mono">ONNX en dispositivo</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</div><!-- /page-inteligencia -->
+
+<!-- ═══════════════════════════════════════════════════
+     PAGE 5 — TECNOLOGÍA
+═══════════════════════════════════════════════════ -->
+<div class="page" id="page-tecnologia">
+<section class="pt-32 pb-10 px-8 bg-surface-container-low">
+  <div class="max-w-7xl mx-auto">
+    <span class="text-secondary font-bold tracking-widest uppercase text-sm mb-4 block">Tecnología</span>
+    <h1 class="text-5xl font-black text-primary header-anchor mb-4">Funciona sin señal.<br>Se conecta al instante.</h1>
+    <p class="text-on-surface-variant text-lg max-w-xl">Offline-first real — el teléfono es la fuente de verdad primaria. El servidor es una copia.</p>
+  </div>
+</section>
+<section class="py-12 px-8">
+  <div class="max-w-7xl mx-auto">
+    <!-- Scroll tabs -->
+    <div class="flex gap-0 border-b border-outline-variant/30 mb-10 overflow-x-auto">
+      <button class="tech-tab active px-6 py-3 font-bold text-sm text-primary" onclick="switchTech('offline',this)">Modo offline</button>
+      <button class="tech-tab px-6 py-3 font-bold text-sm text-on-surface-variant hover:text-primary" onclick="switchTech('sync',this)">Sincronización</button>
+      <button class="tech-tab px-6 py-3 font-bold text-sm text-on-surface-variant hover:text-primary" onclick="switchTech('conflictos',this)">Conflictos</button>
+      <button class="tech-tab px-6 py-3 font-bold text-sm text-on-surface-variant hover:text-primary" onclick="switchTech('cedis',this)">CEDIS & WMS</button>
+      <button class="tech-tab px-6 py-3 font-bold text-sm text-on-surface-variant hover:text-primary" onclick="switchTech('arquitectura',this)">Arquitectura</button>
+    </div>
+
+    <!-- Offline -->
+    <div class="tech-panel active" id="tech-offline">
+      <div class="grid md:grid-cols-2 gap-12 items-start">
+        <div>
+          <h2 class="text-2xl font-bold text-primary mb-4">Las rutas en México atraviesan zonas sin señal — siempre</h2>
+          <p class="text-on-surface-variant text-sm mb-6 leading-relaxed">En una ruta de 30 clientes, estadísticamente entre 4 y 9 se visitan en zona de mala señal. Sótanos de mercados, colonias periféricas, zonas industriales con interferencia, saturación de red en horario pico.</p>
+          <h3 class="text-lg font-bold text-primary mb-4">Simulador — ve cómo reacciona la app en cada condición de red</h3>
+          <div class="space-y-3 mb-4">
+            <div onclick="setNet('4g',this)" data-net="4g" class="net-btn flex items-center gap-3 p-4 bg-surface-container-lowest rounded-xl border border-outline-variant/20 cursor-pointer hover:border-primary/40 transition-all shadow-sm">
+              <div style="width:10px;height:10px;border-radius:50%;background:#16a34a;flex-shrink:0"></div>
+              <div class="flex-1"><div class="text-sm font-bold">4G — Conexión buena</div><div class="text-xs text-on-surface-variant">Pedidos se sincronizan al instante · latencia 124ms</div></div>
+              <span class="text-xs font-bold text-green-700 bg-green-50 px-2 py-1 rounded-lg">ACTIVO</span>
+            </div>
+            <div onclick="setNet('2g',this)" data-net="2g" class="net-btn flex items-center gap-3 p-4 bg-surface-container-lowest rounded-xl border border-outline-variant/20 cursor-pointer hover:border-primary/40 transition-all shadow-sm">
+              <div style="width:10px;height:10px;border-radius:50%;background:#d97706;flex-shrink:0"></div>
+              <div class="flex-1"><div class="text-sm font-bold">2G — Señal débil</div><div class="text-xs text-on-surface-variant">Sync en background · app no se bloquea · fotos comprimidas auto</div></div>
+              <span class="text-xs font-bold text-amber-700 bg-amber-50 px-2 py-1 rounded-lg">LENTO</span>
+            </div>
+            <div onclick="setNet('offline',this)" data-net="offline" class="net-btn flex items-center gap-3 p-4 bg-surface-container-lowest rounded-xl border border-outline-variant/20 cursor-pointer hover:border-primary/40 transition-all shadow-sm">
+              <div style="width:10px;height:10px;border-radius:50%;background:#dc2626;flex-shrink:0"></div>
+              <div class="flex-1"><div class="text-sm font-bold">Sin señal — Modo offline total</div><div class="text-xs text-on-surface-variant">SQLite local · 0 pedidos perdidos · sync automático al reconectar</div></div>
+              <span class="text-xs font-bold text-red-700 bg-red-50 px-2 py-1 rounded-lg">OFFLINE</span>
+            </div>
+          </div>
+          <div id="netResult" class="p-5 bg-surface-container-lowest rounded-xl border border-outline-variant/20 text-sm text-on-surface-variant leading-relaxed min-h-16 shadow-sm">
+            Selecciona una condición de red para ver cómo responde la app del vendedor.
+          </div>
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold text-primary mb-4">Las 3 capas de la arquitectura offline-first</h2>
+          <div class="space-y-3">
+            <div class="bg-primary/5 border border-primary/20 rounded-xl p-5">
+              <div class="flex items-center justify-between mb-2"><h4 class="font-bold text-sm text-on-surface">Capa 1 — Base de datos local (SQLite)</h4><span class="text-xs font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded-full">Siempre disponible</span></div>
+              <p class="text-xs text-on-surface-variant leading-relaxed">Vive en el teléfono. Contiene: padrón de clientes, catálogo de productos, precios, historial de pedidos, pedidos pendientes. Se actualiza en la mañana (405 KB / 3 segundos). El vendedor nunca espera a "que cargue".</p>
+            </div>
+            <div class="text-center text-on-surface-variant text-lg py-1">⇅</div>
+            <div class="bg-secondary-container/10 border border-secondary-container/30 rounded-xl p-5">
+              <div class="flex items-center justify-between mb-2"><h4 class="font-bold text-sm text-on-surface">Capa 2 — Motor de sincronización</h4><span class="text-xs font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">Background</span></div>
+              <p class="text-xs text-on-surface-variant leading-relaxed">Monitorea la conexión constantemente. Cuando hay señal, sube la cola en orden cronológico. Cuando no hay señal, guarda todo localmente sin bloquear la app. El vendedor nunca ve una pantalla de "cargando".</p>
+            </div>
+            <div class="text-center text-on-surface-variant text-lg py-1">⇅</div>
+            <div class="bg-surface-container-lowest border border-outline-variant/20 rounded-xl p-5">
+              <div class="flex items-center justify-between mb-2"><h4 class="font-bold text-sm text-on-surface">Capa 3 — Servidor central (ERP + WMS)</h4><span class="text-xs font-bold text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full">Cuando hay red</span></div>
+              <p class="text-xs text-on-surface-variant leading-relaxed">ERP, inventarios, CRM, facturación. Recibe los pedidos cuando llegan. El pedido ya está confirmado localmente desde que el vendedor tocó "Confirmar".</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sync -->
+    <div class="tech-panel" id="tech-sync">
+      <div class="grid md:grid-cols-2 gap-12 items-start">
+        <div>
+          <h2 class="text-2xl font-bold text-primary mb-4">La precarga matutina — el secreto operativo</h2>
+          <p class="text-on-surface-variant text-sm mb-5">Todo lo que el vendedor va a necesitar durante el día se descarga en un solo bloque al iniciar la jornada — mientras carga el camión, siempre hay WiFi en el almacén.</p>
+          <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/10 shadow-sm overflow-hidden mb-5">
+            <div class="bg-surface-container-low px-5 py-3 text-xs font-bold text-on-surface-variant uppercase tracking-widest border-b border-outline-variant/20">Datos de la precarga matutina</div>
+            <div class="divide-y divide-outline-variant/10 text-sm">
+              <div class="flex justify-between p-4"><span class="text-on-surface-variant">Padrón de clientes del día</span><span class="font-bold text-primary font-mono text-xs">~50 KB</span></div>
+              <div class="flex justify-between p-4"><span class="text-on-surface-variant">Catálogo de productos + precios</span><span class="font-bold text-primary font-mono text-xs">~200 KB</span></div>
+              <div class="flex justify-between p-4"><span class="text-on-surface-variant">Historial últimas 8 visitas</span><span class="font-bold text-primary font-mono text-xs">~80 KB</span></div>
+              <div class="flex justify-between p-4"><span class="text-on-surface-variant">Pedidos sugeridos precalculados</span><span class="font-bold text-primary font-mono text-xs">~40 KB</span></div>
+              <div class="flex justify-between p-4"><span class="text-on-surface-variant">Saldos de cobranza</span><span class="font-bold text-primary font-mono text-xs">~15 KB</span></div>
+              <div class="flex justify-between p-4 bg-surface-container-low"><span class="font-bold text-on-surface">TOTAL</span><span class="font-bold text-primary font-mono text-xs">~405 KB · 3 segundos en 3G</span></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold text-primary mb-4">Cola de sincronización — lo que ocurre en background</h2>
+          <div class="space-y-2 mb-4" id="syncQueue">
+            <div class="flex items-center gap-3 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10 shadow-sm">
+              <div style="width:8px;height:8px;border-radius:50%;background:#004161;flex-shrink:0"></div>
+              <div class="flex-1 text-xs"><strong>Pedido · Abarrotes Don Roberto</strong><div class="text-on-surface-variant">$1,480 · hace 4 min</div></div>
+              <span class="text-xs font-bold text-primary">Sincronizado ✓</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10 shadow-sm">
+              <div style="width:8px;height:8px;border-radius:50%;background:#7d5700;flex-shrink:0"></div>
+              <div class="flex-1 text-xs"><strong>Cobro · Farmacia San José</strong><div class="text-on-surface-variant">$320 efectivo · subiendo...</div></div>
+              <span class="text-xs font-bold text-secondary">Subiendo...</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10 shadow-sm">
+              <div style="width:8px;height:8px;border-radius:50%;background:#ba1a1a;flex-shrink:0"></div>
+              <div class="flex-1 text-xs"><strong>Foto anaquel · Fonda Doña Lupita</strong><div class="text-on-surface-variant">3 fotos · en cola</div></div>
+              <span class="text-xs font-bold text-error">En cola</span>
+            </div>
+          </div>
+          <button onclick="simulateSync()" class="w-full bg-secondary-container text-on-secondary-fixed py-3 rounded-xl font-bold text-sm hover:opacity-90 transition-all">Simular sincronización automática</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Conflictos -->
+    <div class="tech-panel" id="tech-conflictos">
+      <h2 class="text-2xl font-bold text-primary mb-3">Los 4 conflictos que nadie anticipa — y cómo los resolvemos</h2>
+      <p class="text-on-surface-variant text-sm mb-8 max-w-2xl"><strong class="text-primary">Regla de oro en consumo masivo:</strong> nunca rechazar automáticamente, siempre alertar a un humano.</p>
+      <div class="grid md:grid-cols-2 gap-5">
+        <div class="bg-secondary-container/10 border border-secondary-container/30 rounded-xl p-6"><h4 class="font-bold text-primary mb-2 text-sm">⚠️ Precio cambia mientras el vendedor está offline</h4><p class="text-on-surface-variant text-sm">El precio al momento del pedido es el que aplica. Se compara timestamp del pedido vs. timestamp del cambio. Si el pedido fue antes → precio anterior válido.</p></div>
+        <div class="bg-secondary-container/10 border border-secondary-container/30 rounded-xl p-6"><h4 class="font-bold text-primary mb-2 text-sm">⚠️ Producto se agota en bodega mientras se captura offline</h4><p class="text-on-surface-variant text-sm">El pedido se acepta localmente. Al sincronizar, se verifica inventario y se genera alerta al supervisor — pero NO cancela automáticamente. Un humano decide.</p></div>
+        <div class="bg-error/6 border border-error/20 rounded-xl p-6"><h4 class="font-bold text-primary mb-2 text-sm">🔴 Mismo cliente visitado por dos vendedores offline</h4><p class="text-on-surface-variant text-sm">Se aceptan ambos pedidos. Al sincronizar, el sistema detecta duplicado y alerta al supervisor. En consumo masivo es mejor surtir de más que perder la venta.</p></div>
+        <div class="bg-surface-container-lowest border border-outline-variant/20 rounded-xl p-6 shadow-sm"><h4 class="font-bold text-primary mb-2 text-sm">Modificación de pedido ya sincronizado</h4><p class="text-on-surface-variant text-sm">Si el pedido no fue procesado en bodega → se actualiza. Si ya fue procesado → nota de crédito/débito automática. Trazabilidad completa en ambos casos.</p></div>
+      </div>
+    </div>
+
+    <!-- CEDIS -->
+    <div class="tech-panel" id="tech-cedis">
+      <div class="grid md:grid-cols-2 gap-12">
+        <div>
+          <h2 class="text-2xl font-bold text-primary mb-4">El WMS del CEDIS — conectado en tiempo real</h2>
+          <p class="text-on-surface-variant text-sm mb-5 leading-relaxed">Cuando un vendedor confirma un pedido en campo, ese pedido llega al CEDIS en menos de 2 segundos. El picking comienza esa misma noche. La camioneta sale al amanecer con exactamente lo que se necesita.</p>
+          <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/10 shadow-sm overflow-hidden">
+            <div class="divide-y divide-outline-variant/10 text-sm">
+              <div class="flex justify-between p-4"><span class="text-on-surface-variant">Pedido confirmado → CEDIS</span><span class="font-bold text-primary">&lt;2 segundos</span></div>
+              <div class="flex justify-between p-4"><span class="text-on-surface-variant">Fill Rate con sistema</span><span class="font-bold text-primary">&gt;98%</span></div>
+              <div class="flex justify-between p-4"><span class="text-on-surface-variant">OTIF (On Time In Full)</span><span class="font-bold text-primary">&gt;95%</span></div>
+              <div class="flex justify-between p-4"><span class="text-on-surface-variant">Reducción de merma FEFO</span><span class="font-bold text-primary">-95%</span></div>
+              <div class="flex justify-between p-4"><span class="text-on-surface-variant">Tiempo de liquidación diaria</span><span class="font-bold text-primary">8 min vs 2.5h manual</span></div>
+              <div class="flex justify-between p-4"><span class="text-on-surface-variant">Días de stock óptimo</span><span class="font-bold text-primary">3-5 días</span></div>
+            </div>
+          </div>
+          <div class="bg-primary/5 border border-primary/20 rounded-xl p-5 mt-4">
+            <h4 class="font-bold text-sm text-primary mb-2">El orden de carga que nadie calcula — y que cuesta 5 horas</h4>
+            <p class="text-xs text-on-surface-variant leading-relaxed">El WMS genera una secuencia de picking que es el inverso exacto de la secuencia de entrega. Sin esta lógica: el vendedor pasa 8-15 minutos por cliente moviendo cajas. 30 clientes × 10 min = <strong class="text-on-surface">5 horas perdidas al día.</strong></p>
+          </div>
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold text-primary mb-4">Ventana de madrugada — el ciclo completo</h2>
+          <div class="space-y-3 text-sm">
+            <div class="flex items-start gap-3 p-3 bg-surface-container-lowest rounded-xl border border-outline-variant/10 shadow-sm"><div style="width:8px;height:8px;border-radius:50%;background:#dc2626;margin-top:4px;flex-shrink:0"></div><div><strong>10:00 PM</strong> — Cierre de pedidos · Los vendedores suben sus últimos pedidos del día.</div></div>
+            <div class="flex items-start gap-3 p-3 bg-surface-container-lowest rounded-xl border border-outline-variant/10 shadow-sm"><div style="width:8px;height:8px;border-radius:50%;background:#d97706;margin-top:4px;flex-shrink:0"></div><div><strong>11:00 PM</strong> — WMS genera órdenes de picking por ruta, en orden inverso a la entrega.</div></div>
+            <div class="flex items-start gap-3 p-3 bg-surface-container-lowest rounded-xl border border-outline-variant/10 shadow-sm"><div style="width:8px;height:8px;border-radius:50%;background:#d97706;margin-top:4px;flex-shrink:0"></div><div><strong>2:00 AM</strong> — Verificación FEFO · asignación de lotes por fecha de caducidad y volumen.</div></div>
+            <div class="flex items-start gap-3 p-3 bg-surface-container-lowest rounded-xl border border-outline-variant/10 shadow-sm"><div style="width:8px;height:8px;border-radius:50%;background:#d97706;margin-top:4px;flex-shrink:0"></div><div><strong>3:30 AM</strong> — Inicio de carga en camionetas · orden inverso a secuencia de entrega.</div></div>
+            <div class="flex items-start gap-3 p-3 bg-surface-container-lowest rounded-xl border border-outline-variant/10 shadow-sm"><div style="width:8px;height:8px;border-radius:50%;background:#004161;margin-top:4px;flex-shrink:0"></div><div><strong>5:30 AM</strong> — Camionetas listas · verificación de temperatura y sellos de seguridad.</div></div>
+            <div class="flex items-start gap-3 p-3 bg-surface-container-lowest rounded-xl border border-outline-variant/10 shadow-sm"><div style="width:8px;height:8px;border-radius:50%;background:#004161;margin-top:4px;flex-shrink:0"></div><div><strong>6:00 AM</strong> — Apertura de ruta · argumento del primer cliente ya generado en la app.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arquitectura -->
+    <div class="tech-panel" id="tech-arquitectura">
+      <h2 class="text-2xl font-bold text-primary mb-3">Arquitectura de integración</h2>
+      <p class="text-on-surface-variant text-sm mb-8 max-w-2xl">5 capas integradas que fluyen como un solo sistema. Cada capa puede integrarse con los sistemas existentes de tu empresa.</p>
+      <div class="flex items-center gap-0 overflow-x-auto pb-4 mb-10">
+        <div class="flex-shrink-0 text-center bg-primary/8 border border-primary/20 rounded-xl p-4 min-w-[100px]"><div class="text-xl mb-2">📱</div><div class="text-xs font-bold text-primary">App campo</div><div class="text-xs text-on-surface-variant">Android</div></div>
+        <div class="flex-shrink-0 px-1 flex flex-col items-center gap-0.5"><div class="text-xs text-on-surface-variant mb-0.5" style="font-size:9px">pedidos</div><div class="arch-line live"></div><div class="text-on-surface-variant text-xs">▶</div></div>
+        <div class="flex-shrink-0 text-center bg-surface-container-low border border-outline-variant/20 rounded-xl p-4 min-w-[100px]"><div class="text-xl mb-2">🔌</div><div class="text-xs font-bold">API Middleware</div><div class="text-xs text-on-surface-variant">WebSocket</div></div>
+        <div class="flex-shrink-0 px-1 flex flex-col items-center gap-0.5"><div class="text-xs text-on-surface-variant mb-0.5" style="font-size:9px">sync</div><div class="arch-line live"></div><div class="text-on-surface-variant text-xs">▶</div></div>
+        <div class="flex-shrink-0 text-center bg-primary/8 border border-primary/20 rounded-xl p-4 min-w-[100px]"><div class="text-xl mb-2">🏭</div><div class="text-xs font-bold text-primary">CEDIS WMS</div><div class="text-xs text-on-surface-variant">FEFO</div></div>
+        <div class="flex-shrink-0 px-1 flex flex-col items-center gap-0.5"><div class="text-xs text-on-surface-variant mb-0.5" style="font-size:9px">datos</div><div class="arch-line"></div><div class="text-on-surface-variant text-xs">▶</div></div>
+        <div class="flex-shrink-0 text-center bg-surface-container-low border border-outline-variant/20 rounded-xl p-4 min-w-[100px]"><div class="text-xl mb-2">💾</div><div class="text-xs font-bold">ERP / SAP</div><div class="text-xs text-on-surface-variant">CxC · Inv.</div></div>
+        <div class="flex-shrink-0 px-1 flex flex-col items-center gap-0.5"><div class="text-xs text-on-surface-variant mb-0.5" style="font-size:9px">CFDI</div><div class="arch-line"></div><div class="text-on-surface-variant text-xs">▶</div></div>
+        <div class="flex-shrink-0 text-center bg-surface-container-low border border-outline-variant/20 rounded-xl p-4 min-w-[100px]"><div class="text-xl mb-2">🧾</div><div class="text-xs font-bold">SAT / PAC</div><div class="text-xs text-on-surface-variant">CFDI 4.0</div></div>
+      </div>
+      <div class="grid md:grid-cols-3 gap-5">
+        <div class="bg-surface-container-lowest p-5 rounded-xl border border-outline-variant/10 shadow-sm"><h4 class="font-bold text-sm text-primary mb-2">Integración ERP</h4><p class="text-on-surface-variant text-xs">Compatible con SAP, Oracle, Microsoft Dynamics, y ERPs locales vía API REST o archivos de intercambio.</p></div>
+        <div class="bg-surface-container-lowest p-5 rounded-xl border border-outline-variant/10 shadow-sm"><h4 class="font-bold text-sm text-primary mb-2">CFDI 4.0 SAT</h4><p class="text-on-surface-variant text-xs">Integración con PAC autorizado. Timbrado en menos de 2 segundos desde campo. XML y PDF al cliente automáticamente.</p></div>
+        <div class="bg-surface-container-lowest p-5 rounded-xl border border-outline-variant/10 shadow-sm"><h4 class="font-bold text-sm text-primary mb-2">Seguridad</h4><p class="text-on-surface-variant text-xs">JWT + OAuth 2.0, TLS 1.3, datos cifrados en reposo. Cumplimiento LFPDPPP México.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+</div><!-- /page-tecnologia -->
+
+<!-- ═══════════════════════════════════════════════════
+     PAGE 6 — ROI CALCULATOR
+═══════════════════════════════════════════════════ -->
+<div class="page" id="page-roi">
+<section class="pt-32 pb-10 px-8 bg-surface-container-low text-center">
+  <div class="max-w-3xl mx-auto">
+    <span class="text-secondary font-bold tracking-widest uppercase text-sm mb-4 block">Calculadora ROI</span>
+    <h1 class="text-5xl font-black text-primary header-anchor mb-4">¿Cuánto vale para ti una operación de precisión?</h1>
+    <p class="text-on-surface-variant text-lg">Ajusta los datos de tu empresa. Ve el retorno real. Sin estimaciones genéricas.</p>
+  </div>
+</section>
+<section class="py-12 px-8">
+  <div class="max-w-5xl mx-auto bg-surface-container-lowest rounded-3xl shadow-xl overflow-hidden grid md:grid-cols-5 border border-outline-variant/10">
+    <div class="md:col-span-3 p-12 space-y-7">
+      <h3 class="text-3xl font-bold text-primary">Parámetros de tu operación</h3>
+      <div>
+        <div class="flex justify-between mb-2"><label class="font-bold text-on-surface-variant text-sm">Número de vendedores</label><span class="text-primary font-bold" id="rv1">80</span></div>
+        <input class="w-full h-2 bg-surface-container rounded-lg appearance-none cursor-pointer accent-primary" max="500" min="5" value="80" type="range" id="rs1" oninput="calcROI()">
+      </div>
+      <div>
+        <div class="flex justify-between mb-2"><label class="font-bold text-on-surface-variant text-sm">Clientes / vendedor / día</label><span class="text-primary font-bold" id="rv2">30</span></div>
+        <input class="w-full h-2 bg-surface-container rounded-lg appearance-none cursor-pointer accent-primary" max="50" min="15" value="30" type="range" id="rs2" oninput="calcROI()">
+      </div>
+      <div>
+        <label class="font-bold text-on-surface-variant text-sm block mb-2">Ticket promedio (MXN)</label>
+        <input type="number" class="w-full bg-surface-container-low border-none rounded-xl p-4 focus:ring-2 focus:ring-primary text-sm font-bold" value="2200" id="rt" oninput="calcROI()">
+      </div>
+      <div>
+        <div class="flex justify-between mb-2"><label class="font-bold text-on-surface-variant text-sm">% incremento ticket esperado</label><span class="text-primary font-bold" id="rv3">23%</span></div>
+        <input class="w-full h-2 bg-surface-container rounded-lg appearance-none cursor-pointer accent-primary" max="35" min="10" value="23" type="range" id="rs3" oninput="calcROI()">
+      </div>
+      <div>
+        <label class="font-bold text-on-surface-variant text-sm block mb-2">Merma mensual actual (MXN)</label>
+        <input type="number" class="w-full bg-surface-container-low border-none rounded-xl p-4 focus:ring-2 focus:ring-primary text-sm font-bold" value="85000" id="rm" oninput="calcROI()">
+      </div>
+      <div>
+        <div class="flex justify-between mb-2"><label class="font-bold text-on-surface-variant text-sm">Días laborales por año</label><span class="text-primary font-bold" id="rv4">250</span></div>
+        <input class="w-full h-2 bg-surface-container rounded-lg appearance-none cursor-pointer accent-primary" max="310" min="200" value="250" type="range" id="rs4" oninput="calcROI()">
+      </div>
+    </div>
+    <div class="md:col-span-2 bg-secondary-container p-12 flex flex-col justify-center items-center text-center">
+      <span class="text-on-secondary-fixed text-xs uppercase font-bold tracking-widest mb-2">Beneficio incremental anual</span>
+      <div class="text-5xl font-black text-on-secondary-fixed mb-2" id="roiTotal">$0</div>
+      <p class="text-on-secondary-fixed/80 text-xs mb-6">MXN adicionales con Mr. Ruta</p>
+      <div class="w-full space-y-3 text-left mb-6">
+        <div class="bg-white/20 rounded-xl p-4"><div class="text-xs text-on-secondary-fixed/70 mb-1">Por ventas incrementales</div><div class="text-xl font-black text-on-secondary-fixed" id="roiV">$0</div></div>
+        <div class="bg-white/20 rounded-xl p-4"><div class="text-xs text-on-secondary-fixed/70 mb-1">Por reducción de merma (95%)</div><div class="text-xl font-black text-on-secondary-fixed" id="roiM">$0</div></div>
+        <div class="bg-white/20 rounded-xl p-4"><div class="text-xs text-on-secondary-fixed/70 mb-1">Payback estimado</div><div class="text-xl font-black text-on-secondary-fixed" id="roiP">0 meses</div></div>
+      </div>
+      <button onclick="navTo('demo')" class="bg-primary text-white px-8 py-3 rounded-xl font-bold hover:scale-105 transition-transform w-full text-sm">
+        Quiero este ROI — agendar demo →
+      </button>
+    </div>
+  </div>
+  <div class="max-w-5xl mx-auto mt-6 grid md:grid-cols-3 gap-5">
+    <div class="bg-surface-container-lowest p-5 rounded-xl border border-outline-variant/10 text-center shadow-sm"><div class="font-black text-2xl text-primary mb-1">8-14</div><div class="text-xs text-on-surface-variant">meses promedio de payback</div></div>
+    <div class="bg-surface-container-lowest p-5 rounded-xl border border-outline-variant/10 text-center shadow-sm"><div class="font-black text-2xl text-primary mb-1">90 días</div><div class="text-xs text-on-surface-variant">Para ver resultados medibles</div></div>
+    <div class="bg-surface-container-lowest p-5 rounded-xl border border-outline-variant/10 text-center shadow-sm"><div class="font-black text-2xl text-primary mb-1">Creciente</div><div class="text-xs text-on-surface-variant">ROI que mejora con cada mes de datos</div></div>
+  </div>
+</section>
+</div><!-- /page-roi -->
+
+<!-- ═══════════════════════════════════════════════════
+     PAGE 7 — DEMO / CONTACTO (Stitch Contact Section)
+═══════════════════════════════════════════════════ -->
+<div class="page" id="page-demo">
+<section class="pt-32 py-24 px-8 bg-surface-container-low">
+  <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+    <div class="space-y-8">
+      <h2 class="text-5xl font-black text-primary header-anchor">30 minutos para ver tu operación transformada en pantalla</h2>
+      <p class="text-xl text-on-surface-variant leading-relaxed">Nuestros especialistas en DSD te muestran la app funcionando con datos reales de tu industria. Sin demos genéricos.</p>
+      <div class="flex flex-wrap gap-3">
+        <span class="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-outline-variant/20 text-sm shadow-sm">🎯 Demo con datos de tu industria</span>
+        <span class="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-outline-variant/20 text-sm shadow-sm">📱 App en tu celular</span>
+        <span class="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-outline-variant/20 text-sm shadow-sm">💰 ROI calculado para tu empresa</span>
+        <span class="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-outline-variant/20 text-sm shadow-sm">🔌 Conectividad CEDIS en vivo</span>
+      </div>
+      <div class="flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm">
+        <div class="w-12 h-12 bg-secondary-container rounded-full flex items-center justify-center flex-shrink-0">
+          <span class="material-symbols-outlined text-on-secondary-fixed">support_agent</span>
+        </div>
+        <div>
+          <div class="font-bold text-primary">Respuesta en menos de 2 horas</div>
+          <div class="text-sm text-on-surface-variant">Un ejecutivo que conoce la distribución en México — no un bot.</div>
+        </div>
+      </div>
+      <div class="space-y-3 text-sm">
+        <div class="flex items-start gap-3"><span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">check_circle</span><span>La app en tu celular — capturas un pedido con argumento contextual activado</span></div>
+        <div class="flex items-start gap-3"><span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">check_circle</span><span>El CEDIS recibe el pedido en tiempo real — menos de 2 segundos</span></div>
+        <div class="flex items-start gap-3"><span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">check_circle</span><span>Apagamos el WiFi — la app sigue y los pedidos se sincronizan solos</span></div>
+        <div class="flex items-start gap-3"><span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">check_circle</span><span>El ROI calculado exactamente con los datos de tu operación</span></div>
+        <div class="flex items-start gap-3"><span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">check_circle</span><span>Plan de implementación — fases, tiempos, integraciones con tus sistemas</span></div>
+      </div>
+    </div>
+    <!-- Form (Stitch exact) -->
+    <div class="bg-surface-container-lowest p-10 rounded-3xl shadow-2xl border border-outline-variant/10">
+      <h3 class="text-2xl font-bold text-primary mb-2">Agenda tu demo</h3>
+      <p class="text-on-surface-variant text-sm mb-8">Respuesta en menos de 2 horas en días hábiles.</p>
+      <form class="space-y-5" onsubmit="submitForm(event)">
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-on-surface-variant ml-1 uppercase tracking-wide">Nombre</label>
+            <input class="w-full bg-surface-container-low border-none rounded-xl p-4 focus:ring-2 focus:ring-primary text-sm" placeholder="Tu nombre" type="text">
+          </div>
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-on-surface-variant ml-1 uppercase tracking-wide">Empresa</label>
+            <input class="w-full bg-surface-container-low border-none rounded-xl p-4 focus:ring-2 focus:ring-primary text-sm" placeholder="Tu empresa" type="text">
+          </div>
+        </div>
+        <div class="space-y-2">
+          <label class="text-xs font-bold text-on-surface-variant ml-1 uppercase tracking-wide">Cargo</label>
+          <select class="w-full bg-surface-container-low border-none rounded-xl p-4 focus:ring-2 focus:ring-primary text-sm">
+            <option>Director General / CEO</option>
+            <option>Director Comercial</option>
+            <option selected>Gerente de Distribución</option>
+            <option>Gerente de Operaciones</option>
+            <option>Gerente de Tecnología / IT</option>
+            <option>Otro</option>
+          </select>
+        </div>
+        <div class="space-y-2">
+          <label class="text-xs font-bold text-on-surface-variant ml-1 uppercase tracking-wide">Correo Corporativo</label>
+          <input class="w-full bg-surface-container-low border-none rounded-xl p-4 focus:ring-2 focus:ring-primary text-sm" placeholder="nombre@empresa.com" type="email">
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-on-surface-variant ml-1 uppercase tracking-wide">Vendedores</label>
+            <select class="w-full bg-surface-container-low border-none rounded-xl p-4 focus:ring-2 focus:ring-primary text-sm">
+              <option>1-20</option><option>21-50</option><option>51-150</option><option selected>151-500</option><option>+500</option>
+            </select>
+          </div>
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-on-surface-variant ml-1 uppercase tracking-wide">WhatsApp</label>
+            <input class="w-full bg-surface-container-low border-none rounded-xl p-4 focus:ring-2 focus:ring-primary text-sm" placeholder="+52 81 1234 5678" type="tel">
+          </div>
+        </div>
+        <div class="space-y-2">
+          <label class="text-xs font-bold text-on-surface-variant ml-1 uppercase tracking-wide">¿Tu mayor dolor operacional?</label>
+          <textarea class="w-full bg-surface-container-low border-none rounded-xl p-4 focus:ring-2 focus:ring-primary h-28 text-sm" placeholder="Cuéntanos el problema principal..."></textarea>
+        </div>
+        <button type="submit" class="w-full bg-secondary-container text-on-secondary-fixed py-4 rounded-xl font-black text-base shadow-lg hover:shadow-xl hover:opacity-95 transition-all" id="submitBtn">
+          Solicitar mi demo personalizado →
+        </button>
+        <p class="text-xs text-on-surface-variant text-center">No spam. Solo un ejecutivo que conoce tu industria.</p>
+      </form>
+    </div>
+  </div>
+</section>
+</div><!-- /page-demo -->
+
+<!-- ═══════════════════════════════════════════════════
+     FOOTER (Stitch exact)
+═══════════════════════════════════════════════════ -->
+<footer class="bg-slate-50 border-t border-slate-200">
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-8 px-8 py-12 max-w-7xl mx-auto">
+    <div class="col-span-2 md:col-span-1 space-y-6">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary text-2xl" style="font-variation-settings:'FILL' 1;">route</span>
+        <span class="text-xl font-bold text-sky-900">Mr. Ruta</span>
+      </div>
+      <p class="text-slate-500 text-sm leading-relaxed">Plataforma de ventas en campo DSD para empresas de consumo masivo en México. Hecho en México 🇲🇽</p>
+      <div class="flex gap-2 flex-wrap">
+        <span class="text-xs font-bold bg-primary/10 text-primary px-3 py-1 rounded-full">CFDI 4.0 SAT ✓</span>
+        <span class="text-xs font-bold bg-slate-100 text-slate-500 px-3 py-1 rounded-full">México 🇲🇽</span>
+      </div>
+    </div>
+    <div>
+      <h4 class="font-bold text-sky-900 mb-6 text-sm">Producto</h4>
+      <ul class="space-y-4 text-sm text-slate-500">
+        <li><a class="hover:underline decoration-amber-500 transition-colors cursor-pointer" onclick="navTo('solucion')">Módulos</a></li>
+        <li><a class="hover:underline decoration-amber-500 transition-colors cursor-pointer" onclick="navTo('inteligencia')">Motor de IA</a></li>
+        <li><a class="hover:underline decoration-amber-500 transition-colors cursor-pointer" onclick="navTo('tecnologia')">Tecnología offline</a></li>
+        <li><a class="hover:underline decoration-amber-500 transition-colors cursor-pointer" onclick="navTo('roi')">Calculadora ROI</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="font-bold text-sky-900 mb-6 text-sm">Empresa</h4>
+      <ul class="space-y-4 text-sm text-slate-500">
+        <li><a class="hover:underline decoration-amber-500 transition-colors cursor-pointer" onclick="navTo('problema')">El Problema</a></li>
+        <li><a class="hover:underline decoration-amber-500 transition-colors" href="#">Casos de éxito</a></li>
+        <li><a class="hover:underline decoration-amber-500 transition-colors" href="#">Blog técnico</a></li>
+        <li><a class="hover:underline decoration-amber-500 transition-colors cursor-pointer" onclick="navTo('demo')">Contacto</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="font-bold text-sky-900 mb-6 text-sm">Empieza ya</h4>
+      <p class="text-slate-500 text-sm mb-5">Demo de 30 min. Sin compromiso. Sin demos genéricos.</p>
+      <button onclick="navTo('demo')" class="bg-secondary-container text-on-secondary-fixed px-6 py-2 rounded-lg font-bold shadow-sm hover:opacity-90 active:scale-95 duration-150 text-sm">Agendar demo →</button>
+      <a href="/formulario" class="inline-block mt-4 text-sm text-slate-600 hover:text-sky-900 font-medium transition-colors">Operativo</a>
+    </div>
+  </div>
+  <div class="max-w-7xl mx-auto px-8 py-5 border-t border-slate-200 flex items-center justify-between flex-wrap gap-3 text-xs text-slate-400">
+    <span>© 2025 Mr. Ruta. Todos los derechos reservados.</span>
+    <span>Hecho en México 🇲🇽 · Para empresas de distribución y consumo masivo</span>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════════════
+     JAVASCRIPT — FULL INTERACTIVITY
+═══════════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+// ── PAGE ROUTER ───────────────────────────────────────────────
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const pg = document.getElementById(`page-${name}`);
+  if (pg) { pg.classList.add('active'); window.scrollTo(0,0); }
+}
+
+function navTo(name, btn) {
+  showPage(name);
+  // update nav styles
+  document.querySelectorAll('.nav-btn').forEach(b => {
+    b.style.color = '';
+    b.style.borderBottom = '';
+  });
+  const nb = document.getElementById(`nav-${name}`);
+  if (nb) { nb.style.color = '#004161'; nb.style.borderBottom = '2px solid #feb71d'; }
+  if (name === 'roi') calcROI();
+  if (name === 'problema') calcPain();
+}
+
+// ── MODULE TABS ───────────────────────────────────────────────
+function switchMod(name, btn) {
+  document.querySelectorAll('.mod-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.mod-tab').forEach(t => {
+    t.classList.remove('active');
+    t.style.color = '';
+  });
+  const el = document.getElementById(`mod-${name}`);
+  if (el) el.classList.add('active');
+  if (btn) { btn.classList.add('active'); btn.style.color = '#004161'; }
+}
+
+// ── TECH TABS ─────────────────────────────────────────────────
+function switchTech(name, btn) {
+  document.querySelectorAll('.tech-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tech-tab').forEach(t => {
+    t.classList.remove('active');
+    t.style.color = '';
+  });
+  const el = document.getElementById(`tech-${name}`);
+  if (el) el.classList.add('active');
+  if (btn) { btn.classList.add('active'); btn.style.color = '#004161'; }
+}
+
+// ── TIMER DEMO ────────────────────────────────────────────────
+let timerInterval = null, timerSecs = 0;
+
+function startTimer() {
+  if (timerInterval) return;
+  document.getElementById('timerBtn').textContent = '⏸ Corriendo...';
+  timerInterval = setInterval(() => { timerSecs++; updateTimer(); }, 200); // fast demo
+}
+
+function resetTimer() {
+  clearInterval(timerInterval); timerInterval = null; timerSecs = 0;
+  updateTimer();
+  document.getElementById('timerBtn').textContent = '▶ Iniciar simulación';
+}
+
+function updateTimer() {
+  const m = Math.floor(timerSecs/60);
+  const s = String(timerSecs%60).padStart(2,'0');
+  const el = document.getElementById('timerVal');
+  const st = document.getElementById('timerSt');
+  const ns = ['tn0','tn1','tn2','tn3'].map(id => document.getElementById(id));
+  if (!el) return;
+  el.textContent = `${m}:${s}`;
+  ns.forEach(n => { if(n) n.style.background = ''; });
+  if (timerSecs >= 90) {
+    el.style.color = '#dc2626';
+    if(st) st.textContent = '🔴 Visita extendida — ¿hay algo que registrar?';
+    if(ns[3]) ns[3].style.background = '#fee2e2';
+    clearInterval(timerInterval); timerInterval = null;
+    const btn = document.getElementById('timerBtn');
+    if (btn) btn.textContent = '▶ Iniciar de nuevo';
+    setTimeout(resetTimer, 2000);
+  } else if (timerSecs >= 75) {
+    el.style.color = '#d97706';
+    if(st) st.textContent = '🟡 Vibración suave · ¿Ya tienes el pedido listo?';
+    if(ns[2]) ns[2].style.background = '#fef3c7';
+  } else if (timerSecs >= 45) {
+    el.style.color = '#2563eb';
+    if(st) st.textContent = '🔵 Momento de confirmar el pedido';
+    if(ns[1]) ns[1].style.background = '#dbeafe';
+  } else {
+    el.style.color = '#004161';
+    if(st) st.textContent = '🟢 Zona ideal — opera con calma';
+    if(ns[0]) ns[0].style.background = '#dcfce7';
+  }
+}
+
+// ── NETWORK STATES ────────────────────────────────────────────
+const netData = {
+  '4g': {
+    title: '✅ 4G — App funcionando normalmente',
+    color: '#166534',
+    desc: 'Los pedidos se sincronizan al instante al confirmar. Latencia promedio app→CEDIS: 124ms. La precarga matutina de 405 KB tardó 3 segundos esta mañana. El vendedor no nota diferencia alguna.'
+  },
+  '2g': {
+    title: '⚠️ 2G — Señal débil detectada · modo background',
+    color: '#92400e',
+    desc: 'La app SIGUE FUNCIONANDO sin interrupciones. Los pedidos se guardan localmente y se sincronizan en background cuando hay suficiente señal. Las fotos de anaquel se comprimen automáticamente. El vendedor no hace nada diferente.'
+  },
+  'offline': {
+    title: '📵 Sin señal — Modo offline total activado',
+    color: '#7f1d1d',
+    desc: 'La app funciona exactamente igual. Cada pedido confirmado se escribe PRIMERO en la base de datos local del teléfono — antes de intentar sincronizar. Al recuperar señal (WiFi, 3G, 4G), se sincronizan automáticamente en orden cronológico. 0 pedidos perdidos, 0 pantallas de error, 0 acción requerida del vendedor.'
+  }
+};
+
+function setNet(state, btn) {
+  document.querySelectorAll('.net-btn').forEach(b => b.style.borderColor = '');
+  if (btn) btn.style.borderColor = '#004161';
+  const d = netData[state];
+  const el = document.getElementById('netResult');
+  if (el && d) el.innerHTML = `<div class="font-bold mb-2 text-sm" style="color:${d.color}">${d.title}</div><div class="text-xs leading-relaxed">${d.desc}</div>`;
+}
+
+function setNetHome(state, btn) {
+  document.querySelectorAll('.net-btn-home').forEach(b => b.style.borderColor = '');
+  if (btn) btn.style.borderColor = '#004161';
+  const d = netData[state];
+  const el = document.getElementById('netResultHome');
+  if (el && d) el.innerHTML = `<div class="font-bold mb-1 text-xs" style="color:${d.color}">${d.title}</div><div class="text-xs leading-relaxed">${d.desc}</div>`;
+}
+
+// ── SYNC DEMO ─────────────────────────────────────────────────
+function simulateSync() {
+  const items = document.querySelectorAll('#syncQueue > div');
+  const colors = ['#004161','#7d5700','#ba1a1a'];
+  const texts = ['Sincronizado ✓','Sincronizado ✓','Sincronizado ✓'];
+  const tColors = ['text-primary','text-primary','text-primary'];
+  items.forEach((item, i) => {
+    setTimeout(() => {
+      const dot = item.querySelector('div[style]');
+      const status = item.querySelector('span:last-child');
+      if (dot) dot.style.background = '#d97706';
+      if (status) { status.textContent = 'Subiendo...'; status.className = 'text-xs font-bold text-secondary'; }
+      setTimeout(() => {
+        if (dot) dot.style.background = '#004161';
+        if (status) { status.textContent = 'Sincronizado ✓'; status.className = 'text-xs font-bold text-primary'; }
+      }, 900);
+    }, i * 1000);
+  });
+}
+
+// ── HOME ROI QUICK CALC ───────────────────────────────────────
+function calcHomeROI() {
+  const v = parseInt(document.getElementById('hSlVend')?.value || 50);
+  const c = parseInt(document.getElementById('hSlClien')?.value || 30);
+  const t = parseFloat(document.getElementById('hSlTicket')?.value || 1800);
+  if(document.getElementById('hVend')) document.getElementById('hVend').textContent = v;
+  if(document.getElementById('hClien')) document.getElementById('hClien').textContent = c;
+  if(document.getElementById('hTicketLbl')) document.getElementById('hTicketLbl').textContent = '$' + Math.round(t).toLocaleString('es-MX');
+  const perdida = v * c * t * 0.18 * 0.22 * 250; // annual
+  const el = document.getElementById('hROIResult');
+  if (el) el.textContent = '$' + (Math.round(perdida/100000)/10).toFixed(1) + 'M';
+}
+
+// ── PAIN CALCULATOR ───────────────────────────────────────────
+function calcPain() {
+  const v = parseInt(document.getElementById('pSlVend')?.value || 50);
+  const c = parseInt(document.getElementById('pSlClien')?.value || 30);
+  const t = parseFloat(document.getElementById('pTicket')?.value || 1800);
+  const i = parseInt(document.getElementById('pSlInef')?.value || 22) / 100;
+  if(document.getElementById('pVend')) document.getElementById('pVend').textContent = v;
+  if(document.getElementById('pClien')) document.getElementById('pClien').textContent = c;
+  if(document.getElementById('pInef')) document.getElementById('pInef').textContent = Math.round(i*100) + '%';
+  const perdidaDia = v * c * t * 0.18 * i;
+  const fmt = n => '$' + Math.round(n).toLocaleString('es-MX');
+  if(document.getElementById('pResultDia')) document.getElementById('pResultDia').textContent = fmt(perdidaDia);
+  if(document.getElementById('pResultMes')) document.getElementById('pResultMes').textContent = fmt(perdidaDia * 22);
+  if(document.getElementById('pResultAnual')) document.getElementById('pResultAnual').textContent = fmt(perdidaDia * 250);
+}
+
+// ── ROI CALCULATOR ────────────────────────────────────────────
+function calcROI() {
+  const v = parseInt(document.getElementById('rs1')?.value || 80);
+  const c = parseInt(document.getElementById('rs2')?.value || 30);
+  const t = parseFloat(document.getElementById('rt')?.value || 2200);
+  const incr = parseInt(document.getElementById('rs3')?.value || 23) / 100;
+  const merma = parseFloat(document.getElementById('rm')?.value || 85000);
+  const dias = parseInt(document.getElementById('rs4')?.value || 250);
+  if(document.getElementById('rv1')) document.getElementById('rv1').textContent = v;
+  if(document.getElementById('rv2')) document.getElementById('rv2').textContent = c;
+  if(document.getElementById('rv3')) document.getElementById('rv3').textContent = Math.round(incr*100) + '%';
+  if(document.getElementById('rv4')) document.getElementById('rv4').textContent = dias;
+  const ventas = v * c * t * dias * incr * 0.16;
+  const ahorroMerma = merma * 12 * 0.95;
+  const total = ventas + ahorroMerma;
+  const costoAnual = v * 350 * 12;
+  const payback = Math.max(1, Math.round(costoAnual / (total/12) * 10) / 10);
+  const fmt = n => n >= 1000000 ? '$' + (Math.round(n/100000)/10).toFixed(1) + 'M' : '$' + Math.round(n).toLocaleString('es-MX');
+  if(document.getElementById('roiTotal')) document.getElementById('roiTotal').textContent = fmt(total);
+  if(document.getElementById('roiV')) document.getElementById('roiV').textContent = fmt(ventas);
+  if(document.getElementById('roiM')) document.getElementById('roiM').textContent = fmt(ahorroMerma);
+  if(document.getElementById('roiP')) document.getElementById('roiP').textContent = payback + ' meses';
+}
+
+// ── FORM ──────────────────────────────────────────────────────
+function submitForm(e) {
+  e.preventDefault();
+  const btn = document.getElementById('submitBtn');
+  btn.textContent = '✓ ¡Solicitud recibida! Te contactamos en menos de 2 horas.';
+  btn.style.background = '#004161';
+  btn.style.color = '#ffffff';
+  btn.disabled = true;
+  setTimeout(() => {
+    btn.textContent = 'Solicitar mi demo personalizado →';
+    btn.style.background = '';
+    btn.style.color = '';
+    btn.disabled = false;
+  }, 5000);
+}
+
+// ── INTERSECTION OBSERVER (fade-in) ──────────────────────────
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+
+// ── INIT ──────────────────────────────────────────────────────
+calcPain();
+calcROI();
+calcHomeROI();
+</script>
+</body>
 </html>

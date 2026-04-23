@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mr. Ruta — Diagnóstico de tu Operación</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Raleway:wght@700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+tailwind.config = {
+  darkMode:"class",
+  theme:{
+    extend:{
+      colors:{
+        "background":"#f7f9ff","on-primary":"#ffffff","on-secondary-container":"#6b4b00",
+        "secondary-fixed":"#ffdeaa","on-error-container":"#93000a","surface-dim":"#c1ddfc",
+        "outline":"#71787f","surface-container-lowest":"#ffffff","on-error":"#ffffff",
+        "outline-variant":"#c0c7cf","on-surface-variant":"#40484e","inverse-primary":"#8fcdfd",
+        "surface":"#f7f9ff","on-background":"#001d33","error":"#ba1a1a","secondary":"#7d5700",
+        "primary-container":"#005983","surface-variant":"#cee5ff","surface-container-low":"#edf4ff",
+        "surface-bright":"#f7f9ff","on-secondary":"#ffffff","on-primary-fixed":"#001e30",
+        "error-container":"#ffdad6","on-surface":"#001d33","on-secondary-fixed":"#271900",
+        "secondary-container":"#feb71d","surface-container":"#e3efff",
+        "inverse-surface":"#15324b","primary-fixed":"#cae6ff",
+        "on-primary-container":"#90cfff","primary":"#004161","surface-container-high":"#d9eaff",
+        "surface-container-highest":"#cee5ff","surface-container-lowest":"#ffffff"
+      },
+      fontFamily:{
+        "headline":["Raleway","Inter","sans-serif"],
+        "body":["Inter","sans-serif"]
+      }
+    }
+  }
+}
+</script>
+<style>
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.header-anchor{letter-spacing:-0.02em}
+
+/* Question cards */
+.q-card{
+  background:#fff;border-radius:12px;border:1.5px solid #c0c7cf;
+  padding:24px;margin-bottom:16px;transition:all .2s;
+}
+.q-card.answered{border-color:#004161;background:#f7f9ff}
+.q-card.answered-bad{border-color:#ba1a1a;background:#fff8f8}
+.q-card.answered-warn{border-color:#d97706;background:#fffbf0}
+.q-card.answered-ok{border-color:#004161;background:#f0f6ff}
+.q-card.answered-great{border-color:#166534;background:#f0fdf4}
+
+/* Option buttons */
+.option-btn{
+  width:100%;text-align:left;padding:12px 16px;border-radius:10px;
+  border:1.5px solid #c0c7cf;background:#fff;cursor:pointer;
+  transition:all .18s;font-family:Inter,sans-serif;font-size:13px;
+  display:flex;align-items:center;gap:10px;margin-bottom:6px;
+  color:#40484e;
+}
+.option-btn:hover{border-color:#004161;background:#edf4ff;color:#004161}
+.option-btn.selected-great{background:#dcfce7;border-color:#166534;color:#14532d;font-weight:700}
+.option-btn.selected-ok{background:#dbeafe;border-color:#004161;color:#004161;font-weight:700}
+.option-btn.selected-warn{background:#fef3c7;border-color:#d97706;color:#92400e;font-weight:700}
+.option-btn.selected-bad{background:#fee2e2;border-color:#dc2626;color:#7f1d1d;font-weight:700}
+
+/* Progress ring */
+.score-ring{position:relative;display:inline-flex;align-items:center;justify-content:center}
+.score-ring svg{transform:rotate(-90deg)}
+.score-inner{position:absolute;text-align:center}
+
+/* Score bar */
+.score-track{height:12px;background:#e3efff;border-radius:6px;overflow:hidden;margin:8px 0}
+.score-fill{height:100%;border-radius:6px;transition:width 1s ease}
+
+/* Result card */
+.result-module{
+  display:flex;gap:12px;align-items:flex-start;padding:14px 16px;
+  background:#fff;border-radius:10px;border-left:4px solid;
+  margin-bottom:8px;
+}
+
+/* Sections */
+.section-header{
+  display:flex;align-items:center;gap:10px;
+  padding:14px 20px;background:#004161;
+  border-radius:10px 10px 0 0;color:#fff;margin-bottom:0;
+}
+.section-body{background:#fff;border:1.5px solid #c0c7cf;border-top:none;border-radius:0 0 10px 10px;padding:20px;margin-bottom:20px}
+
+/* Progress dots */
+.prog-dot{width:10px;height:10px;border-radius:50%;transition:all .3s;flex-shrink:0}
+
+/* Sticky score bar */
+.sticky-score{
+  position:sticky;top:0;z-index:40;background:#fff;
+  border-bottom:1px solid #c0c7cf;padding:10px 0;
+  box-shadow:0 2px 12px rgba(0,0,0,.08);
+}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.fade-up{animation:fadeUp .4s ease forwards}
+@keyframes countUp{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
+.count-anim{animation:countUp .3s ease}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.pulse-dot{animation:pulse 1.5s ease infinite}
+
+/* Mobile nav */
+@media(max-width:768px){
+  .hide-mobile{display:none}
+}
+</style>
+</head>
+<body class="bg-background text-on-background font-body">
+
+<!-- ═══════════ TOP NAV (Stitch exact) ═══════════ -->
+<nav class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-slate-100">
+  <div class="flex justify-between items-center w-full px-6 py-3 max-w-7xl mx-auto">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary text-2xl" style="font-variation-settings:'FILL' 1;">route</span>
+      <span class="text-xl font-black text-sky-900 header-anchor">Mr. Ruta</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <span class="text-xs font-bold text-on-surface-variant hide-mobile">Diagnóstico Operacional</span>
+      <div class="flex items-center gap-2 px-4 py-1.5 bg-surface-container-low rounded-full border border-outline-variant/30">
+        <span class="pulse-dot w-2 h-2 rounded-full bg-primary inline-block"></span>
+        <span class="text-xs font-bold text-primary" id="navProgress">0 de 12 respondidas</span>
+      </div>
+      <button onclick="scrollToResults()" class="bg-secondary-container text-on-secondary-fixed px-4 py-1.5 rounded-lg font-bold text-xs hover:opacity-90 transition-all hidden" id="navResultBtn">
+        Ver mi diagnóstico ↓
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════ HERO ═══════════ -->
+<section class="pt-24 pb-12 px-6 bg-surface-container-low overflow-hidden">
+  <div class="max-w-4xl mx-auto">
+    <!-- breadcrumb -->
+    <div class="flex items-center gap-2 text-xs text-on-surface-variant mb-6">
+      <span class="material-symbols-outlined text-sm text-primary">route</span>
+      <span class="font-bold text-primary">Mr. Ruta</span>
+      <span>›</span>
+      <span>Diagnóstico operacional</span>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-10 items-center">
+      <div>
+        <div class="inline-flex items-center gap-2 bg-primary/8 text-primary px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase border border-primary/20 mb-5">
+          <span class="pulse-dot w-1.5 h-1.5 rounded-full bg-secondary-container inline-block"></span>
+          Cuestionario de diagnóstico · 12 preguntas
+        </div>
+        <h1 class="text-4xl md:text-5xl font-black text-primary leading-[1.05] header-anchor mb-4">
+          Detecta las fugas<br>de dinero en tu<br>operación <span class="text-secondary">hoy mismo.</span>
+        </h1>
+        <p class="text-on-surface-variant text-base leading-relaxed mb-6">
+          Responde estas 12 preguntas. En menos de 3 minutos sabrás exactamente dónde pierde dinero tu distribución — y qué hace Mr. Ruta para eliminarlo.
+        </p>
+        <div class="flex flex-wrap gap-3 text-sm">
+          <div class="flex items-center gap-2 px-3 py-1.5 bg-white rounded-full border border-outline-variant/30 text-on-surface-variant"><span class="material-symbols-outlined text-primary text-sm">timer</span>3 minutos</div>
+          <div class="flex items-center gap-2 px-3 py-1.5 bg-white rounded-full border border-outline-variant/30 text-on-surface-variant"><span class="material-symbols-outlined text-primary text-sm">lock</span>Confidencial</div>
+          <div class="flex items-center gap-2 px-3 py-1.5 bg-white rounded-full border border-outline-variant/30 text-on-surface-variant"><span class="material-symbols-outlined text-primary text-sm">auto_fix_high</span>Resultado inmediato</div>
+        </div>
+      </div>
+      <!-- Score preview card -->
+      <div class="bg-surface-container-lowest rounded-2xl shadow-xl border border-outline-variant/10 p-6">
+        <div class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-4">Tu puntuación actual</div>
+        <div class="flex items-center gap-6 mb-5">
+          <!-- Ring -->
+          <div class="score-ring flex-shrink-0">
+            <svg width="96" height="96" viewBox="0 0 96 96">
+              <circle cx="48" cy="48" r="40" fill="none" stroke="#e3efff" stroke-width="10"/>
+              <circle id="scoreRingCircle" cx="48" cy="48" r="40" fill="none" stroke="#004161"
+                stroke-width="10" stroke-linecap="round"
+                stroke-dasharray="251.2" stroke-dashoffset="251.2"
+                style="transition:stroke-dashoffset 1s ease, stroke .5s ease"/>
+            </svg>
+            <div class="score-inner">
+              <div class="text-3xl font-black text-primary" id="scoreNum" style="font-family:Raleway">0</div>
+              <div class="text-xs text-on-surface-variant">/ 100</div>
+            </div>
+          </div>
+          <div class="flex-1">
+            <div class="text-xl font-black text-primary header-anchor mb-1" id="scoreLabel">Comenzando...</div>
+            <div class="text-sm text-on-surface-variant" id="scoreDesc">Responde las preguntas para ver tu diagnóstico personalizado.</div>
+          </div>
+        </div>
+        <!-- Category progress -->
+        <div class="space-y-2.5" id="categoryProgress">
+          <div>
+            <div class="flex justify-between text-xs mb-1"><span class="text-on-surface-variant font-medium">Operativa</span><span class="font-bold text-primary" id="cp1">0%</span></div>
+            <div class="score-track"><div class="score-fill bg-primary" id="cf1" style="width:0%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-xs mb-1"><span class="text-on-surface-variant font-medium">Procesos comerciales</span><span class="font-bold text-primary" id="cp2">0%</span></div>
+            <div class="score-track"><div class="score-fill bg-primary" id="cf2" style="width:0%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-xs mb-1"><span class="text-on-surface-variant font-medium">Tecnología</span><span class="font-bold text-primary" id="cp3">0%</span></div>
+            <div class="score-track"><div class="score-fill bg-primary" id="cf3" style="width:0%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-xs mb-1"><span class="text-on-surface-variant font-medium">Control financiero</span><span class="font-bold text-primary" id="cp4">0%</span></div>
+            <div class="score-track"><div class="score-fill bg-primary" id="cf4" style="width:0%"></div></div>
+          </div>
+        </div>
+        <!-- Progress dots -->
+        <div class="flex gap-1.5 mt-5 flex-wrap">
+          <div id="dots"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ DIAGNOSTIC QUOTE ═══════════ -->
+<div class="bg-primary py-5 px-6">
+  <div class="max-w-4xl mx-auto flex items-center gap-4">
+    <span class="material-symbols-outlined text-secondary-container text-2xl flex-shrink-0">format_quote</span>
+    <p class="text-white text-sm leading-relaxed italic">"No tienen un problema de logística, tienen una <strong class="text-secondary-container">fuga de dinero</strong>. Mr. Ruta no viene a ver qué pasó, viene a forzar que las cosas sucedan."</p>
+  </div>
+</div>
+
+<!-- ═══════════ QUESTIONS ═══════════ -->
+<section class="py-10 px-6">
+  <div class="max-w-4xl mx-auto" id="questionsArea">
+
+    <!-- ── BLOQUE 1: OPERATIVA ── -->
+    <div class="section-header fade-up">
+      <span class="material-symbols-outlined text-secondary-container">assignment</span>
+      <div>
+        <div class="font-black text-base">Bloque 1 — Información Operativa</div>
+        <div class="text-xs text-blue-200 mt-0.5">Cómo opera tu fuerza de ventas en campo hoy</div>
+      </div>
+      <div class="ml-auto text-xs text-blue-200 font-bold">4 preguntas · 33 pts</div>
+    </div>
+    <div class="section-body">
+
+      <!-- Q1 -->
+      <div class="q-card" id="qc1" data-block="1">
+        <div class="flex items-start gap-3 mb-4">
+          <div class="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-content:center flex-shrink-0 mt-0.5">
+            <span class="text-xs font-black text-primary block text-center w-full pt-1">1</span>
+          </div>
+          <div>
+            <div class="font-bold text-on-surface text-sm mb-1">¿Cómo documentan actualmente las devoluciones y rechazos de producto?</div>
+            <div class="text-xs text-on-surface-variant">Piensa en la evidencia que tienes hoy si un cliente dice que no pidió algo.</div>
+          </div>
+        </div>
+        <div id="opts1">
+          <button class="option-btn" onclick="answer(1,'bad',0,this,'selected-bad')"><span class="text-base">❌</span><div><strong>No se documentan</strong><div class="text-xs text-on-surface-variant mt-0.5">El vendedor resuelve en el momento, sin registro formal</div></div></button>
+          <button class="option-btn" onclick="answer(1,'warn',3,this,'selected-warn')"><span class="text-base">📋</span><div><strong>Nota en papel o cuadernillo</strong><div class="text-xs text-on-surface-variant mt-0.5">Se toma nota pero puede perderse o ser ilegible</div></div></button>
+          <button class="option-btn" onclick="answer(1,'ok',6,this,'selected-ok')"><span class="text-base">📱</span><div><strong>Se reporta en el sistema, sin foto</strong><div class="text-xs text-on-surface-variant mt-0.5">Hay registro digital pero sin evidencia visual</div></div></button>
+          <button class="option-btn" onclick="answer(1,'great',9,this,'selected-great')"><span class="text-base">📸</span><div><strong>Protocolo fotográfico obligatorio en cada visita</strong><div class="text-xs text-on-surface-variant mt-0.5">4 fotos: llegada, anaquel, entrega y firma. Sin foto = no cierra visita</div></div></button>
+        </div>
+        <div class="hidden mt-3 p-3 rounded-lg text-xs" id="fb1"></div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="q-card" id="qc2" data-block="1">
+        <div class="flex items-start gap-3 mb-4">
+          <div class="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-content:center flex-shrink-0 mt-0.5">
+            <span class="text-xs font-black text-primary block text-center w-full pt-1">2</span>
+          </div>
+          <div>
+            <div class="font-bold text-on-surface text-sm mb-1">¿Cuánto tiempo dura en promedio cada visita a cliente?</div>
+            <div class="text-xs text-on-surface-variant">Incluyendo saludo, pedido, cobro y despedida. ¿Lo sabes con exactitud?</div>
+          </div>
+        </div>
+        <div id="opts2">
+          <button class="option-btn" onclick="answer(2,'bad',0,this,'selected-bad')"><span class="text-base">❌</span><div><strong>No lo medimos</strong><div class="text-xs text-on-surface-variant mt-0.5">El vendedor sale y regresa, no hay control de tiempo por cliente</div></div></button>
+          <button class="option-btn" onclick="answer(2,'warn',2,this,'selected-warn')"><span class="text-base">⏱️</span><div><strong>Lo estimamos, más de 5 minutos por cliente</strong><div class="text-xs text-on-surface-variant mt-0.5">Sabemos que se tarda pero no tenemos el dato exacto</div></div></button>
+          <button class="option-btn" onclick="answer(2,'ok',5,this,'selected-ok')"><span class="text-base">📊</span><div><strong>Lo medimos, entre 2 y 5 minutos</strong><div class="text-xs text-on-surface-variant mt-0.5">Tenemos datos por GPS o reporte del vendedor</div></div></button>
+          <button class="option-btn" onclick="answer(2,'great',8,this,'selected-great')"><span class="text-base">⚡</span><div><strong>Timer activo: menos de 90 segundos con alerta automática</strong><div class="text-xs text-on-surface-variant mt-0.5">El sistema alerta al vendedor y al supervisor si se excede el tiempo</div></div></button>
+        </div>
+        <div class="hidden mt-3 p-3 rounded-lg text-xs" id="fb2"></div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="q-card" id="qc3" data-block="1">
+        <div class="flex items-start gap-3 mb-4">
+          <div class="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-content:center flex-shrink-0 mt-0.5">
+            <span class="text-xs font-black text-primary block text-center w-full pt-1">3</span>
+          </div>
+          <div>
+            <div class="font-bold text-on-surface text-sm mb-1">¿Cuánta visibilidad tienes de tus rutas durante el día — ahora mismo?</div>
+            <div class="text-xs text-on-surface-variant">Si yo te preguntara "¿cuánto lleva vendido la ruta norte esta mañana?", ¿podrías responder?</div>
+          </div>
+        </div>
+        <div id="opts3">
+          <button class="option-btn" onclick="answer(3,'bad',0,this,'selected-bad')"><span class="text-base">🕶️</span><div><strong>Ninguna visibilidad</strong><div class="text-xs text-on-surface-variant mt-0.5">El vendedor sale y no sabemos nada hasta que regresa</div></div></button>
+          <button class="option-btn" onclick="answer(3,'warn',2,this,'selected-warn')"><span class="text-base">📍</span><div><strong>Solo GPS — sé dónde está el camión</strong><div class="text-xs text-on-surface-variant mt-0.5">Tengo ubicación pero no ventas, pedidos ni tiempo por cliente</div></div></button>
+          <button class="option-btn" onclick="answer(3,'ok',5,this,'selected-ok')"><span class="text-base">📱</span><div><strong>Recibo reportes del vendedor por WhatsApp/teléfono</strong><div class="text-xs text-on-surface-variant mt-0.5">Información manual, no en tiempo real ni estructurada</div></div></button>
+          <button class="option-btn" onclick="answer(3,'great',8,this,'selected-great')"><span class="text-base">🎯</span><div><strong>Dashboard en tiempo real: clientes, ventas, KPIs, alertas automáticas</strong><div class="text-xs text-on-surface-variant mt-0.5">Veo todo en vivo sin esperar que el vendedor reporte</div></div></button>
+        </div>
+        <div class="hidden mt-3 p-3 rounded-lg text-xs" id="fb3"></div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="q-card" id="qc4" data-block="1">
+        <div class="flex items-start gap-3 mb-4">
+          <div class="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-content:center flex-shrink-0 mt-0.5">
+            <span class="text-xs font-black text-primary block text-center w-full pt-1">4</span>
+          </div>
+          <div>
+            <div class="font-bold text-on-surface text-sm mb-1">¿Se realiza inventario físico en cada visita al cliente?</div>
+            <div class="text-xs text-on-surface-variant">¿El vendedor verifica cuánto producto tiene el cliente antes de proponer el pedido?</div>
+          </div>
+        </div>
+        <div id="opts4">
+          <button class="option-btn" onclick="answer(4,'bad',0,this,'selected-bad')"><span class="text-base">❌</span><div><strong>No, el vendedor pregunta "¿qué le ponemos?" sin revisar</strong><div class="text-xs text-on-surface-variant mt-0.5">El cliente decide sin contexto de su propio inventario</div></div></button>
+          <button class="option-btn" onclick="answer(4,'warn',2,this,'selected-warn')"><span class="text-base">👁️</span><div><strong>El vendedor lo hace "de vista", sin registrar</strong><div class="text-xs text-on-surface-variant mt-0.5">Estimación visual informal, no hay dato registrado</div></div></button>
+          <button class="option-btn" onclick="answer(4,'ok',5,this,'selected-ok')"><span class="text-base">📝</span><div><strong>Se anota en hoja de pre-venta, algunos lo hacen, otros no</strong><div class="text-xs text-on-surface-variant mt-0.5">Proceso inconsistente entre vendedores</div></div></button>
+          <button class="option-btn" onclick="answer(4,'great',8,this,'selected-great')"><span class="text-base">✅</span><div><strong>Inventario obligatorio en sistema antes de capturar pedido</strong><div class="text-xs text-on-surface-variant mt-0.5">Sin inventario registrado no se puede generar el pedido</div></div></button>
+        </div>
+        <div class="hidden mt-3 p-3 rounded-lg text-xs" id="fb4"></div>
+      </div>
+
+    </div><!-- /section-body 1 -->
+
+    <!-- ── BLOQUE 2: PROCESOS COMERCIALES ── -->
+    <div class="section-header">
+      <span class="material-symbols-outlined text-secondary-container">storefront</span>
+      <div>
+        <div class="font-black text-base">Bloque 2 — Procesos Comerciales</div>
+        <div class="text-xs text-blue-200 mt-0.5">Cómo se genera la venta y se controla el producto</div>
+      </div>
+      <div class="ml-auto text-xs text-blue-200 font-bold">4 preguntas · 34 pts</div>
+    </div>
+    <div class="section-body">
+
+      <!-- Q5 -->
+      <div class="q-card" id="qc5" data-block="2">
+        <div class="flex items-start gap-3 mb-4">
+          <div class="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-content:center flex-shrink-0 mt-0.5">
+            <span class="text-xs font-black text-primary block text-center w-full pt-1">5</span>
+          </div>
+          <div>
+            <div class="font-bold text-on-surface text-sm mb-1">¿Cómo se genera el pedido sugerido para cada cliente?</div>
+            <div class="text-xs text-on-surface-variant">La primera frase que dice el vendedor al entrar a la tienda lo dice todo.</div>
+          </div>
+        </div>
+        <div id="opts5">
+          <button class="option-btn" onclick="answer(5,'bad',0,this,'selected-bad')"><span class="text-base">🗣️</span><div><strong>"¿Qué le ponemos hoy?" — el cliente decide solo</strong><div class="text-xs text-on-surface-variant mt-0.5">Sin datos, sin argumento, sin contexto. El cliente pide lo mismo o menos</div></div></button>
+          <button class="option-btn" onclick="answer(5,'warn',3,this,'selected-warn')"><span class="text-base">🧠</span><div><strong>El vendedor lo define por experiencia propia</strong><div class="text-xs text-on-surface-variant mt-0.5">Depende del vendedor, no del sistema. Si se va, se pierde el conocimiento</div></div></button>
+          <button class="option-btn" onclick="answer(5,'ok',6,this,'selected-ok')"><span class="text-base">📋</span><div><strong>Llevamos una lista sugerida por categoría</strong><div class="text-xs text-on-surface-variant mt-0.5">Hay un orden pero no está personalizado por cliente ni tiene argumento</div></div></button>
+          <button class="option-btn" onclick="answer(5,'great',9,this,'selected-great')"><span class="text-base">🤖</span><div><strong>IA genera el pedido y el argumento exacto antes de cada visita</strong><div class="text-xs text-on-surface-variant mt-0.5">"Don Roberto, le volaron las tostadas — hoy es viernes de quincena. Le traigo 5 cajas..."</div></div></button>
+        </div>
+        <div class="hidden mt-3 p-3 rounded-lg text-xs" id="fb5"></div>
+      </div>
+
+      <!-- Q6 -->
+      <div class="q-card" id="qc6" data-block="2">
+        <div class="flex items-start gap-3 mb-4">
+          <div class="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-content:center flex-shrink-0 mt-0.5">
+            <span class="text-xs font-black text-primary block text-center w-full pt-1">6</span>
+          </div>
+          <div>
+            <div class="font-bold text-on-surface text-sm mb-1">¿Existe control de caducidades (FEFO) en tu bodega y en ruta?</div>
+            <div class="text-xs text-on-surface-variant">Primero en caducar, primero en salir. Esto es crítico para tostadas y botanas con fecha de vida corta.</div>
+          </div>
+        </div>
+        <div id="opts6">
+          <button class="option-btn" onclick="answer(6,'bad',0,this,'selected-bad')"><span class="text-base">💀</span><div><strong>No, cargamos lo que está más a la mano</strong><div class="text-xs text-on-surface-variant mt-0.5">Riesgo alto de devoluciones por caducidad y multas sanitarias</div></div></button>
+          <button class="option-btn" onclick="answer(6,'warn',2,this,'selected-warn')"><span class="text-base">🗓️</span><div><strong>Lo intentamos manualmente, pero no siempre se cumple</strong><div class="text-xs text-on-surface-variant mt-0.5">El bodeguero lo hace "de vista", errores frecuentes</div></div></button>
+          <button class="option-btn" onclick="answer(6,'ok',5,this,'selected-ok')"><span class="text-base">📦</span><div><strong>Tenemos procedimiento pero no validación automática</strong><div class="text-xs text-on-surface-variant mt-0.5">El proceso existe pero depende de que alguien lo haga bien cada vez</div></div></button>
+          <button class="option-btn" onclick="answer(6,'great',9,this,'selected-great')"><span class="text-base">✅</span><div><strong>FEFO automatizado — el sistema alerta y bloquea si no se respeta</strong><div class="text-xs text-on-surface-variant mt-0.5">Cero merma por caducidad. -95% en pérdidas por producto vencido</div></div></button>
+        </div>
+        <div class="hidden mt-3 p-3 rounded-lg text-xs" id="fb6"></div>
+      </div>
+
+      <!-- Q7 -->
+      <div class="q-card" id="qc7" data-block="2">
+        <div class="flex items-start gap-3 mb-4">
+          <div class="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-content:center flex-shrink-0 mt-0.5">
+            <span class="text-xs font-black text-primary block text-center w-full pt-1">7</span>
+          </div>
+          <div>
+            <div class="font-bold text-on-surface text-sm mb-1">¿Cómo se detectan los huecos en anaquel del cliente durante la visita?</div>
+            <div class="text-xs text-on-surface-variant">Un hueco en anaquel es venta perdida que no se recupera. ¿Cuántos huecos ves por semana sin saberlo?</div>
+          </div>
+        </div>
+        <div id="opts7">
+          <button class="option-btn" onclick="answer(7,'bad',0,this,'selected-bad')"><span class="text-base">🙈</span><div><strong>No los detectamos sistemáticamente</strong><div class="text-xs text-on-surface-variant mt-0.5">El vendedor ve lo que hay pero no registra lo que falta</div></div></button>
+          <button class="option-btn" onclick="answer(7,'warn',2,this,'selected-warn')"><span class="text-base">👁️</span><div><strong>El vendedor lo ve y avisa si es grave</strong><div class="text-xs text-on-surface-variant mt-0.5">Informal, depende de la iniciativa de cada vendedor</div></div></button>
+          <button class="option-btn" onclick="answer(7,'ok',5,this,'selected-ok')"><span class="text-base">📝</span><div><strong>Se anota en el reporte de visita, sin foto</strong><div class="text-xs text-on-surface-variant mt-0.5">Hay registro pero sin evidencia ni disparo automático de reposición</div></div></button>
+          <button class="option-btn" onclick="answer(7,'great',8,this,'selected-great')"><span class="text-base">📸</span><div><strong>Foto de anaquel con IA: detecta huecos y dispara sugerido con ROI automático</strong><div class="text-xs text-on-surface-variant mt-0.5">+35% en ventas por hueco detectado. El sistema calcula el dinero perdido al instante</div></div></button>
+        </div>
+        <div class="hidden mt-3 p-3 rounded-lg text-xs" id="fb7"></div>
+      </div>
+
+      <!-- Q8 -->
+      <div class="q-card" id="qc8" data-block="2">
+        <div class="flex items-start gap-3 mb-4">
+          <div class="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-content:center flex-shrink-0 mt-0.5">
+            <span class="text-xs font-black text-primary block text-center w-full pt-1">8</span>
+          </div>
+          <div>
+            <div class="font-bold text-on-surface text-sm mb-1">¿Cómo se realiza la liquidación diaria del vendedor?</div>
+            <div class="text-xs text-on-surface-variant">El cierre del día: cuadre de efectivo, facturas, devoluciones y producto sobrante.</div>
+          </div>
+        </div>
+        <div id="opts8">
+          <button class="option-btn" onclick="answer(8,'bad',0,this,'selected-bad')"><span class="text-base">📄</span><div><strong>En papel, tarda 2-3 horas y siempre hay diferencias</strong><div class="text-xs text-on-surface-variant mt-0.5">Error humano, diferencias no explicadas, tiempo perdido en administración</div></div></button>
+          <button class="option-btn" onclick="answer(8,'warn',2,this,'selected-warn')"><span class="text-base">💻</span><div><strong>En computadora con Excel, tarda 1-2 horas</strong><div class="text-xs text-on-surface-variant mt-0.5">Más rápido pero aún manual y propenso a errores</div></div></button>
+          <button class="option-btn" onclick="answer(8,'ok',5,this,'selected-ok')"><span class="text-base">📱</span><div><strong>En sistema, 30-45 minutos, aún hay ajustes manuales</strong><div class="text-xs text-on-surface-variant mt-0.5">Hay sistema pero no cuadra solo, requiere intervención</div></div></button>
+          <button class="option-btn" onclick="answer(8,'great',8,this,'selected-great')"><span class="text-base">⚡</span><div><strong>Automático: 8 minutos, cuadre exacto, CFDI ya emitido en campo</strong><div class="text-xs text-on-surface-variant mt-0.5">El sistema cuadra solo. El gerente tiene el cierre antes de que lleguen los camiones</div></div></button>
+        </div>
+        <div class="hidden mt-3 p-3 rounded-lg text-xs" id="fb8"></div>
+      </div>
+
+    </div><!-- /section-body 2 -->
+
+    <!-- ── BLOQUE 3: TECNOLOGÍA E INTEGRACIÓN ── -->
+    <div class="section-header">
+      <span class="material-symbols-outlined text-secondary-container">devices</span>
+      <div>
+        <div class="font-black text-base">Bloque 3 — Tecnología e Integración</div>
+        <div class="text-xs text-blue-200 mt-0.5">Qué tan conectada está tu operación hoy</div>
+      </div>
+      <div class="ml-auto text-xs text-blue-200 font-bold">2 preguntas · 17 pts</div>
+    </div>
+    <div class="section-body">
+
+      <!-- Q9 -->
+      <div class="q-card" id="qc9" data-block="3">
+        <div class="flex items-start gap-3 mb-4">
+          <div class="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-content:center flex-shrink-0 mt-0.5">
+            <span class="text-xs font-black text-primary block text-center w-full pt-1">9</span>
+          </div>
+          <div>
+            <div class="font-bold text-on-surface text-sm mb-1">¿Qué pasa cuando el vendedor no tiene señal de internet?</div>
+            <div class="text-xs text-on-surface-variant">En zonas industriales, sótanos de mercados, colonias periféricas — esto ocurre en 4-9 clientes de cada ruta.</div>
+          </div>
+        </div>
+        <div id="opts9">
+          <button class="option-btn" onclick="answer(9,'bad',0,this,'selected-bad')"><span class="text-base">📝</span><div><strong>Anota en papel y pasa los datos al llegar</strong><div class="text-xs text-on-surface-variant mt-0.5">Riesgo de pérdida, retraso y errores de transcripción</div></div></button>
+          <button class="option-btn" onclick="answer(9,'warn',2,this,'selected-warn')"><span class="text-base">⏳</span><div><strong>Espera a tener señal para capturar el pedido</strong><div class="text-xs text-on-surface-variant mt-0.5">Tiempo muerto, el cliente espera o el pedido se pierde</div></div></button>
+          <button class="option-btn" onclick="answer(9,'ok',5,this,'selected-ok')"><span class="text-base">💾</span><div><strong>La app guarda el pedido localmente, no siempre funciona bien</strong><div class="text-xs text-on-surface-variant mt-0.5">Modo offline existe pero es inestable o no cubre todo el flujo</div></div></button>
+          <button class="option-btn" onclick="answer(9,'great',9,this,'selected-great')"><span class="text-base">📡</span><div><strong>100% offline-first: funciona igual sin señal, sync automático al reconectar</strong><div class="text-xs text-on-surface-variant mt-0.5">0 pedidos perdidos. El teléfono ES la fuente de verdad. Sin excusa técnica.</div></div></button>
+        </div>
+        <div class="hidden mt-3 p-3 rounded-lg text-xs" id="fb9"></div>
+      </div>
+
+      <!-- Q10 -->
+      <div class="q-card" id="qc10" data-block="3">
+        <div class="flex items-start gap-3 mb-4">
+          <div class="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-content:center flex-shrink-0 mt-0.5">
+            <span class="text-xs font-black text-primary block text-center w-full pt-1">10</span>
+          </div>
+          <div>
+            <div class="font-bold text-on-surface text-sm mb-1">¿Existen pedidos manuales sin doble autorización en tu operación?</div>
+            <div class="text-xs text-on-surface-variant">Los pedidos manuales sin control son la puerta de entrada al robo hormiga y a irregularidades de crédito.</div>
+          </div>
+        </div>
+        <div id="opts10">
+          <button class="option-btn" onclick="answer(10,'bad',0,this,'selected-bad')"><span class="text-base">🚨</span><div><strong>Sí, los vendedores pueden hacer pedidos manuales sin restricción</strong><div class="text-xs text-on-surface-variant mt-0.5">Meta: $0 en pedidos manuales sin autorización</div></div></button>
+          <button class="option-btn" onclick="answer(10,'warn',2,this,'selected-warn')"><span class="text-base">⚠️</span><div><strong>Existen pero los supervisamos después</strong><div class="text-xs text-on-surface-variant mt-0.5">Control reactivo, el daño ya está hecho cuando se detecta</div></div></button>
+          <button class="option-btn" onclick="answer(10,'ok',5,this,'selected-ok')"><span class="text-base">🔒</span><div><strong>Requieren aprobación del supervisor, por WhatsApp o llamada</strong><div class="text-xs text-on-surface-variant mt-0.5">Control existe pero es informal y no queda en el sistema</div></div></button>
+          <button class="option-btn" onclick="answer(10,'great',8,this,'selected-great')"><span class="text-base">✅</span><div><strong>El sistema bloquea pedidos manuales sin doble autorización digital</strong><div class="text-xs text-on-surface-variant mt-0.5">Trazabilidad total. Sin autorización en sistema = no procede. Punto.</div></div></button>
+        </div>
+        <div class="hidden mt-3 p-3 rounded-lg text-xs" id="fb10"></div>
+      </div>
+
+    </div><!-- /section-body 3 -->
+
+    <!-- ── BLOQUE 4: CONTROL FINANCIERO ── -->
+    <div class="section-header">
+      <span class="material-symbols-outlined text-secondary-container">payments</span>
+      <div>
+        <div class="font-black text-base">Bloque 4 — Control Financiero y Escalabilidad</div>
+        <div class="text-xs text-blue-200 mt-0.5">Cuánto mides y cuánto pierdes sin saberlo</div>
+      </div>
+      <div class="ml-auto text-xs text-blue-200 font-bold">2 preguntas · 16 pts</div>
+    </div>
+    <div class="section-body">
+
+      <!-- Q11 -->
+      <div class="q-card" id="qc11" data-block="4">
+        <div class="flex items-start gap-3 mb-4">
+          <div class="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-content:center flex-shrink-0 mt-0.5">
+            <span class="text-xs font-black text-primary block text-center w-full pt-1">11</span>
+          </div>
+          <div>
+            <div class="font-bold text-on-surface text-sm mb-1">¿Cuál es tu Fill Rate actual y cómo lo mides?</div>
+            <div class="text-xs text-on-surface-variant">Fill Rate = % de pedidos entregados completos. La meta de Mr. Ruta es 99%. ¿Dónde estás hoy?</div>
+          </div>
+        </div>
+        <div id="opts11">
+          <button class="option-btn" onclick="answer(11,'bad',0,this,'selected-bad')"><span class="text-base">❓</span><div><strong>No lo medimos / no sabemos qué es</strong><div class="text-xs text-on-surface-variant mt-0.5">Si no lo mides, no puedes mejorarlo. Es la métrica más importante del reparto</div></div></button>
+          <button class="option-btn" onclick="answer(11,'warn',2,this,'selected-warn')"><span class="text-base">📉</span><div><strong>Lo calculamos manualmente, sabemos que hay problemas</strong><div class="text-xs text-on-surface-variant mt-0.5">Proceso lento, datos atrasados, sin acción automática</div></div></button>
+          <button class="option-btn" onclick="answer(11,'ok',5,this,'selected-ok')"><span class="text-base">📊</span><div><strong>Tenemos dashboard con Fill Rate, entre 85-95%</strong><div class="text-xs text-on-surface-variant mt-0.5">Visible pero por debajo de la meta. Sin alertas proactivas</div></div></button>
+          <button class="option-btn" onclick="answer(11,'great',8,this,'selected-great')"><span class="text-base">🎯</span><div><strong>Fill Rate &gt;98% con alerta automática cuando baja del umbral</strong><div class="text-xs text-on-surface-variant mt-0.5">En tiempo real. El sistema alerta antes de que afecte al cliente</div></div></button>
+        </div>
+        <div class="hidden mt-3 p-3 rounded-lg text-xs" id="fb11"></div>
+      </div>
+
+      <!-- Q12 -->
+      <div class="q-card" id="qc12" data-block="4">
+        <div class="flex items-start gap-3 mb-4">
+          <div class="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-content:center flex-shrink-0 mt-0.5">
+            <span class="text-xs font-black text-primary block text-center w-full pt-1">12</span>
+          </div>
+          <div>
+            <div class="font-bold text-on-surface text-sm mb-1">Si tu mejor vendedor renunciara hoy, ¿qué tan rápido podría arrancar su sustituto?</div>
+            <div class="text-xs text-on-surface-variant">El conocimiento de 200 clientes, preferencias, historial de crédito, acuerdos especiales... ¿dónde vive hoy?</div>
+          </div>
+        </div>
+        <div id="opts12">
+          <button class="option-btn" onclick="answer(12,'bad',0,this,'selected-bad')"><span class="text-base">😱</span><div><strong>En su cabeza — tardaríamos 3-6 meses en recuperar productividad</strong><div class="text-xs text-on-surface-variant mt-0.5">Conocimiento crítico perdido para siempre. El cliente sufre el impacto directo</div></div></button>
+          <button class="option-btn" onclick="answer(12,'warn',2,this,'selected-warn')"><span class="text-base">📓</span><div><strong>Tiene un cuadernillo con apuntes, tomaría 1-2 meses</strong><div class="text-xs text-on-surface-variant mt-0.5">Información incompleta, desactualizada, riesgo de pérdida</div></div></button>
+          <button class="option-btn" onclick="answer(12,'ok',5,this,'selected-ok')"><span class="text-base">💾</span><div><strong>Está en el sistema, el sustituto podría arrancar en 1-2 semanas</strong><div class="text-xs text-on-surface-variant mt-0.5">Hay histórico pero no hay pedido sugerido ni argumento contextual automático</div></div></button>
+          <button class="option-btn" onclick="answer(12,'great',8,this,'selected-great')"><span class="text-base">🚀</span><div><strong>El sistema tiene todo: el sustituto arranca productivo desde el día 1</strong><div class="text-xs text-on-surface-variant mt-0.5">Historial, argumento, pedido sugerido y ruta optimizada disponibles al instante</div></div></button>
+        </div>
+        <div class="hidden mt-3 p-3 rounded-lg text-xs" id="fb12"></div>
+      </div>
+
+    </div><!-- /section-body 4 -->
+
+  </div><!-- /questionsArea -->
+</section>
+
+<!-- ═══════════ RESULTS SECTION ═══════════ -->
+<div id="resultsSection" class="hidden">
+
+  <!-- Results Hero -->
+  <section class="py-16 px-6" id="resultsTop">
+    <div class="max-w-4xl mx-auto">
+
+      <!-- Score display (big) -->
+      <div class="bg-surface-container-lowest rounded-3xl shadow-2xl border border-outline-variant/10 overflow-hidden mb-8">
+        <div id="resultHeaderBar" class="p-8 text-white" style="background:#004161">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="material-symbols-outlined text-secondary-container text-2xl">assignment_turned_in</span>
+            <span class="font-bold text-blue-200 text-sm tracking-widest uppercase">Diagnóstico Mr. Ruta completado</span>
+          </div>
+          <div class="grid md:grid-cols-3 gap-6 items-center">
+            <!-- Big ring -->
+            <div class="flex flex-col items-center">
+              <div class="score-ring">
+                <svg width="140" height="140" viewBox="0 0 140 140">
+                  <circle cx="70" cy="70" r="58" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="14"/>
+                  <circle id="bigRingCircle" cx="70" cy="70" r="58" fill="none"
+                    stroke="#feb71d" stroke-width="14" stroke-linecap="round"
+                    stroke-dasharray="364.4" stroke-dashoffset="364.4"
+                    style="transition:stroke-dashoffset 1.5s ease"/>
+                </svg>
+                <div class="score-inner">
+                  <div class="font-black text-white leading-none" id="bigScore" style="font-size:44px;font-family:Raleway">0</div>
+                  <div class="text-blue-200 text-sm font-bold">/ 100</div>
+                </div>
+              </div>
+              <div class="text-center mt-3">
+                <div class="font-black text-xl text-white" id="bigLabel">—</div>
+                <div class="text-blue-200 text-xs mt-1" id="bigSub">—</div>
+              </div>
+            </div>
+            <!-- Stats grid -->
+            <div class="md:col-span-2 grid grid-cols-2 gap-4">
+              <div class="bg-white/10 rounded-xl p-4 text-center">
+                <div class="text-3xl font-black text-secondary-container mb-1" id="resQ">0</div>
+                <div class="text-xs text-blue-200">Preguntas respondidas</div>
+              </div>
+              <div class="bg-white/10 rounded-xl p-4 text-center">
+                <div class="text-3xl font-black text-secondary-container mb-1" id="resFugas">0</div>
+                <div class="text-xs text-blue-200">Fugas de dinero detectadas</div>
+              </div>
+              <div class="bg-white/10 rounded-xl p-4 text-center">
+                <div class="text-3xl font-black text-secondary-container mb-1" id="resModulos">0</div>
+                <div class="text-xs text-blue-200">Módulos de Mr. Ruta que te aplican</div>
+              </div>
+              <div class="bg-white/10 rounded-xl p-4 text-center">
+                <div class="text-3xl font-black text-secondary-container mb-1" id="resROI">—</div>
+                <div class="text-xs text-blue-200">Potencial de recuperación</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Urgency message -->
+        <div id="urgencyMsg" class="p-6 border-t border-outline-variant/20">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+
+      <!-- Category breakdown -->
+      <h2 class="text-2xl font-black text-primary header-anchor mb-5">Desglose por área de tu operación</h2>
+      <div class="grid md:grid-cols-2 gap-4 mb-8">
+        <div class="bg-surface-container-lowest rounded-xl p-5 border border-outline-variant/10 shadow-sm">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="material-symbols-outlined text-primary text-xl">assignment</span>
+            <div><div class="font-bold text-sm">Información Operativa</div><div class="text-xs text-on-surface-variant">Tiempo, visibilidad, inventario en visita</div></div>
+            <div class="ml-auto font-black text-primary text-lg" id="catScore1">0</div>
+          </div>
+          <div class="score-track"><div class="score-fill bg-primary" id="catBar1" style="width:0%"></div></div>
+          <div class="text-xs text-on-surface-variant mt-2" id="catMsg1">—</div>
+        </div>
+        <div class="bg-surface-container-lowest rounded-xl p-5 border border-outline-variant/10 shadow-sm">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="material-symbols-outlined text-primary text-xl">storefront</span>
+            <div><div class="font-bold text-sm">Procesos Comerciales</div><div class="text-xs text-on-surface-variant">Pedido sugerido, FEFO, liquidación</div></div>
+            <div class="ml-auto font-black text-primary text-lg" id="catScore2">0</div>
+          </div>
+          <div class="score-track"><div class="score-fill bg-primary" id="catBar2" style="width:0%"></div></div>
+          <div class="text-xs text-on-surface-variant mt-2" id="catMsg2">—</div>
+        </div>
+        <div class="bg-surface-container-lowest rounded-xl p-5 border border-outline-variant/10 shadow-sm">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="material-symbols-outlined text-primary text-xl">devices</span>
+            <div><div class="font-bold text-sm">Tecnología e Integración</div><div class="text-xs text-on-surface-variant">Offline, control de pedidos manuales</div></div>
+            <div class="ml-auto font-black text-primary text-lg" id="catScore3">0</div>
+          </div>
+          <div class="score-track"><div class="score-fill bg-primary" id="catBar3" style="width:0%"></div></div>
+          <div class="text-xs text-on-surface-variant mt-2" id="catMsg3">—</div>
+        </div>
+        <div class="bg-surface-container-lowest rounded-xl p-5 border border-outline-variant/10 shadow-sm">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="material-symbols-outlined text-primary text-xl">payments</span>
+            <div><div class="font-bold text-sm">Control Financiero</div><div class="text-xs text-on-surface-variant">Fill Rate, retención de conocimiento</div></div>
+            <div class="ml-auto font-black text-primary text-lg" id="catScore4">0</div>
+          </div>
+          <div class="score-track"><div class="score-fill bg-primary" id="catBar4" style="width:0%"></div></div>
+          <div class="text-xs text-on-surface-variant mt-2" id="catMsg4">—</div>
+        </div>
+      </div>
+
+      <!-- What Mr. Ruta solves for YOU -->
+      <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/10 shadow-sm overflow-hidden mb-8">
+        <div class="bg-primary/8 border-b border-primary/15 p-5">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary text-2xl">auto_fix_high</span>
+            <div>
+              <div class="font-black text-primary text-base">Lo que Mr. Ruta resuelve específicamente para tu operación</div>
+              <div class="text-xs text-on-surface-variant mt-0.5">Basado en tus respuestas — módulos y beneficios que te aplican directamente</div>
+            </div>
+          </div>
+        </div>
+        <div class="p-5" id="solutionModules">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+
+      <!-- Financial impact estimate -->
+      <div class="bg-secondary-container rounded-2xl p-8 mb-8 text-center">
+        <div class="text-xs font-black text-on-secondary-fixed/70 uppercase tracking-widest mb-2">Estimación de impacto financiero — basada en tu diagnóstico</div>
+        <div class="text-5xl font-black text-on-secondary-fixed mb-3" id="impactTotal" style="font-family:Raleway">—</div>
+        <div class="text-on-secondary-fixed/80 text-sm mb-6">en recuperación anual estimada para tu operación</div>
+        <div class="grid grid-cols-3 gap-4 text-center mb-6">
+          <div class="bg-white/20 rounded-xl p-4">
+            <div class="text-2xl font-black text-on-secondary-fixed mb-1" id="impactFugas">—</div>
+            <div class="text-xs text-on-secondary-fixed/70">Por fugas eliminadas</div>
+          </div>
+          <div class="bg-white/20 rounded-xl p-4">
+            <div class="text-2xl font-black text-on-secondary-fixed mb-1" id="impactMerma">—</div>
+            <div class="text-xs text-on-secondary-fixed/70">Por reducción de merma</div>
+          </div>
+          <div class="bg-white/20 rounded-xl p-4">
+            <div class="text-2xl font-black text-on-secondary-fixed mb-1" id="impactVentas">—</div>
+            <div class="text-xs text-on-secondary-fixed/70">Por incremento en ticket</div>
+          </div>
+        </div>
+        <p class="text-xs text-on-secondary-fixed/60 mb-5">* Estimación conservadora basada en benchmarks de empresas de distribución similares en México. El dato exacto se calcula con tus números reales en el piloto de 30 días.</p>
+        <a href="#contactSection">
+          <button class="bg-primary text-white px-8 py-3 rounded-xl font-bold hover:scale-105 transition-transform text-sm">
+            Validar estos números con un especialista →
+          </button>
+        </a>
+      </div>
+
+      <!-- Next steps -->
+      <div class="grid md:grid-cols-3 gap-5 mb-8">
+        <div class="bg-surface-container-lowest rounded-xl p-5 border border-outline-variant/10 shadow-sm text-center">
+          <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+            <span class="font-black text-primary text-lg" style="font-family:Raleway">1</span>
+          </div>
+          <h4 class="font-bold text-sm text-primary mb-2">Piloto de 30 días</h4>
+          <p class="text-xs text-on-surface-variant leading-relaxed">3 rutas reales con datos reales. Si el ahorro no supera el 15%, no seguimos.</p>
+        </div>
+        <div class="bg-surface-container-lowest rounded-xl p-5 border border-outline-variant/10 shadow-sm text-center">
+          <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+            <span class="font-black text-primary text-lg" style="font-family:Raleway">2</span>
+          </div>
+          <h4 class="font-bold text-sm text-primary mb-2">Mide los 5 KPIs</h4>
+          <p class="text-xs text-on-surface-variant leading-relaxed">Fill Rate, Merma, Tiempo/Visita, ROI y Ticket Promedio. Números exactos, no estimaciones.</p>
+        </div>
+        <div class="bg-surface-container-lowest rounded-xl p-5 border border-outline-variant/10 shadow-sm text-center">
+          <div class="w-12 h-12 bg-secondary-container rounded-full flex items-center justify-center mx-auto mb-3">
+            <span class="material-symbols-outlined text-on-secondary-fixed text-xl">rocket_launch</span>
+          </div>
+          <h4 class="font-bold text-sm text-primary mb-2">Escala con evidencia</h4>
+          <p class="text-xs text-on-surface-variant leading-relaxed">Si el piloto funciona, escalas a toda la flota con datos duros que justifican la inversión.</p>
+        </div>
+      </div>
+
+      <!-- Quote cierre -->
+      <div class="bg-primary rounded-2xl p-8 text-center">
+        <span class="material-symbols-outlined text-secondary-container text-3xl block mb-3">format_quote</span>
+        <p class="text-white text-lg font-bold leading-relaxed mb-2">"Mr. Ruta no viene a vender software. Viene a eliminar fugas de dinero."</p>
+        <p class="text-blue-200 text-sm">"Si tus tostadas se venden, pero tus rutas no ganan, el problema no está en el producto, está en el proceso."</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ CONTACT FORM ═══════════ -->
+  <section class="py-16 px-6 bg-surface-container-low" id="contactSection">
+    <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+      <div class="space-y-8">
+        <h2 class="text-4xl font-black text-primary header-anchor">¿Listo para convertir este diagnóstico en un piloto real?</h2>
+        <p class="text-on-surface-variant text-lg leading-relaxed">Agenda una sesión de 30 minutos. Te mostramos Mr. Ruta funcionando en vivo con datos de distribuidoras como la tuya en el norte de México.</p>
+        <div class="flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm">
+          <div class="w-12 h-12 bg-secondary-container rounded-full flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-on-secondary-fixed">support_agent</span>
+          </div>
+          <div>
+            <div class="font-bold text-primary">Respuesta en menos de 2 horas</div>
+            <div class="text-sm text-on-surface-variant">Un especialista en distribución — no un bot.</div>
+          </div>
+        </div>
+        <!-- Score summary for contact -->
+        <div class="p-5 bg-white rounded-xl border border-outline-variant/20 shadow-sm">
+          <div class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-3">Tu diagnóstico a enviar:</div>
+          <div class="flex items-center gap-4">
+            <div class="text-4xl font-black text-primary" id="contactScore" style="font-family:Raleway">0</div>
+            <div>
+              <div class="font-bold text-primary" id="contactLabel">—</div>
+              <div class="text-xs text-on-surface-variant" id="contactFugas">— fugas detectadas · — módulos aplicables</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Form (Stitch exact) -->
+      <div class="bg-surface-container-lowest p-10 rounded-3xl shadow-2xl border border-outline-variant/10">
+        <h3 class="text-2xl font-bold text-primary mb-2">Agenda tu sesión de diagnóstico</h3>
+        <p class="text-on-surface-variant text-sm mb-7">Tu diagnóstico se adjunta automáticamente para personalizar la sesión.</p>
+        <form class="space-y-5" onsubmit="submitDiagnostico(event)">
+          <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-on-surface-variant ml-1 uppercase tracking-wide">Nombre</label>
+              <input class="w-full bg-surface-container-low border-none rounded-xl p-4 focus:ring-2 focus:ring-primary text-sm" placeholder="Tu nombre" type="text" required>
+            </div>
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-on-surface-variant ml-1 uppercase tracking-wide">Empresa</label>
+              <input class="w-full bg-surface-container-low border-none rounded-xl p-4 focus:ring-2 focus:ring-primary text-sm" placeholder="Tu empresa" type="text" id="fEmpresa" required>
+            </div>
+          </div>
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-on-surface-variant ml-1 uppercase tracking-wide">Cargo</label>
+            <select class="w-full bg-surface-container-low border-none rounded-xl p-4 focus:ring-2 focus:ring-primary text-sm">
+              <option>Director General / CEO / Dueño</option>
+              <option>Director Comercial</option>
+              <option selected>Gerente de Distribución / Logística</option>
+              <option>Gerente de Operaciones</option>
+              <option>Gerente de Tecnología / IT</option>
+              <option>Otro</option>
+            </select>
+          </div>
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-on-surface-variant ml-1 uppercase tracking-wide">Correo corporativo</label>
+            <input class="w-full bg-surface-container-low border-none rounded-xl p-4 focus:ring-2 focus:ring-primary text-sm" placeholder="nombre@empresa.com" type="email" required>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-on-surface-variant ml-1 uppercase tracking-wide">Número de rutas</label>
+              <select class="w-full bg-surface-container-low border-none rounded-xl p-4 focus:ring-2 focus:ring-primary text-sm">
+                <option>1-5 rutas</option>
+                <option selected>6-20 rutas</option>
+                <option>21-50 rutas</option>
+                <option>+50 rutas</option>
+              </select>
+            </div>
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-on-surface-variant ml-1 uppercase tracking-wide">WhatsApp</label>
+              <input class="w-full bg-surface-container-low border-none rounded-xl p-4 focus:ring-2 focus:ring-primary text-sm" placeholder="+52 81 1234 5678" type="tel">
+            </div>
+          </div>
+          <!-- Auto-filled score summary -->
+          <div class="p-4 bg-surface-container rounded-xl border border-primary/20 text-xs">
+            <div class="font-bold text-primary mb-1">📊 Tu diagnóstico (se adjuntará automáticamente):</div>
+            <div class="text-on-surface-variant" id="formScoreSummary">Completa el cuestionario para ver tu resumen aquí.</div>
+          </div>
+          <button type="submit" class="w-full bg-secondary-container text-on-secondary-fixed py-4 rounded-xl font-black text-base shadow-lg hover:shadow-xl hover:opacity-95 transition-all" id="submitBtn">
+            Quiero mi piloto de 30 días →
+          </button>
+          <p class="text-xs text-on-surface-variant text-center">No spam. Un especialista que conoce tu industria en el norte de México.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+</div><!-- /resultsSection -->
+
+<!-- ═══════════ ADAPTACIÓN DE VEHÍCULOS ═══════════ -->
+<section class="py-20 px-6 bg-white">
+  <div class="max-w-7xl mx-auto">
+
+    <!-- Section header -->
+    <div class="text-center mb-12">
+      <div class="inline-flex items-center gap-2 bg-primary/8 text-primary px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase border border-primary/20 mb-5">
+        <span class="material-symbols-outlined text-sm">build</span>
+        Servicio complementario
+      </div>
+      <h2 class="text-4xl font-black text-primary header-anchor mb-4">
+        Adaptamos tus vehículos para<br>la operación que mereces
+      </h2>
+      <p class="text-on-surface-variant text-lg max-w-2xl mx-auto leading-relaxed">
+        Un sistema de reparto inteligente necesita vehículos preparados. Adaptamos tu flota con racks, separadores, refrigeración y equipamiento para maximizar cada visita.
+      </p>
+    </div>
+
+    <!-- Main gallery — Feature image + grid -->
+    <div class="grid md:grid-cols-2 gap-6 mb-8">
+
+      <!-- Feature image left (tall) -->
+      <div class="relative group overflow-hidden rounded-2xl border border-outline-variant/20 shadow-md bg-surface-container-low">
+        <img
+          src="https://i.ibb.co/gLRysNrZ/Captura-de-pantalla-2026-04-17-092531.png"
+          alt="Adaptación interior de vehículo de reparto — racks y organización profesional"
+          class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          style="min-height:320px"
+          loading="lazy"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-5">
+          <div class="text-white">
+            <div class="font-black text-sm">Interior adaptado</div>
+            <div class="text-xs text-blue-200 mt-0.5">Organización por ruta · Acceso eficiente al producto</div>
+          </div>
+        </div>
+        <!-- Badge -->
+        <div class="absolute top-4 left-4 bg-secondary-container text-on-secondary-fixed px-3 py-1 rounded-full text-xs font-black shadow-md">
+          ⭐ Más solicitado
+        </div>
+      </div>
+
+      <!-- Grid right (2x2) -->
+      <div class="grid grid-cols-2 gap-4">
+        <div class="relative group overflow-hidden rounded-xl border border-outline-variant/20 shadow-sm bg-surface-container-low">
+          <img
+            src="https://i.ibb.co/JRkC0mmQ/Captura-de-pantalla-2026-04-17-095158.png"
+            alt="Adaptación exterior de vehículo de reparto"
+            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            style="min-height:180px"
+            loading="lazy"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-primary/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+            <div class="text-white text-xs font-bold">Carrocería adaptada</div>
+          </div>
+        </div>
+        <div class="relative group overflow-hidden rounded-xl border border-outline-variant/20 shadow-sm bg-surface-container-low">
+          <img
+            src="https://i.ibb.co/TzQtMKX/Captura-de-pantalla-2026-04-17-095204.png"
+            alt="Sistema de racks para reparto organizado"
+            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            style="min-height:180px"
+            loading="lazy"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-primary/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+            <div class="text-white text-xs font-bold">Racks y separadores</div>
+          </div>
+        </div>
+        <div class="relative group overflow-hidden rounded-xl border border-outline-variant/20 shadow-sm bg-surface-container-low">
+          <img
+            src="https://i.ibb.co/PvfbLfBR/Captura-de-pantalla-2026-04-17-095225.png"
+            alt="Área de carga optimizada para distribución"
+            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            style="min-height:180px"
+            loading="lazy"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-primary/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+            <div class="text-white text-xs font-bold">Área de carga optimizada</div>
+          </div>
+        </div>
+        <div class="relative group overflow-hidden rounded-xl border border-outline-variant/20 shadow-sm bg-surface-container-low">
+          <img
+            src="https://i.ibb.co/NnGj4DVC/Captura-de-pantalla-2026-04-17-095233.png"
+            alt="Equipamiento profesional para reparto de tostadas y botanas"
+            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            style="min-height:180px"
+            loading="lazy"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-primary/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+            <div class="text-white text-xs font-bold">Equipamiento profesional</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Benefits row -->
+    <div class="grid md:grid-cols-4 gap-5 mb-10">
+      <div class="bg-surface-container-low rounded-xl p-5 border border-outline-variant/20 text-center">
+        <div class="w-11 h-11 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+          <span class="material-symbols-outlined text-primary text-xl">inventory_2</span>
+        </div>
+        <h4 class="font-bold text-sm text-primary mb-1">Carga optimizada por ruta</h4>
+        <p class="text-xs text-on-surface-variant leading-relaxed">El producto de cada cliente está donde debe estar. Cero tiempo moviendo cajas innecesariamente.</p>
+      </div>
+      <div class="bg-surface-container-low rounded-xl p-5 border border-outline-variant/20 text-center">
+        <div class="w-11 h-11 bg-secondary-container/30 rounded-full flex items-center justify-center mx-auto mb-3">
+          <span class="material-symbols-outlined text-secondary text-xl">timer</span>
+        </div>
+        <h4 class="font-bold text-sm text-primary mb-1">-5 horas por día</h4>
+        <p class="text-xs text-on-surface-variant leading-relaxed">Sin adaptación, el vendedor pierde 8-15 min por cliente moviendo producto. Con racks: acceso inmediato.</p>
+      </div>
+      <div class="bg-surface-container-low rounded-xl p-5 border border-outline-variant/20 text-center">
+        <div class="w-11 h-11 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+          <span class="material-symbols-outlined text-primary text-xl">local_shipping</span>
+        </div>
+        <h4 class="font-bold text-sm text-primary mb-1">Compatible con Mr. Ruta</h4>
+        <p class="text-xs text-on-surface-variant leading-relaxed">La app genera el orden de carga exacto. La adaptación del vehículo lo hace ejecutable en campo.</p>
+      </div>
+      <div class="bg-surface-container-low rounded-xl p-5 border border-outline-variant/20 text-center">
+        <div class="w-11 h-11 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+          <span class="material-symbols-outlined text-primary text-xl">verified</span>
+        </div>
+        <h4 class="font-bold text-sm text-primary mb-1">Piloto en 3 unidades</h4>
+        <p class="text-xs text-on-surface-variant leading-relaxed">Igual que con el software: empezamos con 3 rutas, medimos el impacto y escalamos con evidencia.</p>
+      </div>
+    </div>
+
+    <!-- CTA combinado: Software + Adaptación -->
+    <div class="bg-gradient-to-br from-primary to-primary-container rounded-2xl p-8 md:p-10 text-center text-white">
+      <div class="inline-flex items-center gap-2 bg-secondary-container text-on-secondary-fixed px-4 py-1.5 rounded-full text-xs font-black mb-5">
+        🔧 Software + Adaptación = La solución completa
+      </div>
+      <h3 class="text-3xl font-black header-anchor mb-3">
+        La app optimiza la ruta.<br>El vehículo la ejecuta.
+      </h3>
+      <p class="text-blue-200 text-base max-w-xl mx-auto mb-7 leading-relaxed">
+        Ofrecemos el paquete completo: implementación de Mr. Ruta + adaptación de flota en piloto de 30 días. Mides el ROI de ambos antes de escalar.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="#contactSection">
+          <button class="bg-secondary-container text-on-secondary-fixed px-8 py-4 rounded-xl font-black shadow-lg hover:scale-105 transition-transform text-sm">
+            Incluir adaptación en mi piloto →
+          </button>
+        </a>
+        <button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="border-2 border-white text-white px-8 py-4 rounded-xl font-bold hover:bg-white/10 transition-all text-sm">
+          Ver mi diagnóstico ↑
+        </button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-slate-50 border-t border-slate-200 py-8 px-6">
+  <div class="max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-4">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary text-xl" style="font-variation-settings:'FILL' 1;">route</span>
+      <span class="font-black text-primary text-base">Mr. Ruta</span>
+      <span class="text-slate-400 text-xs ml-2">· Diagnóstico Operacional</span>
+    </div>
+    <span class="text-xs text-slate-400">© 2025 Mr. Ruta · Hecho en México 🇲🇽</span>
+  </div>
+</footer>
+
+<!-- ═══════════ JAVASCRIPT ═══════════ -->
+<script>
+'use strict';
+
+// ── STATE ─────────────────────────────────────────────
+const S = {
+  answers: {}, // qNum -> {level, pts}
+  total: 0,
+  blockScores: [0, 0, 0, 0], // index 0=block1...
+  blockMax: [33, 34, 17, 16],
+  answered: 0
+};
+
+// ── FEEDBACKS ─────────────────────────────────────────
+const FEEDBACKS = {
+  1: {
+    bad:   { msg:'🔴 Sin evidencia fotográfica, cualquier devolución es un conflicto sin resolver. Cada rechazo no documentado es dinero que se pierde sin rastro.', bg:'bg-red-50', text:'text-red-800' },
+    warn:  { msg:'🟡 El papel se pierde, se moja o es ilegible. Un cuadernillo no es evidencia ante un cliente que dice que no pidió algo.', bg:'bg-amber-50', text:'text-amber-800' },
+    ok:    { msg:'🔵 Tener registro sin foto tiene un problema: el cliente puede refutar. La evidencia visual es irrefutable y acelera la resolución.', bg:'bg-blue-50', text:'text-blue-800' },
+    great: { msg:'✅ Protocolo fotográfico de 4 pasos. Exactamente lo que hace Mr. Ruta. Sin foto = no cierra visita. Blindaje total de devoluciones.', bg:'bg-green-50', text:'text-green-800' }
+  },
+  2: {
+    bad:   { msg:'🔴 Sin medir el tiempo por cliente, no sabes si tu vendedor lleva 25 minutos en una tiendita o si hizo 3 visitas en una hora. El Sargento Timer de Mr. Ruta cambia esto.', bg:'bg-red-50', text:'text-red-800' },
+    warn:  { msg:'🟡 Más de 5 minutos por cliente destruye la productividad. Con 30 clientes, son 2.5 horas extra al día. Mr. Ruta tiene bono de ejecución por tiempo de visita.', bg:'bg-amber-50', text:'text-amber-800' },
+    ok:    { msg:'🔵 Buen punto de partida. 2-5 minutos es el rango razonable. Con timer activo y argumento contextual, la meta es &lt;90 segundos en captura de pedido.', bg:'bg-blue-50', text:'text-blue-800' },
+    great: { msg:'✅ Timer activo con nudges progresivos. Verde → Azul → Ámbar → Rojo. Sin sonido en los primeros 90 segundos. El vendedor se autogestiona.', bg:'bg-green-50', text:'text-green-800' }
+  },
+  3: {
+    bad:   { msg:'🔴 Tu vendedor sale y entra — no sabes qué pasó entre medias. Si hay un problema, lo descubres 8 horas después. Eso tiene un costo real.', bg:'bg-red-50', text:'text-red-800' },
+    warn:  { msg:'🟡 "El GPS te dice dónde está el camión, no cuánto dinero pierdes." Mr. Ruta rastrea rentabilidad, no vehículos.', bg:'bg-amber-50', text:'text-amber-800' },
+    ok:    { msg:'🔵 WhatsApp/llamada = información manual no estructurada. El supervisor gasta tiempo en preguntar en vez de actuar. Los datos llegan tarde.', bg:'bg-blue-50', text:'text-blue-800' },
+    great: { msg:'✅ Dashboard en tiempo real. Mapa de rutas, KPIs por vendedor, alertas automáticas. El supervisor no necesita preguntar — el sistema le avisa.', bg:'bg-green-50', text:'text-green-800' }
+  },
+  4: {
+    bad:   { msg:'🔴 "¿Qué le ponemos?" + sin inventario = el cliente decide con cero contexto. Resultado garantizado: pide lo mismo o menos. -18% de venta potencial por visita.', bg:'bg-red-50', text:'text-red-800' },
+    warn:  { msg:'🟡 La estimación visual no registrada no existe en el sistema. Si no hay dato, no hay tendencia, no hay sugerido inteligente.', bg:'bg-amber-50', text:'text-amber-800' },
+    ok:    { msg:'🔵 Proceso inconsistente = resultados inconsistentes. Si el 40% de tus vendedores no lo hace, el 40% de tus clientes tiene pedidos subóptimos.', bg:'bg-blue-50', text:'text-blue-800' },
+    great: { msg:'✅ Inventario obligatorio en sistema antes del pedido. Esto alimenta el motor de IA para generar sugeridos precisos en la siguiente visita.', bg:'bg-green-50', text:'text-green-800' }
+  },
+  5: {
+    bad:   { msg:'🔴 El cliente decide solo, sin argumento, sin contexto. El resultado es siempre el mismo: pide lo de siempre o menos. Esto tiene un nombre: venta perdida sistemática.', bg:'bg-red-50', text:'text-red-800' },
+    warn:  { msg:'🟡 El conocimiento que vive solo en la cabeza del vendedor no es un activo tuyo — es un activo de él. Si renuncia, se va con él.', bg:'bg-amber-50', text:'text-amber-800' },
+    ok:    { msg:'🔵 Una lista por categoría no tiene contexto de cliente, historial ni razón de compra para hoy. Es mejor que nada, pero está muy lejos del potencial.', bg:'bg-blue-50', text:'text-blue-800' },
+    great: { msg:'✅ Motor de IA con 6 señales: historial 8 visitas + quincena + clima + promo + canal + inventario estimado. +18% en tasa de aceptación del pedido.', bg:'bg-green-50', text:'text-green-800' }
+  },
+  6: {
+    bad:   { msg:'🔴 Para tostadas y botanas esto es crítico. Un lote vencido en tienda es multa sanitaria + pérdida de relación + producto de retorno sin valor. Mr. Ruta integra FEFO.', bg:'bg-red-50', text:'text-red-800' },
+    warn:  { msg:'🟡 Si no siempre se cumple, el error solo es cuestión de tiempo. Un CEDIS mediano pierde 80-120 cajas semanales sin FEFO. A tu precio de producto = mucho dinero.', bg:'bg-amber-50', text:'text-amber-800' },
+    ok:    { msg:'🔵 El proceso existe pero sin validación automática, la excepción ocurre. Mr. Ruta bloquea la salida si el FEFO no se respeta. No hay manera de saltarlo.', bg:'bg-blue-50', text:'text-blue-800' },
+    great: { msg:'✅ FEFO automatizado con bloqueo y alerta. -95% en merma por caducidad. El sistema asigna lotes automáticamente según fecha de vencimiento.', bg:'bg-green-50', text:'text-green-800' }
+  },
+  7: {
+    bad:   { msg:'🔴 Un hueco en anaquel es venta perdida en ese momento y en la siguiente visita. Sin detección sistemática, tu competencia crece en tus clientes sin que lo notes.', bg:'bg-red-50', text:'text-red-800' },
+    warn:  { msg:'🟡 La iniciativa individual no es proceso. Si depende del ánimo del vendedor ese día, no es confiable. Necesitas que el sistema lo detecte, no la persona.', bg:'bg-amber-50', text:'text-amber-800' },
+    ok:    { msg:'🔵 Registro sin foto ni disparo automático = información pasiva. No genera acción ni ROI. El hueco se anota pero no se convierte en venta recuperada.', bg:'bg-blue-50', text:'text-blue-800' },
+    great: { msg:'✅ Foto de anaquel con IA: detecta huecos, calcula el dinero perdido y dispara el sugerido con ROI inmediato. +35% en ventas por hueco detectado.', bg:'bg-green-50', text:'text-green-800' }
+  },
+  8: {
+    bad:   { msg:'🔴 2-3 horas en papel por día × 30 días × 6 rutas = tiempo administrativo masivo. Más los errores que requieren auditoría posterior. Ese tiempo tiene un costo.', bg:'bg-red-50', text:'text-red-800' },
+    warn:  { msg:'🟡 Excel mejora el tiempo pero sigue siendo manual. Un error en una celda afecta todo. El gerente no tiene el cierre hasta tarde en la noche.', bg:'bg-amber-50', text:'text-amber-800' },
+    ok:    { msg:'🔵 Sistema pero con ajustes manuales = el proceso no está cerrado del todo. Los ajustes son donde viven los errores y las irregularidades.', bg:'bg-blue-50', text:'text-blue-800' },
+    great: { msg:'✅ 8 minutos de liquidación automática. CFDI timbrado en campo. El gerente tiene el cierre de todas las rutas antes de que lleguen los camiones al CEDIS.', bg:'bg-green-50', text:'text-green-800' }
+  },
+  9: {
+    bad:   { msg:'🔴 El papel se pierde, se moja, se olvida. Datos transcriptos incorrectamente. Este es el punto exacto donde Mr. Ruta marca la diferencia: funciona 100% offline.', bg:'bg-red-50', text:'text-red-800' },
+    warn:  { msg:'🟡 Esperar señal = tiempo muerto. El cliente espera, la visita se alarga, la ruta se retrasa. No hay excusa técnica para perder pedidos.', bg:'bg-amber-50', text:'text-amber-800' },
+    ok:    { msg:'🔵 Si el modo offline es inestable, es tan malo como no tenerlo. El vendedor no puede depender de algo que "a veces" funciona. Necesita certeza total.', bg:'bg-blue-50', text:'text-blue-800' },
+    great: { msg:'✅ Offline-first real: SQLite local + sync automático al reconectar. 0 pedidos perdidos. Sin excusa técnica para no tener control. El teléfono ES la fuente de verdad.', bg:'bg-green-50', text:'text-green-800' }
+  },
+  10: {
+    bad:   { msg:'🔴 Los pedidos manuales sin control son la puerta de entrada al robo hormiga. Meta de Mr. Ruta: $0 en pedidos manuales sin doble autorización digital.', bg:'bg-red-50', text:'text-red-800' },
+    warn:  { msg:'🟡 Control reactivo llega tarde. El daño ya está hecho. La auditoría posterior tiene un costo y el dinero ya salió. Necesitas bloqueo preventivo.', bg:'bg-amber-50', text:'text-amber-800' },
+    ok:    { msg:'🔵 WhatsApp/llamada como control no deja rastro en el sistema. No es auditable, no es trazable. "Sin autorización en sistema = no procede."', bg:'bg-blue-50', text:'text-blue-800' },
+    great: { msg:'✅ Bloqueo digital con doble autorización en sistema. Trazabilidad total. El sistema fuerza el proceso — no pregunta, bloquea.', bg:'bg-green-50', text:'text-green-800' }
+  },
+  11: {
+    bad:   { msg:'🔴 Si no mides el Fill Rate, no puedes mejorarlo. Es la métrica más importante del reparto. La meta de Mr. Ruta: &gt;98% con alerta automática cuando baja.', bg:'bg-red-50', text:'text-red-800' },
+    warn:  { msg:'🟡 Datos atrasados = decisiones tardías. Para cuando calculas el Fill Rate mensualmente, ya perdiste clientes por pedidos incompletos.', bg:'bg-amber-50', text:'text-amber-800' },
+    ok:    { msg:'🔵 85-95% significa que 1 de cada 10 pedidos no se entrega completo. Eso es un cliente insatisfecho, una queja potencial, y venta perdida esa visita.', bg:'bg-blue-50', text:'text-blue-800' },
+    great: { msg:'✅ &gt;98% con alerta automática en tiempo real. Si el Fill Rate baja del umbral, el supervisor lo sabe antes de que afecte al cliente. Acción proactiva.', bg:'bg-green-50', text:'text-green-800' }
+  },
+  12: {
+    bad:   { msg:'🔴 Si tu mejor vendedor renuncia esta tarde, ¿cuánto dinero pierdes? El conocimiento de 200 clientes, preferencias, crédito, acuerdos — en su cabeza, no en tu sistema.', bg:'bg-red-50', text:'text-red-800' },
+    warn:  { msg:'🟡 Un cuadernillo es un pasivo enorme. Se pierde, es ilegible, está desactualizado. 1-2 meses para recuperar productividad = dinero real perdido.', bg:'bg-amber-50', text:'text-amber-800' },
+    ok:    { msg:'🔵 Histórico en sistema sin pedido sugerido = el sustituto sabe qué compró el cliente, pero no qué proponerle hoy. Hay una brecha entre datos y acción.', bg:'bg-blue-50', text:'text-blue-800' },
+    great: { msg:'✅ El sistema tiene todo: historial, argumento contextual, pedido sugerido y ruta optimizada. El sustituto arranca productivo desde el día 1. Tu negocio es resiliente.', bg:'bg-green-50', text:'text-green-800' }
+  }
+};
+
+// ── MODULES MAPPING ───────────────────────────────────
+const MODULES = [
+  { key:'timer', icon:'timer', title:'Sargento Timer', desc:'Timer activo con nudges progresivos por visita. Bono de ejecución automático.', color:'#004161', triggers:[2,3] },
+  { key:'foto', icon:'photo_camera', title:'Protocolo fotográfico 4 pasos', desc:'Sin foto no cierra la visita. Blindaje total de devoluciones y rechazos.', color:'#7d5700', triggers:[1,7] },
+  { key:'sugerido', icon:'auto_fix_high', title:'Pedido sugerido con IA', desc:'+18% en tasa de aceptación. Argumento contextual generado antes de cada visita.', color:'#004161', triggers:[5,4] },
+  { key:'fefo', icon:'inventory', title:'Control FEFO automatizado', desc:'-95% en merma por caducidad. Bloqueo si no se respeta. Crítico para tostadas y botanas.', color:'#166534', triggers:[6] },
+  { key:'anaquel', icon:'image_search', title:'Foto de anaquel con IA', desc:'+35% ventas por hueco detectado. ROI inmediato calculado al instante.', color:'#7d5700', triggers:[7] },
+  { key:'offline', icon:'signal_wifi_off', title:'Modo offline-first total', desc:'100% funcional sin señal. 0 pedidos perdidos. Sin excusa técnica.', color:'#004161', triggers:[9] },
+  { key:'pedidosManual', icon:'block', title:'Bloqueo de pedidos manuales', desc:'Doble autorización digital obligatoria. $0 en irregularidades. Trazabilidad total.', color:'#7f1d1d', triggers:[10] },
+  { key:'dashboard', icon:'dashboard', title:'Dashboard en tiempo real', desc:'KPIs de todas las rutas sin esperar reportes. Alertas automáticas proactivas.', color:'#004161', triggers:[3,11] },
+  { key:'liquidacion', icon:'receipt_long', title:'Liquidación automática 8 min', desc:'CFDI en campo. Cuadre exacto. El gerente tiene el cierre antes que los camiones.', color:'#004161', triggers:[8] },
+  { key:'conocimiento', icon:'brain', title:'Base de conocimiento de clientes', desc:'El sustituto arranca productivo el día 1. Tu negocio es resiliente al turnover.', color:'#7d5700', triggers:[12] },
+];
+
+// ── ANSWER HANDLER ─────────────────────────────────────
+function answer(qNum, level, pts, btn, styleClass) {
+  // Remove previous selection in this question
+  const opts = document.getElementById(`opts${qNum}`);
+  opts.querySelectorAll('.option-btn').forEach(b => {
+    b.className = 'option-btn';
+  });
+  btn.classList.add(styleClass);
+
+  const wasAnswered = S.answers[qNum] !== undefined;
+  const prevPts = wasAnswered ? S.answers[qNum].pts : 0;
+  S.answers[qNum] = { level, pts };
+
+  if (!wasAnswered) {
+    S.answered++;
+  } else {
+    S.total -= prevPts;
+  }
+  S.total += pts;
+
+  // Update block score
+  const blockMap = {1:0, 2:0, 3:0, 4:0, 5:1, 6:1, 7:1, 8:1, 9:2, 10:2, 11:3, 12:3};
+  const bIdx = blockMap[qNum];
+  // Recalculate block score from scratch
+  S.blockScores = [0, 0, 0, 0];
+  Object.entries(S.answers).forEach(([q, a]) => {
+    S.blockScores[blockMap[parseInt(q)]] += a.pts;
+  });
+
+  // Update card style
+  const card = document.getElementById(`qc${qNum}`);
+  card.className = 'q-card answered-' + level;
+
+  // Show feedback
+  const fb = document.getElementById(`fb${qNum}`);
+  const fbData = FEEDBACKS[qNum][level];
+  fb.className = `mt-3 p-3 rounded-lg text-xs ${fbData.bg} ${fbData.text}`;
+  fb.textContent = fbData.msg;
+  fb.classList.remove('hidden');
+
+  // Update UI
+  updateScoreUI();
+  updateNavProgress();
+
+  // Check if all answered
+  if (S.answered >= 12) {
+    showResults();
+  }
+}
+
+// ── UPDATE SCORE UI ────────────────────────────────────
+function updateScoreUI() {
+  const score = Math.min(100, S.total);
+  const pct = score / 100;
+
+  // Mini ring (hero)
+  const circumference = 251.2;
+  const offset = circumference - pct * circumference;
+  const ring = document.getElementById('scoreRingCircle');
+  if (ring) {
+    ring.style.strokeDashoffset = offset;
+    ring.style.stroke = score >= 70 ? '#166534' : score >= 40 ? '#d97706' : '#dc2626';
+  }
+  const sn = document.getElementById('scoreNum');
+  if (sn) { sn.textContent = score; sn.classList.add('count-anim'); setTimeout(()=>sn.classList.remove('count-anim'),400); }
+
+  // Label
+  const {label, desc} = getScoreLabel(score);
+  if(document.getElementById('scoreLabel')) document.getElementById('scoreLabel').textContent = label;
+  if(document.getElementById('scoreDesc')) document.getElementById('scoreDesc').textContent = desc;
+
+  // Category bars
+  S.blockScores.forEach((bs, i) => {
+    const idx = i + 1;
+    const pctCat = Math.round(bs / S.blockMax[i] * 100);
+    const el = document.getElementById(`cp${idx}`);
+    const bar = document.getElementById(`cf${idx}`);
+    if (el) el.textContent = pctCat + '%';
+    if (bar) {
+      bar.style.width = pctCat + '%';
+      bar.style.background = pctCat >= 70 ? '#166534' : pctCat >= 40 ? '#d97706' : '#dc2626';
+    }
+  });
+
+  // Progress dots
+  renderDots();
+}
+
+function getScoreLabel(score) {
+  if (score >= 80) return { label: '🟢 Operación madura', desc: 'Tienes buenas bases. Mr. Ruta optimiza lo que ya funciona para escalar.' };
+  if (score >= 60) return { label: '🔵 Operación en desarrollo', desc: 'Hay procesos en marcha pero con gaps importantes que cuestan dinero cada día.' };
+  if (score >= 35) return { label: '🟡 Riesgo moderado', desc: 'Varias fugas detectadas. El potencial de mejora con Mr. Ruta es muy significativo.' };
+  return { label: '🔴 Urgencia alta', desc: 'Múltiples fugas de dinero activas. Cada semana sin sistema tiene un costo medible.' };
+}
+
+function renderDots() {
+  const container = document.getElementById('dots');
+  if (!container) return;
+  let html = '<div style="display:flex;gap:5px;flex-wrap:wrap">';
+  for (let i = 1; i <= 12; i++) {
+    const a = S.answers[i];
+    let color = '#e3efff';
+    if (a) {
+      color = a.level === 'great' ? '#166534' : a.level === 'ok' ? '#004161' : a.level === 'warn' ? '#d97706' : '#dc2626';
+    }
+    html += `<div class="prog-dot" style="background:${color};width:10px;height:10px;border-radius:50%"></div>`;
+  }
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+// ── NAV PROGRESS ──────────────────────────────────────
+function updateNavProgress() {
+  const np = document.getElementById('navProgress');
+  if (np) np.textContent = `${S.answered} de 12 respondidas`;
+  if (S.answered >= 12) {
+    const btn = document.getElementById('navResultBtn');
+    if (btn) btn.classList.remove('hidden');
+  }
+}
+
+// ── SHOW RESULTS ──────────────────────────────────────
+function showResults() {
+  const rs = document.getElementById('resultsSection');
+  if (!rs) return;
+  rs.classList.remove('hidden');
+
+  const score = Math.min(100, S.total);
+
+  // Animate big ring
+  setTimeout(() => {
+    const bigRing = document.getElementById('bigRingCircle');
+    if (bigRing) {
+      const offset = 364.4 - (score / 100 * 364.4);
+      bigRing.style.strokeDashoffset = offset;
+    }
+    const bs = document.getElementById('bigScore');
+    if (bs) animateNumber(bs, 0, score, 1200);
+  }, 300);
+
+  // Header bar color
+  const headerBar = document.getElementById('resultHeaderBar');
+  if (headerBar) {
+    if (score >= 70) headerBar.style.background = '#14532d';
+    else if (score >= 40) headerBar.style.background = '#92400e';
+    else headerBar.style.background = '#7f1d1d';
+  }
+
+  // Labels
+  const {label, desc} = getScoreLabel(score);
+  if(document.getElementById('bigLabel')) document.getElementById('bigLabel').textContent = label;
+  if(document.getElementById('bigSub')) document.getElementById('bigSub').textContent = desc;
+
+  // Count stats
+  const fugas = Object.values(S.answers).filter(a => a.level === 'bad' || a.level === 'warn').length;
+  const modulos = getApplicableModules().length;
+  if(document.getElementById('resQ')) animateNumber(document.getElementById('resQ'), 0, 12, 800);
+  if(document.getElementById('resFugas')) setTimeout(() => animateNumber(document.getElementById('resFugas'), 0, fugas, 800), 200);
+  if(document.getElementById('resModulos')) setTimeout(() => animateNumber(document.getElementById('resModulos'), 0, modulos, 800), 400);
+
+  const roi = score < 40 ? 'Muy alto' : score < 70 ? 'Alto' : 'Moderado';
+  if(document.getElementById('resROI')) document.getElementById('resROI').textContent = roi;
+
+  // Urgency message
+  renderUrgencyMsg(score, fugas);
+
+  // Category breakdown
+  renderCategoryBreakdown();
+
+  // Solution modules
+  renderSolutionModules();
+
+  // Financial impact
+  renderFinancialImpact(score, fugas);
+
+  // Contact section update
+  updateContactSection(score, label, fugas, modulos);
+
+  // Scroll
+  setTimeout(() => {
+    rs.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 400);
+}
+
+function renderUrgencyMsg(score, fugas) {
+  const el = document.getElementById('urgencyMsg');
+  if (!el) return;
+  let msg, icon, bg;
+  if (score >= 70) {
+    bg = 'bg-green-50 border border-green-200';
+    icon = '✅';
+    msg = `Tienes bases sólidas en ${12 - fugas} de 12 áreas. Mr. Ruta potencia lo que ya funciona y cierra las brechas restantes para que puedas escalar con certeza.`;
+  } else if (score >= 40) {
+    bg = 'bg-amber-50 border border-amber-200';
+    icon = '⚠️';
+    msg = `Detectamos ${fugas} áreas con fugas activas de dinero. Son procesos que funcionan parcialmente pero que cuestan cada día. Un piloto de 30 días te da el número exacto.`;
+  } else {
+    bg = 'bg-red-50 border border-red-200';
+    icon = '🚨';
+    msg = `${fugas} fugas de dinero activas en tu operación. Cada semana sin sistema tiene un costo medible. "No tienen un problema de logística, tienen una fuga de dinero." — Mr. Ruta viene a eliminarlo.`;
+  }
+  el.innerHTML = `<div class="${bg} rounded-xl p-4 flex gap-3 items-start"><span class="text-xl flex-shrink-0">${icon}</span><p class="text-sm leading-relaxed">${msg}</p></div>`;
+}
+
+function renderCategoryBreakdown() {
+  const catData = [
+    { msgs: ['Sin medición de tiempos ni visibilidad en ruta. Punto de inicio.',
+             'Algunos controles en campo, pero sin datos en tiempo real.',
+             'Buena visibilidad operativa. Optimizar con automatización.',
+             'Control operativo de alto nivel. Listo para escalar.'] },
+    { msgs: ['Sin pedido sugerido, FEFO ni liquidación controlada. Fugas múltiples.',
+             'Procesos básicos existen pero son inconsistentes o manuales.',
+             'Procesos comerciales en desarrollo. Falta argumento contextual y FEFO duro.',
+             'Excelencia en procesos comerciales. Mr. Ruta agrega la IA.'] },
+    { msgs: ['Sin offline-first ni control de pedidos manuales. Riesgo de pérdida y robo.',
+             'Tecnología básica presente. Offline inestable, control manual.',
+             'Buena base tecnológica. Cerrar el offline y el control de manuales.',
+             'Operación tecnológicamente robusta. Mr. Ruta agrega la capa de IA.'] },
+    { msgs: ['Sin Fill Rate medido y conocimiento solo en la cabeza del vendedor.',
+             'Mediciones básicas. Mejorable en tiempo real y retención de conocimiento.',
+             'Control financiero avanzado. Automatizar alertas y retención de conocimiento.',
+             'Control financiero maduro. Mr. Ruta optimiza y escala.'] }
+  ];
+
+  S.blockScores.forEach((bs, i) => {
+    const idx = i + 1;
+    const pctCat = Math.round(bs / S.blockMax[i] * 100);
+    const tier = pctCat >= 75 ? 3 : pctCat >= 50 ? 2 : pctCat >= 25 ? 1 : 0;
+    if(document.getElementById(`catScore${idx}`)) document.getElementById(`catScore${idx}`).textContent = pctCat + '%';
+    const bar = document.getElementById(`catBar${idx}`);
+    if (bar) {
+      bar.style.width = pctCat + '%';
+      bar.style.background = pctCat >= 70 ? '#166534' : pctCat >= 40 ? '#d97706' : '#dc2626';
+    }
+    if(document.getElementById(`catMsg${idx}`)) document.getElementById(`catMsg${idx}`).textContent = catData[i].msgs[tier];
+  });
+}
+
+function getApplicableModules() {
+  return MODULES.filter(m => {
+    return m.triggers.some(qNum => {
+      const a = S.answers[qNum];
+      return a && (a.level === 'bad' || a.level === 'warn' || a.level === 'ok');
+    });
+  });
+}
+
+function renderSolutionModules() {
+  const el = document.getElementById('solutionModules');
+  if (!el) return;
+  const applicable = getApplicableModules();
+  el.innerHTML = applicable.map(m => `
+    <div class="result-module" style="border-color:${m.color}">
+      <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:${m.color}15">
+        <span class="material-symbols-outlined text-lg" style="color:${m.color}">${m.icon}</span>
+      </div>
+      <div>
+        <div class="font-bold text-sm" style="color:${m.color}">${m.title}</div>
+        <div class="text-xs text-on-surface-variant mt-0.5">${m.desc}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderFinancialImpact(score, fugas) {
+  // Conservative estimates based on score
+  const multiplier = fugas / 12;
+  const fugasAmt = Math.round(multiplier * 850000 / 100) * 100;
+  const mermaAmt = Math.round(multiplier * 280000 / 100) * 100;
+  const ventasAmt = Math.round(multiplier * 420000 / 100) * 100;
+  const total = fugasAmt + mermaAmt + ventasAmt;
+
+  const fmt = n => '$' + n.toLocaleString('es-MX');
+  const fmtM = n => n >= 1000000 ? '$' + (n/1000000).toFixed(1) + 'M' : fmt(n);
+
+  if(document.getElementById('impactTotal')) document.getElementById('impactTotal').textContent = fmtM(total) + ' MXN/año';
+  if(document.getElementById('impactFugas')) document.getElementById('impactFugas').textContent = fmtM(fugasAmt);
+  if(document.getElementById('impactMerma')) document.getElementById('impactMerma').textContent = fmtM(mermaAmt);
+  if(document.getElementById('impactVentas')) document.getElementById('impactVentas').textContent = fmtM(ventasAmt);
+}
+
+function updateContactSection(score, label, fugas, modulos) {
+  if(document.getElementById('contactScore')) document.getElementById('contactScore').textContent = score;
+  if(document.getElementById('contactLabel')) document.getElementById('contactLabel').textContent = label;
+  if(document.getElementById('contactFugas')) document.getElementById('contactFugas').textContent = `${fugas} fugas detectadas · ${modulos} módulos aplicables`;
+  if(document.getElementById('formScoreSummary')) {
+    document.getElementById('formScoreSummary').textContent =
+      `Score: ${score}/100 · ${label} · ${fugas} fugas activas · ${modulos} módulos Mr. Ruta aplicables`;
+  }
+}
+
+// ── UTILS ─────────────────────────────────────────────
+function animateNumber(el, from, to, duration) {
+  if (!el) return;
+  const start = Date.now();
+  const tick = () => {
+    const elapsed = Date.now() - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(from + (to - from) * ease);
+    if (progress < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
+function scrollToResults() {
+  const rs = document.getElementById('resultsSection');
+  if (rs) rs.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── FORM SUBMIT ───────────────────────────────────────
+function submitDiagnostico(e) {
+  e.preventDefault();
+  const btn = document.getElementById('submitBtn');
+  btn.textContent = '✅ ¡Diagnóstico enviado! Te contactamos en menos de 2 horas.';
+  btn.style.background = '#004161';
+  btn.style.color = '#ffffff';
+  btn.disabled = true;
+}
+
+// ── INIT DOTS ─────────────────────────────────────────
+renderDots();
+</script>
+</body>
+</html>

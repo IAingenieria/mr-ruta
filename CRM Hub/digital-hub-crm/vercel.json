@@ -1,5 +1,11 @@
 {
   "rewrites": [
+    { "source": "/crm/:path*", "destination": "/crm.html" },
+    { "source": "/crm", "destination": "/crm.html" },
+    { "source": "/cuestionario/:path*", "destination": "/cuestionario.html" },
+    { "source": "/cuestionario", "destination": "/cuestionario.html" },
+    { "source": "/formulario/:path*", "destination": "/formulario.html" },
+    { "source": "/formulario", "destination": "/formulario.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
