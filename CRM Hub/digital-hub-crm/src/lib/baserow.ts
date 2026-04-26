@@ -42,7 +42,9 @@ const fetchAllPages = async (tableId: number): Promise<{ count: number; results:
     results = results.concat(data.results);
     if (data.next) {
       // data.next is an absolute URL — strip the base to get a relative path
-      nextPath = data.next.replace(BASE_URL, "");
+      // Force HTTPS to avoid Mixed Content errors
+      const nextUrl = data.next.replace("http://", "https://");
+      nextPath = nextUrl.replace(BASE_URL, "");
     } else {
       nextPath = null;
     }
