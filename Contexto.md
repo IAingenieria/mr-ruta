@@ -466,5 +466,64 @@ son los archivos activos. Continúa desde donde quedamos.
 
 ---
 
-*Documento generado el 14 de abril de 2026 · Claude Sonnet 4.6 · Anthropic*
+## 16. CRM Hub — Sistema de Gestión de Clientes y Prospectos
+
+**Fecha de implementación:** 25 de abril de 2026  
+**Ubicación:** `CRM Hub/digital-hub-crm/`  
+**Stack tecnológico:** React 18 + TypeScript + Vite + Shadcn/ui + TailwindCSS  
+**Base de datos:** Baserow (API REST)  
+**Deployment:** Vercel (`mr-ruta.vercel.app`)
+
+### Descripción
+Sistema CRM web para gestión de prospectos, clientes, cotizaciones, tareas y reuniones. Integrado con Baserow como backend sin servidor.
+
+### URLs de producción
+- **Website principal:** `https://www.mr-ruta.com/` o `https://mr-ruta.vercel.app/`
+- **CRM:** `https://www.mr-ruta.com/crm` o `https://mr-ruta.vercel.app/crm`
+- **Formulario:** `https://www.mr-ruta.com/formulario`
+- **Cuestionario:** `https://www.mr-ruta.com/cuestionario`
+
+### Estructura del CRM
+- **Dashboard:** Vista general con métricas clave
+- **Prospectos:** Pipeline de ventas con estados (Nuevo, Contactado, Calificado, Propuesta enviada, Negociación)
+- **Clientes:** Gestión de clientes activos
+- **Cotizaciones:** Seguimiento de cotizaciones y propuestas
+- **Tareas:** Sistema de tareas con recordatorios
+- **Reuniones:** Calendario de reuniones
+- **Calendario:** Vista de calendario integrada
+- **Citas:** Integración con Cal.com
+
+### Tablas de Baserow (Database 422751)
+| Tabla | ID | Descripción |
+|---|---|---|
+| Clients | 941359 | Clientes activos |
+| Quotes | 941362 | Cotizaciones |
+| Prospects | 941364 | Pipeline de prospectos |
+| Tasks | 941365 | Tareas y recordatorios |
+| Meetings | 941366 | Reuniones programadas |
+
+### Variables de entorno (Vercel)
+```
+VITE_BASEROW_TOKEN=zBza79SbZyJ3S2nnbs5N7j2HvKt4qd5S
+VITE_CRM_EMAIL=info@mr-ruta.com
+VITE_CRM_PASSWORD=Zuazua#114
+```
+
+### Configuración de deployment
+- **Repositorio:** `github.com/IAingenieria/mr-ruta`
+- **Branch principal:** `main`
+- **Build command:** `node build.js`
+- **Output directory:** `dist/`
+- **Framework:** Vite (React)
+
+### Archivos clave
+- `vercel.json` — Configuración de rewrites y redirects
+- `build.js` — Script de build que compila el CRM y copia archivos estáticos
+- `package.json` — Configuración del proyecto raíz
+- `CRM Hub/digital-hub-crm/` — Código fuente del CRM
+
+---
+
+*Documento generado el 14 de abril de 2026 · Actualizado el 25 de abril de 2026*  
+*Claude Sonnet 4.6 · Anthropic*  
 *Para uso interno del proyecto Mr. Ruta — Luis Vilchis*
