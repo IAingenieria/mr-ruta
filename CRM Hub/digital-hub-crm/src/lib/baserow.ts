@@ -3,6 +3,13 @@ import axios from "axios";
 const BASE_URL = "https://api.baserow.io/api";
 const TOKEN = import.meta.env.VITE_BASEROW_TOKEN as string;
 
+if (!TOKEN) {
+  console.error("❌ VITE_BASEROW_TOKEN no está definido");
+  console.log("Variables disponibles:", Object.keys(import.meta.env));
+} else {
+  console.log("✅ VITE_BASEROW_TOKEN cargado correctamente");
+}
+
 export const baserow = axios.create({
   baseURL: BASE_URL,
   headers: {
