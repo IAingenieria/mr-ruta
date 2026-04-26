@@ -1,0 +1,2773 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Tostisanas — App de Campo v3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════
+   DESIGN TOKENS & RESET
+═══════════════════════════════════════════════ */
+:root {
+  --g900:#052E1C; --g800:#0A4F30; --g700:#0D6A40;
+  --g600:#0F7A4A; --g500:#129057; --g400:#18B36B;
+  --g300:#3FCA88; --g200:#7DDEAD; --g100:#C2F0D8; --g50:#EBF9F2;
+  --b900:#03102A; --b800:#061E4A; --b700:#0B306E;
+  --b600:#1044A0; --b500:#1A5EC8; --b400:#3A7EE8;
+  --b300:#72A9F4; --b100:#C8DFFB; --b50:#EBF2FE;
+  --a900:#3A1A00; --a800:#6B3200; --a700:#9E4A00;
+  --a600:#C45E00; --a500:#E87800; --a400:#F5A623;
+  --a300:#FACC73; --a100:#FEE9B8; --a50:#FFF8E9;
+  --r700:#7A0B0B; --r500:#C42828; --r300:#F47A7A; --r100:#FDDDDD; --r50:#FEF2F2;
+  --p700:#2D1B7A; --p500:#5040CC; --p300:#9085F0; --p100:#DCD9FB; --p50:#F0EFFE;
+  --gray50:#F8FAF9; --gray100:#EEF2F0; --gray200:#D8DDD9;
+  --gray300:#B5BCB8; --gray400:#8C9490; --gray500:#636A66;
+  --gray600:#454C48; --gray700:#2E3330; --gray800:#1A1F1C; --gray900:#0D100E;
+  --surface:#FFFFFF; --surface2:#F4F7F5; --surface3:#E8EDEA;
+  --border:rgba(0,0,0,.08); --border2:rgba(0,0,0,.14);
+  --text-primary:#0D100E; --text-secondary:#454C48; --text-muted:#8C9490;
+  --font:'DM Sans',system-ui,sans-serif; --mono:'DM Mono',monospace;
+  --r-sm:8px; --r-md:12px; --r-lg:16px; --r-xl:24px; --r-full:999px;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05);
+  --shadow-md:0 4px 16px rgba(0,0,0,.10),0 2px 6px rgba(0,0,0,.06);
+  --shadow-lg:0 16px 48px rgba(0,0,0,.14),0 6px 16px rgba(0,0,0,.08);
+  --nav-h:64px; --bottom-h:72px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--gray900);font-family:var(--font)}
+body{display:flex;justify-content:center;align-items:center}
+
+/* ═══════════════════════════════════════════════
+   PHONE FRAME
+═══════════════════════════════════════════════ */
+.phone-wrap{
+  position:relative; width:100%; max-width:420px; height:100%;
+  max-height:900px; display:flex; flex-direction:column;
+  background:var(--surface); overflow:hidden;
+  box-shadow:var(--shadow-lg);
+}
+@media(max-width:480px){.phone-wrap{max-height:100vh;border-radius:0}}
+
+/* ═══════════════════════════════════════════════
+   STATUS BAR
+═══════════════════════════════════════════════ */
+.status-bar{
+  height:44px; background:var(--g800); display:flex;
+  align-items:center; justify-content:space-between;
+  padding:0 20px; flex-shrink:0;
+}
+.status-time{font-size:13px;font-weight:600;color:#fff;font-variant-numeric:tabular-nums}
+.status-icons{display:flex;gap:6px;align-items:center}
+.status-icons svg{width:16px;height:16px;fill:#fff;opacity:.9}
+.status-signal{display:flex;gap:2px;align-items:flex-end;height:12px}
+.status-signal span{width:3px;background:#fff;border-radius:1px;opacity:.9}
+.status-signal span:nth-child(1){height:4px}
+.status-signal span:nth-child(2){height:7px}
+.status-signal span:nth-child(3){height:10px}
+.status-signal span:nth-child(4){height:12px}
+
+/* ═══════════════════════════════════════════════
+   TOP NAV
+═══════════════════════════════════════════════ */
+.top-nav{
+  height:var(--nav-h); background:var(--g800); display:flex;
+  align-items:center; padding:0 16px; gap:12px; flex-shrink:0;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.nav-back{
+  width:36px;height:36px;border-radius:var(--r-full);
+  background:rgba(255,255,255,.12);border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:18px;transition:background .15s;
+  display:none;
+}
+.nav-back:hover{background:rgba(255,255,255,.2)}
+.nav-back.show{display:flex}
+.nav-title{flex:1}
+.nav-title h2{font-size:17px;font-weight:600;color:#fff;line-height:1.2}
+.nav-title p{font-size:12px;color:rgba(255,255,255,.65);line-height:1.3}
+.nav-avatar{
+  width:36px;height:36px;border-radius:var(--r-full);
+  background:var(--g400);border:2px solid rgba(255,255,255,.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:var(--g900);cursor:pointer;
+  flex-shrink:0;
+}
+.nav-badge{
+  min-width:18px;height:18px;background:var(--r500);
+  border-radius:var(--r-full);font-size:10px;font-weight:700;
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  padding:0 5px;cursor:pointer;flex-shrink:0;
+}
+.offline-chip{
+  display:none;align-items:center;gap:4px;
+  background:var(--a500);color:var(--a900);
+  font-size:10px;font-weight:700;padding:3px 8px;
+  border-radius:var(--r-full);
+}
+.offline-chip.show{display:flex}
+.offline-chip::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--a900)}
+
+/* ═══════════════════════════════════════════════
+   MAIN CONTENT AREA
+═══════════════════════════════════════════════ */
+.main-content{
+  flex:1;overflow-y:auto;overflow-x:hidden;
+  background:var(--gray50); position:relative;
+  -webkit-overflow-scrolling:touch;
+  scroll-behavior:smooth;
+}
+.main-content::-webkit-scrollbar{width:3px}
+.main-content::-webkit-scrollbar-thumb{background:var(--gray200);border-radius:2px}
+
+/* ═══════════════════════════════════════════════
+   BOTTOM NAVIGATION
+═══════════════════════════════════════════════ */
+.bottom-nav{
+  height:var(--bottom-h);background:var(--surface);
+  border-top:1px solid var(--border);display:flex;
+  align-items:center;justify-content:space-around;
+  padding:0 8px;flex-shrink:0;
+  box-shadow:0 -4px 16px rgba(0,0,0,.06);
+}
+.nav-item{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:6px 12px;border-radius:var(--r-md);cursor:pointer;
+  transition:all .2s;flex:1;border:none;background:none;
+  min-height:52px;justify-content:center;
+}
+.nav-item .nav-icon{
+  width:24px;height:24px;display:flex;align-items:center;
+  justify-content:center;position:relative;
+}
+.nav-item .nav-icon svg{width:22px;height:22px;transition:all .2s}
+.nav-item .nav-label{font-size:10px;font-weight:500;color:var(--text-muted);transition:color .2s}
+.nav-item.active .nav-label{color:var(--g600);font-weight:700}
+.nav-item.active .nav-icon svg path,.nav-item.active .nav-icon svg rect,
+.nav-item.active .nav-icon svg circle{fill:var(--g600)}
+.nav-dot{
+  position:absolute;top:-2px;right:-2px;width:8px;height:8px;
+  background:var(--r500);border-radius:50%;border:2px solid var(--surface);
+  display:none;
+}
+.nav-dot.show{display:block}
+
+/* ═══════════════════════════════════════════════
+   SCREENS
+═══════════════════════════════════════════════ */
+.screen{display:none;animation:fadeIn .25s ease}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* ═══════════════════════════════════════════════
+   SHARED COMPONENTS
+═══════════════════════════════════════════════ */
+.section{padding:16px}
+.section+.section{padding-top:0}
+.section-title{
+  font-size:11px;font-weight:700;color:var(--text-muted);
+  letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;
+}
+
+/* Cards */
+.card{
+  background:var(--surface);border-radius:var(--r-lg);
+  border:1px solid var(--border);padding:14px;
+  box-shadow:var(--shadow-sm);
+}
+.card+.card{margin-top:8px}
+
+/* Badges */
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:10px;font-weight:700;padding:3px 8px;
+  border-radius:var(--r-full);letter-spacing:.02em;
+}
+.badge-green{background:var(--g50);color:var(--g700)}
+.badge-amber{background:var(--a50);color:var(--a700)}
+.badge-red{background:var(--r50);color:var(--r700)}
+.badge-blue{background:var(--b50);color:var(--b700)}
+.badge-purple{background:var(--p50);color:var(--p700)}
+.badge-gray{background:var(--gray100);color:var(--gray600)}
+
+/* Buttons */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  font-family:var(--font);font-size:14px;font-weight:600;
+  padding:13px 20px;border-radius:var(--r-md);border:none;
+  cursor:pointer;transition:all .18s;line-height:1;letter-spacing:.01em;
+  min-height:48px;
+}
+.btn-primary{background:var(--g600);color:#fff}
+.btn-primary:hover{background:var(--g700)}
+.btn-primary:active{background:var(--g800);transform:scale(.98)}
+.btn-secondary{background:var(--surface);color:var(--text-primary);border:1.5px solid var(--border2)}
+.btn-secondary:active{transform:scale(.98)}
+.btn-danger{background:var(--r50);color:var(--r700);border:1.5px solid var(--r300)}
+.btn-ghost{background:transparent;color:var(--text-secondary);padding:10px}
+.btn-full{width:100%}
+.btn-sm{padding:9px 14px;font-size:13px;min-height:36px;border-radius:var(--r-sm)}
+
+/* Progress bars */
+.progress-track{height:6px;background:var(--gray100);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;border-radius:3px;transition:width .5s ease}
+
+/* Metric boxes */
+.metrics-row{display:grid;gap:8px}
+.metrics-row.cols-2{grid-template-columns:1fr 1fr}
+.metrics-row.cols-3{grid-template-columns:1fr 1fr 1fr}
+.metric-box{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-md);padding:12px 10px;text-align:center;
+}
+.metric-val{font-size:22px;font-weight:700;color:var(--text-primary);line-height:1.1}
+.metric-val.green{color:var(--g600)}
+.metric-val.amber{color:var(--a600)}
+.metric-val.red{color:var(--r500)}
+.metric-val.blue{color:var(--b600)}
+.metric-lbl{font-size:9.5px;color:var(--text-muted);margin-top:3px;line-height:1.3}
+
+/* Alert boxes */
+.alert{
+  border-radius:var(--r-md);padding:10px 12px;
+  font-size:12px;line-height:1.5;border-left:3px solid;
+  display:flex;gap:8px;align-items:flex-start;
+}
+.alert-icon{font-size:14px;flex-shrink:0;margin-top:1px}
+.alert-green{background:var(--g50);border-color:var(--g500);color:var(--g800)}
+.alert-amber{background:var(--a50);border-color:var(--a500);color:var(--a800)}
+.alert-red{background:var(--r50);border-color:var(--r500);color:var(--r700)}
+.alert-blue{background:var(--b50);border-color:var(--b500);color:var(--b800)}
+
+/* Data rows */
+.data-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;
+}
+.data-row:last-child{border-bottom:none;padding-bottom:0}
+.data-key{color:var(--text-secondary)}
+.data-val{font-weight:600;color:var(--text-primary);text-align:right}
+
+/* List rows */
+.list-row{
+  display:flex;align-items:center;gap:12px;padding:12px 14px;
+  background:var(--surface);border-radius:var(--r-md);
+  border:1px solid var(--border);cursor:pointer;transition:all .15s;
+}
+.list-row:hover{border-color:var(--gray300);background:var(--surface2)}
+.list-row+.list-row{margin-top:6px}
+.row-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+
+/* Qty controls */
+.qty-ctrl{display:flex;align-items:center;gap:6px}
+.qty-btn{
+  width:44px;height:44px;border-radius:var(--r-sm);
+  border:1.5px solid var(--border2);background:var(--surface2);
+  font-size:18px;font-weight:600;color:var(--text-primary);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .15s;flex-shrink:0;font-family:var(--font);
+  line-height:1;
+}
+.qty-btn:hover{background:var(--gray100);border-color:var(--gray300)}
+.qty-btn:active{transform:scale(.92)}
+.qty-val{
+  width:36px;text-align:center;font-size:17px;font-weight:700;
+  color:var(--text-primary);font-variant-numeric:tabular-nums;
+}
+
+/* Timer ring */
+.timer-ring-wrap{position:relative;display:inline-block}
+.timer-ring-wrap svg{transform:rotate(-90deg)}
+.timer-center{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  text-align:center;
+}
+.timer-time{
+  font-size:28px;font-weight:700;font-variant-numeric:tabular-nums;
+  line-height:1; font-family:var(--mono);
+}
+.timer-label{font-size:10px;color:var(--text-muted);margin-top:2px}
+
+/* Tabs */
+.tab-bar{
+  display:flex;gap:4px;background:var(--gray100);
+  border-radius:var(--r-md);padding:3px;margin-bottom:12px;
+}
+.tab-item{
+  flex:1;padding:7px 4px;border-radius:var(--r-sm);
+  font-size:12px;font-weight:500;color:var(--text-muted);
+  cursor:pointer;transition:all .18s;text-align:center;
+  border:none;background:none;font-family:var(--font);
+}
+.tab-item.active{
+  background:var(--surface);color:var(--text-primary);
+  font-weight:700;box-shadow:var(--shadow-sm);
+}
+
+/* Chip filter */
+.chip-group{display:flex;gap:6px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}
+.chip-group::-webkit-scrollbar{display:none}
+.chip{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:6px 12px;border-radius:var(--r-full);font-size:12px;
+  font-weight:500;border:1.5px solid var(--border2);
+  background:var(--surface);color:var(--text-secondary);
+  cursor:pointer;white-space:nowrap;transition:all .15s;
+  flex-shrink:0;font-family:var(--font);
+}
+.chip.active{
+  background:var(--g800);color:#fff;border-color:var(--g800);
+  font-weight:700;
+}
+
+/* Stacked bar */
+.bar-stack{display:flex;height:20px;border-radius:var(--r-sm);overflow:hidden}
+.bar-seg{
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:700;color:rgba(255,255,255,.9);
+  transition:width .5s ease;overflow:hidden;white-space:nowrap;
+}
+
+/* Overlay / Modal */
+.overlay{
+  position:absolute;top:0;left:0;right:0;bottom:0;
+  background:rgba(0,0,0,.5);backdrop-filter:blur(2px);
+  z-index:100;display:none;align-items:flex-end;
+  animation:overlayIn .2s ease;
+}
+.overlay.show{display:flex}
+@keyframes overlayIn{from{opacity:0}to{opacity:1}}
+.sheet{
+  width:100%;background:var(--surface);border-radius:var(--r-xl) var(--r-xl) 0 0;
+  padding:8px 0 24px;max-height:90%;overflow-y:auto;
+  animation:sheetUp .25s ease;
+}
+@keyframes sheetUp{from{transform:translateY(100%)}to{transform:none}}
+.sheet-handle{
+  width:40px;height:4px;background:var(--gray200);border-radius:2px;
+  margin:0 auto 16px;
+}
+.sheet-title{
+  font-size:17px;font-weight:700;padding:0 20px 12px;
+  border-bottom:1px solid var(--border);
+}
+
+/* Toast */
+.toast{
+  position:absolute;top:16px;left:16px;right:16px;
+  background:var(--gray800);color:#fff;border-radius:var(--r-md);
+  padding:12px 16px;font-size:13px;font-weight:500;
+  z-index:200;box-shadow:var(--shadow-md);
+  display:none;animation:toastIn .3s ease;
+  display:flex;align-items:center;gap:10px;
+}
+.toast.show{display:flex}
+.toast.hidden{display:none}
+@keyframes toastIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+
+/* Loader */
+.spinner{
+  width:20px;height:20px;border:2.5px solid rgba(255,255,255,.3);
+  border-top-color:#fff;border-radius:50%;
+  animation:spin .7s linear infinite;flex-shrink:0;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ═══════════════════════════════════════════════
+   SCREEN 1 — DASHBOARD / HOME
+═══════════════════════════════════════════════ */
+.hero-card{
+  background:linear-gradient(135deg,var(--g800) 0%,var(--g600) 100%);
+  border-radius:0;padding:20px 16px 24px;color:#fff;
+  position:relative;overflow:hidden;
+}
+.hero-card::after{
+  content:'';position:absolute;top:-40px;right:-40px;
+  width:180px;height:180px;border-radius:50%;
+  background:rgba(255,255,255,.05);
+}
+.hero-greeting{font-size:13px;color:rgba(255,255,255,.7);margin-bottom:4px}
+.hero-name{font-size:22px;font-weight:700}
+.hero-sub{font-size:12px;color:rgba(255,255,255,.65);margin-top:2px}
+.hero-progress-area{margin-top:16px}
+.hero-progress-label{
+  display:flex;justify-content:space-between;font-size:12px;
+  color:rgba(255,255,255,.8);margin-bottom:6px;font-weight:500;
+}
+.hero-progress-track{height:8px;background:rgba(255,255,255,.2);border-radius:4px;overflow:hidden}
+.hero-progress-fill{height:100%;background:#fff;border-radius:4px;transition:width 1s ease}
+.hero-clients{
+  display:flex;gap:8px;margin-top:16px;
+}
+.hero-client-chip{
+  flex:1;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+  border-radius:var(--r-md);padding:10px 8px;text-align:center;
+}
+.hero-client-chip .val{font-size:20px;font-weight:700}
+.hero-client-chip .lbl{font-size:10px;color:rgba(255,255,255,.7);margin-top:1px}
+
+.quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.quick-action{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-lg);padding:14px 12px;cursor:pointer;
+  transition:all .18s;display:flex;align-items:center;gap:10px;
+  text-align:left;font-family:var(--font);
+}
+.quick-action:hover{border-color:var(--g300);background:var(--g50)}
+.quick-action:active{transform:scale(.97)}
+.qa-icon{
+  width:40px;height:40px;border-radius:var(--r-md);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex-shrink:0;
+}
+.qa-label{font-size:13px;font-weight:600;color:var(--text-primary)}
+.qa-sub{font-size:11px;color:var(--text-muted);margin-top:1px}
+
+.alert-strip{
+  background:var(--a50);border:1px solid var(--a300);
+  border-radius:var(--r-md);padding:10px 12px;
+  display:flex;align-items:center;gap:10px;cursor:pointer;
+}
+.alert-strip-icon{font-size:18px}
+.alert-strip-text{flex:1;font-size:12px;font-weight:500;color:var(--a800);line-height:1.4}
+.alert-strip-arrow{color:var(--a600);font-size:16px}
+
+/* ═══════════════════════════════════════════════
+   SCREEN 2 — RUTA DEL DÍA
+═══════════════════════════════════════════════ */
+.route-header{
+  background:var(--surface);border-bottom:1px solid var(--border);
+  padding:12px 16px;
+}
+.route-day-info{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;
+}
+.route-date{font-size:16px;font-weight:700;color:var(--text-primary)}
+.route-sub{font-size:12px;color:var(--text-muted);margin-top:1px}
+.route-progress-info{display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-top:6px;margin-bottom:4px}
+.client-card{
+  background:var(--surface);border-radius:var(--r-lg);border:1.5px solid var(--border);
+  padding:0;overflow:hidden;margin-bottom:8px;transition:all .15s;
+  cursor:pointer;
+}
+.client-card:hover{border-color:var(--g300);transform:translateX(2px)}
+.client-card.active{border-color:var(--g500);background:var(--g50)}
+.client-card.done{opacity:.6}
+.client-card.done .client-name{text-decoration:line-through;color:var(--text-muted)}
+.client-card-inner{display:flex;align-items:center;gap:10px;padding:12px 14px}
+.client-num{
+  width:28px;height:28px;border-radius:var(--r-full);
+  background:var(--gray100);color:var(--gray500);
+  font-size:12px;font-weight:700;display:flex;align-items:center;
+  justify-content:center;flex-shrink:0;
+}
+.client-card.active .client-num{background:var(--g600);color:#fff}
+.client-card.done .client-num{background:var(--g100);color:var(--g600)}
+.client-info{flex:1;min-width:0}
+.client-name{font-size:14px;font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.client-meta{font-size:11px;color:var(--text-muted);margin-top:2px}
+.client-actions{display:flex;gap:6px;align-items:center;flex-shrink:0}
+.client-status-icon{font-size:18px}
+
+/* ═══════════════════════════════════════════════
+   SCREEN 3 — CAPTURA DE PEDIDO
+═══════════════════════════════════════════════ */
+.client-hero{
+  background:var(--g800);padding:14px 16px;color:#fff;
+}
+.client-hero-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.client-hero-name{font-size:17px;font-weight:700}
+.client-hero-sub{font-size:12px;color:rgba(255,255,255,.65);margin-top:1px}
+.client-stats-row{display:flex;gap:8px}
+.client-stat{
+  flex:1;background:rgba(255,255,255,.1);border-radius:var(--r-sm);
+  padding:7px;text-align:center;
+}
+.client-stat .val{font-size:15px;font-weight:700}
+.client-stat .lbl{font-size:9px;color:rgba(255,255,255,.65);margin-top:1px}
+
+.argument-box{
+  background:var(--a50);border:1.5px solid var(--a300);
+  border-radius:var(--r-md);padding:10px 12px;
+  display:flex;gap:8px;align-items:flex-start;margin-bottom:12px;
+}
+.argument-box .arg-icon{font-size:18px;flex-shrink:0}
+.argument-box .arg-text{font-size:12px;color:var(--a800);line-height:1.5;font-style:italic}
+
+.sku-section-title{
+  font-size:10px;font-weight:800;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--text-muted);
+  margin:14px 0 6px;padding-left:2px;
+}
+.sku-row{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--r-md);padding:10px 12px;
+  display:flex;align-items:center;gap:8px;margin-bottom:5px;
+}
+.sku-row.highlight{border-color:var(--g300);background:var(--g50)}
+.sku-color-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.sku-info{flex:1;min-width:0}
+.sku-name{font-size:13px;font-weight:600;color:var(--text-primary)}
+.sku-sub{font-size:10px;color:var(--text-muted);margin-top:1px}
+.sku-badge{
+  font-size:9px;font-weight:700;padding:2px 6px;
+  border-radius:var(--r-full);margin-left:4px;
+  background:var(--g100);color:var(--g700);
+}
+.sku-badge.new{background:var(--a100);color:var(--a700)}
+
+.order-total-bar{
+  background:var(--surface);border-top:1.5px solid var(--border);
+  padding:12px 16px;display:flex;align-items:center;
+  justify-content:space-between;box-shadow:0 -4px 16px rgba(0,0,0,.06);
+}
+.order-total-val{font-size:22px;font-weight:800;color:var(--text-primary)}
+.order-total-lbl{font-size:11px;color:var(--text-muted)}
+
+/* ═══════════════════════════════════════════════
+   SCREEN 4 — DASHBOARD SUPERVISOR
+═══════════════════════════════════════════════ */
+.supervisor-hero{
+  background:linear-gradient(135deg,var(--b800) 0%,var(--b600) 100%);
+  padding:16px;color:#fff;
+}
+.sv-title{font-size:18px;font-weight:700}
+.sv-sub{font-size:12px;color:rgba(255,255,255,.7);margin-top:2px}
+.sv-metrics{display:flex;gap:8px;margin-top:14px}
+.sv-metric{
+  flex:1;background:rgba(255,255,255,.12);border-radius:var(--r-md);
+  padding:10px 8px;text-align:center;
+}
+.sv-metric .val{font-size:20px;font-weight:700}
+.sv-metric .lbl{font-size:9px;color:rgba(255,255,255,.65);margin-top:2px}
+
+.vendedor-row{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-lg);padding:12px 14px;margin-bottom:8px;
+  cursor:pointer;transition:all .15s;
+}
+.vendedor-row:hover{border-color:var(--b300);background:var(--b50)}
+.vendedor-row-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.vendedor-avatar{
+  width:36px;height:36px;border-radius:var(--r-full);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:#fff;flex-shrink:0;
+}
+.vendedor-name{font-size:14px;font-weight:600;color:var(--text-primary);flex:1}
+.vendedor-meta{font-size:11px;color:var(--text-muted)}
+.vendedor-progress-label{
+  display:flex;justify-content:space-between;
+  font-size:11px;color:var(--text-muted);margin-bottom:4px;
+}
+.alert-row{
+  background:var(--surface);border-radius:var(--r-md);
+  border-left:3px solid;padding:10px 12px;margin-bottom:6px;
+}
+.alert-row .ar-title{font-size:12px;font-weight:700;margin-bottom:2px}
+.alert-row .ar-desc{font-size:11px;color:var(--text-muted);line-height:1.4}
+.alert-row.critical{border-color:var(--r500);background:var(--r50)}
+.alert-row.critical .ar-title{color:var(--r700)}
+.alert-row.warning{border-color:var(--a500);background:var(--a50)}
+.alert-row.warning .ar-title{color:var(--a700)}
+.alert-row.success{border-color:var(--g500);background:var(--g50)}
+.alert-row.success .ar-title{color:var(--g700)}
+
+/* ═══════════════════════════════════════════════
+   SCREEN 5 — GAMIFICACIÓN
+═══════════════════════════════════════════════ */
+.gamif-hero{
+  background:linear-gradient(135deg,var(--p700) 0%,var(--p500) 100%);
+  padding:20px 16px;color:#fff;text-align:center;
+}
+.gamer-level-ring{
+  width:100px;height:100px;margin:0 auto 12px;position:relative;
+}
+.gamer-level-ring svg{transform:rotate(-90deg)}
+.gamer-level-center{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  text-align:center;
+}
+.level-num{font-size:24px;font-weight:800}
+.level-label{font-size:9px;color:rgba(255,255,255,.7);margin-top:1px}
+.points-total{font-size:32px;font-weight:800}
+.points-sub{font-size:13px;color:rgba(255,255,255,.7)}
+.points-progress{margin-top:12px}
+.pp-label{display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,.7);margin-bottom:5px}
+.pp-track{height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden}
+.pp-fill{height:100%;background:#fff;border-radius:3px}
+
+.streak-days{display:flex;gap:6px;margin-bottom:4px}
+.streak-day{
+  flex:1;border-radius:var(--r-sm);padding:8px 4px;
+  text-align:center;border:1.5px solid var(--border);
+  background:var(--surface);
+}
+.streak-day.done{background:var(--g600);border-color:var(--g600)}
+.streak-day .sd-label{font-size:10px;font-weight:700;color:var(--text-muted)}
+.streak-day.done .sd-label{color:#fff}
+.streak-day .sd-icon{font-size:16px;margin-top:2px}
+
+.achievement-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.achievement{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--r-lg);padding:12px 8px;text-align:center;
+  cursor:pointer;transition:all .18s;
+}
+.achievement.unlocked{border-color:var(--a400);background:var(--a50)}
+.achievement.locked{opacity:.45;filter:grayscale(.7)}
+.ach-icon{font-size:24px;margin-bottom:6px}
+.ach-name{font-size:10px;font-weight:700;color:var(--text-primary)}
+.ach-desc{font-size:9px;color:var(--text-muted);margin-top:2px;line-height:1.3}
+
+.leaderboard-row{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;border-radius:var(--r-md);
+  background:var(--surface);border:1px solid var(--border);margin-bottom:5px;
+}
+.leaderboard-row.me{border-color:var(--g400);background:var(--g50)}
+.leaderboard-row.gold{border-color:var(--a400);background:var(--a50)}
+.rank-badge{
+  width:24px;height:24px;border-radius:var(--r-full);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;flex-shrink:0;
+}
+.rank-1{background:var(--a400);color:var(--a900)}
+.rank-2{background:var(--gray300);color:var(--gray700)}
+.rank-3{background:#CD7F32;color:#fff}
+.rank-n{background:var(--gray100);color:var(--gray500)}
+.lb-name{flex:1;font-size:13px;font-weight:600;color:var(--text-primary)}
+.lb-pts{font-size:13px;font-weight:700;color:var(--text-primary)}
+
+/* ═══════════════════════════════════════════════
+   SPECIAL: CONFIRM OVERLAY
+═══════════════════════════════════════════════ */
+.confirm-overlay{
+  position:absolute;inset:0;background:rgba(0,0,0,.6);
+  z-index:150;display:none;align-items:center;justify-content:center;
+  padding:20px;
+}
+.confirm-overlay.show{display:flex;animation:fadeIn .2s ease}
+.confirm-card{
+  background:var(--surface);border-radius:var(--r-xl);padding:28px 24px;
+  text-align:center;width:100%;max-width:340px;
+  animation:scaleIn .25s ease;
+}
+@keyframes scaleIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+.confirm-icon{font-size:52px;margin-bottom:12px;display:block}
+.confirm-title{font-size:20px;font-weight:800;margin-bottom:8px}
+.confirm-amount{font-size:36px;font-weight:800;color:var(--g600);margin:8px 0}
+.confirm-sub{font-size:13px;color:var(--text-muted);line-height:1.5}
+.confirm-actions{display:flex;flex-direction:column;gap:8px;margin-top:20px}
+
+/* Map placeholder */
+.map-placeholder{
+  height:200px;background:linear-gradient(135deg,var(--b50),var(--g50));
+  border-radius:var(--r-lg);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:8px;color:var(--text-muted);
+  font-size:13px;position:relative;overflow:hidden;
+}
+.map-dot{
+  width:12px;height:12px;border-radius:50%;
+  background:var(--g500);border:2px solid var(--g800);
+  position:absolute;
+}
+.map-dot::after{
+  content:'';position:absolute;top:-4px;left:-4px;right:-4px;bottom:-4px;
+  border-radius:50%;background:var(--g400);opacity:.3;
+  animation:pulse 1.8s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:.3}50%{transform:scale(1.6);opacity:.08}}
+
+/* CEDIS status */
+.cedis-bar{
+  background:var(--gray800);padding:10px 16px;
+  display:flex;align-items:center;gap:8px;
+}
+.cedis-status-dot{
+  width:8px;height:8px;border-radius:50%;background:var(--g400);
+  box-shadow:0 0 8px var(--g400);
+  animation:blink 2s ease-in-out infinite;flex-shrink:0;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.cedis-text{font-size:11px;color:rgba(255,255,255,.7)}
+.cedis-text b{color:#fff}
+
+/* Sync indicator */
+.sync-row{
+  display:flex;align-items:center;gap:8px;padding:8px 12px;
+  background:var(--gray800);border-radius:var(--r-sm);
+  font-size:11px;color:rgba(255,255,255,.8);
+}
+.sync-item{display:flex;align-items:center;gap:6px}
+.sync-dot-ok{width:6px;height:6px;border-radius:50%;background:var(--g400);flex-shrink:0}
+.sync-dot-pending{width:6px;height:6px;border-radius:50%;background:var(--a400);flex-shrink:0;animation:blink 1s ease infinite}
+
+/* ═══════════════════════════════════════════════
+   AI CHAT BUBBLE (for argument generation)
+═══════════════════════════════════════════════ */
+.ai-generating{
+  display:flex;align-items:center;gap:8px;padding:8px 12px;
+  background:var(--g50);border-radius:var(--r-md);
+  font-size:12px;color:var(--g700);
+}
+.ai-dots{display:flex;gap:4px}
+.ai-dot{
+  width:6px;height:6px;border-radius:50%;background:var(--g500);
+  animation:dotBounce .8s ease-in-out infinite;
+}
+.ai-dot:nth-child(2){animation-delay:.16s}
+.ai-dot:nth-child(3){animation-delay:.32s}
+@keyframes dotBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+
+/* Inline loading for list items */
+.skeleton{
+  background:linear-gradient(90deg,var(--gray100) 25%,var(--gray50) 50%,var(--gray100) 75%);
+  background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:4px;
+}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ═══════════════════════════════════════════════
+   PHOTO CAPTURE SCREEN
+═══════════════════════════════════════════════ */
+.camera-frame{
+  position:relative;height:220px;background:var(--gray900);
+  border-radius:var(--r-lg);overflow:hidden;margin-bottom:12px;
+  display:flex;align-items:center;justify-content:center;
+}
+.camera-grid{
+  position:absolute;inset:0;pointer-events:none;opacity:.25;
+}
+.camera-scan-line{
+  position:absolute;width:100%;height:2px;
+  background:linear-gradient(90deg,transparent,var(--g400),transparent);
+  animation:scanAnim 2s ease-in-out infinite;display:none;
+}
+.camera-scan-line.active{display:block}
+@keyframes scanAnim{
+  0%{top:10%;opacity:0}10%{opacity:1}90%{opacity:1}100%{top:90%;opacity:0}
+}
+.camera-overlay-text{color:rgba(255,255,255,.6);font-size:13px;text-align:center}
+.detection-badge{
+  position:absolute;border:2px solid var(--g400);border-radius:4px;
+  background:rgba(15,122,74,.15);pointer-events:none;display:none;
+}
+.detection-badge-label{
+  position:absolute;top:-20px;left:0;
+  background:var(--g600);color:#fff;font-size:9px;font-weight:700;
+  padding:2px 6px;border-radius:var(--r-sm);white-space:nowrap;
+}
+.detection-badge.show{display:block;animation:fadeIn .3s ease}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE ADJUSTMENTS
+═══════════════════════════════════════════════ */
+@media(max-height:700px){
+  .hero-clients{display:none}
+  .hero-progress-area{margin-top:10px}
+}
+
+/* PWA splash bg */
+@media(display-mode:standalone){
+  .phone-wrap{max-height:100vh;border-radius:0}
+}
+
+/* ═══ V3 — SARGENTO TIMER ═══ */
+.sargento-panel{
+  display:flex;flex-direction:column;align-items:center;
+  background:rgba(0,0,0,.28);border-radius:14px;padding:10px 14px;
+  border:1px solid rgba(255,255,255,.15);min-width:90px;position:relative;
+}
+.sargento-budget{font-size:9px;font-weight:700;color:rgba(255,255,255,.5);letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px}
+.sargento-time{font-size:23px;font-weight:800;font-family:var(--mono);color:#fff;line-height:1;letter-spacing:.02em}
+.sargento-limit{font-size:9px;color:rgba(255,255,255,.4);margin-top:1px}
+.sargento-bar-track{height:3px;width:100%;background:rgba(255,255,255,.12);border-radius:2px;margin-top:5px;overflow:hidden}
+.sargento-bar-fill{height:100%;border-radius:2px;transition:width .5s,background .4s}
+.sargento-alarm-ring{position:absolute;inset:0;border-radius:14px;pointer-events:none;display:none}
+.sargento-alarm-ring.active{display:block;animation:sargentoAlarm .45s ease-in-out infinite}
+@keyframes sargentoAlarm{0%,100%{box-shadow:0 0 0 0 rgba(244,122,122,0)}50%{box-shadow:0 0 0 10px rgba(244,122,122,.35)}}
+.sargento-status-chip{font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;margin-top:4px;letter-spacing:.03em}
+
+/* ═══ V3 — FOTO PROTOCOL BAR ═══ */
+.foto-steps-bar{background:rgba(0,0,0,.3);padding:6px 16px;display:flex;gap:5px;align-items:center;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.08)}
+.foto-pill{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.12);transition:background .3s}
+.foto-pill.done{background:var(--g400)}
+.foto-pill.active{background:var(--a400);animation:pillPulse 1s ease infinite}
+@keyframes pillPulse{0%,100%{opacity:1}50%{opacity:.45}}
+.foto-bar-label{font-size:9px;font-weight:700;color:rgba(255,255,255,.45);letter-spacing:.06em;text-transform:uppercase}
+.foto-bar-count{font-size:9px;font-weight:700;color:rgba(255,255,255,.65)}
+
+/* ═══ V3 — FOTO PROTOCOL CARDS ═══ */
+.foto-req-card{background:var(--surface);border-radius:var(--r-lg);border:2px solid var(--border);padding:14px;margin-bottom:8px;transition:all .2s;cursor:pointer;position:relative;overflow:hidden}
+.foto-req-card.required{border-color:var(--r300)}
+.foto-req-card.done{border-color:var(--g400);background:var(--g50)}
+.foto-req-card.optional{opacity:.7}
+.foto-req-header{display:flex;align-items:center;gap:10px}
+.foto-req-icon{font-size:22px}
+.foto-req-body{flex:1}
+.foto-req-title{font-size:13px;font-weight:700;color:var(--text-primary)}
+.foto-req-sub{font-size:11px;color:var(--text-muted);margin-top:2px;line-height:1.4}
+.foto-req-badge{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.foto-req-badge.pending{background:var(--r50);border:1.5px solid var(--r300)}
+.foto-req-badge.done{background:var(--g100);border:1.5px solid var(--g400)}
+.foto-capture-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--gray800);color:#fff;border:none;border-radius:var(--r-sm);padding:10px;font-size:12px;font-weight:600;font-family:var(--font);cursor:pointer;width:100%;margin-top:10px;transition:background .15s}
+.foto-capture-btn:hover{background:var(--gray700)}
+.foto-capture-btn.done-state{background:var(--g600)}
+.foto-thumbnail{width:100%;height:72px;border-radius:var(--r-sm);background:linear-gradient(135deg,var(--gray800),var(--gray700));display:flex;align-items:center;justify-content:center;margin-top:8px;position:relative;overflow:hidden;font-size:11px;color:rgba(255,255,255,.65);gap:6px}
+.foto-timestamp{position:absolute;bottom:4px;right:8px;font-size:9px;color:rgba(255,255,255,.45);font-family:var(--mono)}
+
+/* ═══ V3 — QR RECEIPT ═══ */
+.qr-receipt-sheet{background:var(--surface);border-radius:var(--r-lg);border:1.5px solid var(--g200);padding:16px;text-align:center;margin-top:12px}
+.qr-box{width:130px;height:130px;margin:0 auto 10px;background:var(--gray900);border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;padding:8px}
+.qr-box svg{width:100%;height:100%}
+.qr-order-num{font-family:var(--mono);font-size:15px;font-weight:800;color:var(--text-primary);letter-spacing:.06em}
+.qr-hint{font-size:11px;color:var(--text-muted);margin-top:4px;line-height:1.5}
+.qr-alt-box{background:var(--gray100);border-radius:var(--r-sm);padding:8px 12px;margin-top:8px;font-size:11px;color:var(--text-secondary);text-align:left;line-height:1.5}
+
+/* ═══ V3 — OFFLINE CLIENT REGISTRATION ═══ */
+.reg-step{background:var(--surface);border-radius:var(--r-lg);border:1px solid var(--border);padding:14px;margin-bottom:8px}
+.reg-step-hdr{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.reg-num{width:24px;height:24px;border-radius:50%;background:var(--g600);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.reg-title{font-size:13px;font-weight:700}
+.field-lbl{display:block;font-size:10px;font-weight:700;color:var(--text-muted);letter-spacing:.04em;text-transform:uppercase;margin-bottom:4px;margin-top:8px}
+.field-input{width:100%;padding:10px 12px;border:1.5px solid var(--border2);border-radius:var(--r-sm);font-size:13px;font-family:var(--font);background:var(--surface);color:var(--text-primary)}
+.field-input:focus{outline:none;border-color:var(--g500)}
+.facade-btn{width:100%;height:68px;border:2px dashed var(--border2);border-radius:var(--r-md);background:var(--gray50);display:flex;align-items:center;justify-content:center;gap:10px;font-size:13px;color:var(--text-muted);cursor:pointer;font-family:var(--font);font-weight:500;transition:all .15s;margin-top:8px}
+.facade-btn:hover{border-color:var(--g400);background:var(--g50);color:var(--g700)}
+.facade-btn.captured{border-style:solid;border-color:var(--g400);background:var(--g50);color:var(--g700);font-weight:700}
+
+/* ═══ V3 — EFFICIENCY SCORE ═══ */
+.eff-score-card{background:linear-gradient(135deg,var(--g800),var(--g600));border-radius:var(--r-lg);padding:14px;color:#fff;margin-bottom:8px}
+.eff-score-val{font-size:36px;font-weight:800;line-height:1}
+.eff-score-lbl{font-size:11px;color:rgba(255,255,255,.7)}
+.eff-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px}
+.eff-row:last-child{border-bottom:none}
+
+</style>
+</head>
+<body>
+<div class="phone-wrap" id="app">
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="status-time" id="statusTime">9:41</span>
+    <div class="status-icons">
+      <div class="status-signal">
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <svg viewBox="0 0 24 24"><path d="M1.5 8.5a13 13 0 0121 0M5 12a9 9 0 0114 0M8.5 15.5a5 5 0 017 0M12 19h.01" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M23 6H1v12h22V6zM1 9h22M4 6V4h16v2" fill="none" stroke="#fff" stroke-width="1.5"/><rect x="22" y="10" width="1" height="4" rx=".5" fill="#fff"/></svg>
+    </div>
+  </div>
+
+  <!-- Top Nav -->
+  <div class="top-nav">
+    <button class="nav-back" id="navBack" onclick="goBack()">←</button>
+    <div class="nav-title">
+      <h2 id="navTitle">Tostisanas <span style="font-size:10px;background:var(--g400);color:var(--g900);padding:1px 6px;border-radius:4px;font-weight:800;vertical-align:middle">v3</span></h2>
+      <p id="navSubtitle">Lunes 16 · Guadalajara Centro</p>
+    </div>
+    <div class="offline-chip" id="offlineChip">SIN RED</div>
+    <div class="nav-badge" id="alertBadge" onclick="showScreen('supervisor')">3</div>
+    <div class="nav-avatar" onclick="showScreen('gamificacion')">LR</div>
+  </div>
+
+  <!-- CEDIS Status Bar -->
+  <div class="cedis-bar" id="cedisBar">
+    <div class="cedis-status-dot"></div>
+    <div class="cedis-text"><b>CEDIS Guadalajara Centro</b> conectado · 3 pedidos en cola · Liq. 6:00 PM</div>
+  </div>
+
+  <!-- Foto Protocol Steps Bar (visible during visit) -->
+  <div class="foto-steps-bar" id="fotoStepsBar" style="display:none">
+    <span class="foto-bar-label">Fotos</span>
+    <div class="foto-pill" id="fpill-0"></div>
+    <div class="foto-pill" id="fpill-1"></div>
+    <div class="foto-pill" id="fpill-2"></div>
+    <div class="foto-pill" id="fpill-3"></div>
+    <span class="foto-bar-count" id="fotoBarCount">0/4</span>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content" id="mainContent">
+
+    <!-- Toast -->
+    <div class="toast hidden" id="toast">
+      <div class="spinner" id="toastSpinner" style="display:none"></div>
+      <span id="toastText"></span>
+    </div>
+
+    <!-- ──────────────────────────────────────────
+         SCREEN: HOME / DASHBOARD
+    ────────────────────────────────────────── -->
+    <div class="screen active" id="screen-home">
+
+      <!-- Hero card -->
+      <div class="hero-card">
+        <div class="hero-greeting">Buenos días 👋</div>
+        <div class="hero-name">Luis Rodríguez</div>
+        <div class="hero-sub">Ruta Centro A · 30 clientes hoy</div>
+        <div class="hero-progress-area">
+          <div class="hero-progress-label">
+            <span>Progreso del día</span>
+            <span id="heroProgressTxt">13 / 30</span>
+          </div>
+          <div class="hero-progress-track">
+            <div class="hero-progress-fill" id="heroProgressFill" style="width:43%"></div>
+          </div>
+        </div>
+        <div class="hero-clients">
+          <div class="hero-client-chip">
+            <div class="val" id="hdVisited">13</div>
+            <div class="lbl">Visitados</div>
+          </div>
+          <div class="hero-client-chip">
+            <div class="val">17</div>
+            <div class="lbl">Pendientes</div>
+          </div>
+          <div class="hero-client-chip">
+            <div class="val">$38.4K</div>
+            <div class="lbl">Vendido hoy</div>
+          </div>
+          <div class="hero-client-chip">
+            <div class="val">112%</div>
+            <div class="lbl">De meta</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sync status -->
+      <div class="section" style="padding-bottom:8px">
+        <div class="sync-row">
+          <div class="sync-item"><div class="sync-dot-ok"></div><span>3 pedidos sincronizados</span></div>
+          <div style="margin:0 8px;color:rgba(255,255,255,.3)">·</div>
+          <div class="sync-item"><div class="sync-dot-pending"></div><span>1 foto subiendo</span></div>
+        </div>
+      </div>
+
+      <!-- Alert strip -->
+      <div class="section" style="padding-top:8px;padding-bottom:8px">
+        <div class="alert-strip" onclick="showToast('Marinela ganó 8pts de share en Farmacia San José — proponer exhibidor en próxima visita','⚠️')">
+          <div class="alert-strip-icon">⚠️</div>
+          <div class="alert-strip-text">Marinela ganó share en 3 clientes de tu zona. Acción recomendada disponible.</div>
+          <div class="alert-strip-arrow">›</div>
+        </div>
+      </div>
+
+      <!-- Quick actions -->
+      <div class="section" style="padding-top:0">
+        <div class="section-title">Acciones rápidas</div>
+        <div class="quick-actions">
+          <div class="quick-action" onclick="showScreen('ruta')">
+            <div class="qa-icon" style="background:var(--g50)">📍</div>
+            <div>
+              <div class="qa-label">Mi ruta</div>
+              <div class="qa-sub">17 pendientes</div>
+            </div>
+          </div>
+          <div class="quick-action" onclick="startCaptura('Don Roberto','Abarrotes Don Roberto','Col. Cumbres')">
+            <div class="qa-icon" style="background:var(--b50)">📦</div>
+            <div>
+              <div class="qa-label">Siguiente cliente</div>
+              <div class="qa-sub">Don Roberto</div>
+            </div>
+          </div>
+          <div class="quick-action" onclick="showScreen('anaquel')">
+            <div class="qa-icon" style="background:var(--p50)">📸</div>
+            <div>
+              <div class="qa-label">Foto anaquel</div>
+              <div class="qa-sub">2 pendientes</div>
+            </div>
+          </div>
+          <div class="quick-action" onclick="showScreen('gamificacion')">
+            <div class="qa-icon" style="background:var(--a50)">🏆</div>
+            <div>
+              <div class="qa-label">Mis logros</div>
+              <div class="qa-sub">4,820 pts · Nivel 4</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPIs del día -->
+      <div class="section" style="padding-top:0">
+        <div class="section-title">KPIs del día</div>
+        <div class="card">
+          <div class="data-row">
+            <span class="data-key">Cobertura de ruta</span>
+            <span class="data-val" style="color:var(--g600)">96% ✓</span>
+          </div>
+          <div class="data-row">
+            <span class="data-key">Efectividad de visita</span>
+            <span class="data-val" style="color:var(--g600)">88% ✓</span>
+          </div>
+          <div class="data-row">
+            <span class="data-key">Ticket promedio</span>
+            <span class="data-val">$2,956</span>
+          </div>
+          <div class="data-row">
+            <span class="data-key">Devoluciones</span>
+            <span class="data-val" style="color:var(--g600)">1.2% ✓</span>
+          </div>
+          <div class="data-row">
+            <span class="data-key">Tiempo prom. en cliente</span>
+            <span class="data-val" style="color:var(--g600)">82s ⚡</span>
+          </div>
+          <div class="data-row" style="border-bottom:none">
+            <span class="data-key">Meta mensual acumulada</span>
+            <span class="data-val" style="color:var(--g600)">112% 🚀</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Racha -->
+      <div class="section" style="padding-top:0;padding-bottom:20px">
+        <div class="section-title">Racha semanal 🔥</div>
+        <div class="card">
+          <div class="streak-days">
+            <div class="streak-day done"><div class="sd-label">L</div><div class="sd-icon">✓</div></div>
+            <div class="streak-day done"><div class="sd-label">M</div><div class="sd-icon">✓</div></div>
+            <div class="streak-day done"><div class="sd-label">M</div><div class="sd-icon">✓</div></div>
+            <div class="streak-day done"><div class="sd-label">J</div><div class="sd-icon">✓</div></div>
+            <div class="streak-day" id="streakFriday"><div class="sd-label" style="color:var(--text-muted)">V</div><div class="sd-icon" style="font-size:14px;color:var(--gray300)">○</div></div>
+          </div>
+          <div class="alert alert-green" style="margin-top:8px">
+            <span class="alert-icon">🔥</span>
+            <span>¡4 días seguidos! Si cumples hoy, todos tus puntos de mañana valen <b>×1.5</b></span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /screen-home -->
+
+    <!-- ──────────────────────────────────────────
+         SCREEN: RUTA DEL DÍA
+    ────────────────────────────────────────── -->
+    <div class="screen" id="screen-ruta">
+
+      <div class="route-header">
+        <div class="route-day-info">
+          <div>
+            <div class="route-date">Ruta Norte B</div>
+            <div class="route-sub">Lunes 16 de Marzo · Monterrey</div>
+          </div>
+          <div class="badge badge-amber">⚡ Quincena</div>
+        </div>
+        <div class="route-progress-info">
+          <span>13 visitados de 30</span>
+          <span>Terminas ~3:40 PM ✓</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" style="width:43%;background:var(--g500)"></div>
+        </div>
+      </div>
+
+      <!-- Filter chips -->
+      <div style="padding:10px 16px 0">
+        <div class="chip-group">
+          <button class="chip active" onclick="filterClients('all',this)">Todos (30)</button>
+          <button class="chip" onclick="filterClients('pending',this)">⏳ Pendientes (17)</button>
+          <button class="chip" onclick="filterClients('done',this)">✓ Visitados (13)</button>
+          <button class="chip" onclick="filterClients('alert',this)">⚠️ Con alerta (3)</button>
+        </div>
+      </div>
+
+      <div class="section" id="clientList">
+        <!-- Generated by JS -->
+      </div>
+
+    </div><!-- /screen-ruta -->
+
+    <!-- ──────────────────────────────────────────
+         SCREEN: CAPTURA DE PEDIDO
+    ────────────────────────────────────────── -->
+    <div class="screen" id="screen-captura">
+
+      <!-- Client hero -->
+      <div class="client-hero">
+        <div class="client-hero-row">
+          <div>
+            <div class="client-hero-name" id="capturaClientName">Abarrotes Don Roberto</div>
+            <div class="client-hero-sub" id="capturaClientSub">Tiendita · Col. Cumbres · Visita #14</div>
+          </div>
+          <!-- Sargento Timer v3 -->
+          <div class="sargento-panel" id="sargentoPanel">
+            <div class="sargento-alarm-ring" id="sargentoAlarm"></div>
+            <div class="sargento-budget">⏱ SARGENTO</div>
+            <div class="sargento-time" id="sargentoTime">0:00</div>
+            <div class="sargento-limit" id="sargentoLimit">/ 7:00 meta</div>
+            <div class="sargento-bar-track">
+              <div class="sargento-bar-fill" id="sargentoBarFill" style="width:0%;background:var(--g400)"></div>
+            </div>
+            <div class="sargento-status-chip" id="sargentoChip" style="background:rgba(63,202,136,.2);color:var(--g300)">🟢 Óptimo</div>
+          </div>
+        </div>
+        <div class="client-stats-row">
+          <div class="client-stat"><div class="val">$1,240</div><div class="lbl">Último pedido</div></div>
+          <div class="client-stat"><div class="val" style="color:var(--g300)">$1,580</div><div class="lbl">Sugerido hoy</div></div>
+          <div class="client-stat"><div class="val" style="color:var(--a300)">+27%</div><div class="lbl">Oportunidad</div></div>
+          <div class="client-stat"><div class="val" style="color:var(--g300)">Al corriente ✓</div><div class="lbl">Cobranza</div></div>
+        </div>
+      </div>
+
+      <!-- Argument box (AI generated) -->
+      <div class="section" style="padding-bottom:0">
+        <div class="argument-box" id="argumentBox">
+          <span class="arg-icon">💡</span>
+          <span class="arg-text" id="argumentText">
+            "Don Roberto, la semana pasada le volaron los Gansitos — y hoy es quincena. Le traigo 5 cajas, ¿le acomodo las mismas Tortillinas de siempre?"
+          </span>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="section" style="padding-bottom:0">
+        <div class="tab-bar">
+          <button class="tab-item active" onclick="switchOrderTab('sugerido',this)">🎯 Sugerido</button>
+          <button class="tab-item" onclick="switchOrderTab('catalogo',this)">📦 Catálogo</button>
+          <button class="tab-item" onclick="switchOrderTab('cobro',this)">💵 Cobro</button>
+          <button class="tab-item" id="tabFotoBtn" onclick="switchOrderTab('fotos',this)" style="position:relative">
+            📸 Fotos
+            <span id="fotoPendingDot" style="position:absolute;top:4px;right:4px;width:7px;height:7px;background:var(--r500);border-radius:50%;display:block"></span>
+          </button>
+        </div>
+
+        <!-- SKU List - Sugerido -->
+        <div id="tab-sugerido">
+          <div class="sku-section-title">⭐ Alta confianza — 95%+ de aceptación</div>
+          <div id="skuHighList"></div>
+
+          <div class="sku-section-title">💡 Oportunidad incremental</div>
+          <div id="skuMidList"></div>
+
+          <div class="sku-section-title">
+            <span id="lowSkuToggle" onclick="toggleLowSkus()" style="cursor:pointer;color:var(--b600)">
+              ▸ Baja rotación (6 SKUs) — toca para ver
+            </span>
+          </div>
+          <div id="skuLowList" style="display:none">
+            <!-- low sku items -->
+            <div class="sku-row">
+              <div class="sku-color-dot" style="background:var(--gray300)"></div>
+              <div class="sku-info"><div class="sku-name">Barritas Marinela</div><div class="sku-sub">Baja rotación en zona</div></div>
+              <div class="qty-ctrl">
+                <button class="qty-btn" onclick="changeQty('barritas',-1)">−</button>
+                <div class="qty-val" id="q-barritas">0</div>
+                <button class="qty-btn" onclick="changeQty('barritas',1)">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Catálogo -->
+        <div id="tab-catalogo" style="display:none">
+          <div style="position:relative;margin-bottom:10px">
+            <input type="text" placeholder="🔍  Buscar SKU o código de barras..."
+              style="width:100%;padding:12px 14px;border:1.5px solid var(--border2);border-radius:var(--r-md);font-size:14px;font-family:var(--font);background:var(--surface);color:var(--text-primary)"
+              id="catalogSearch" oninput="filterCatalog(this.value)">
+          </div>
+          <div id="catalogList"></div>
+        </div>
+
+        <!-- Cobro -->
+        <div id="tab-cobro" style="display:none">
+          <div class="card">
+            <div class="data-row">
+              <span class="data-key">Saldo pendiente</span>
+              <span class="data-val" style="color:var(--g600)">$0.00 — Al corriente ✓</span>
+            </div>
+            <div class="data-row">
+              <span class="data-key">Último pago</span>
+              <span class="data-val">$1,240 · Martes pasado</span>
+            </div>
+            <div class="data-row">
+              <span class="data-key">Forma de pago</span>
+              <span class="data-val">Efectivo</span>
+            </div>
+            <div class="data-row" style="border-bottom:none">
+              <span class="data-key">Límite de crédito</span>
+              <span class="data-val">$8,000 MXN</span>
+            </div>
+          </div>
+          <button class="btn btn-secondary btn-full" style="margin-top:8px" onclick="showToast('💵 Módulo de cobro en campo — efectivo, transferencia, QR')">
+            💵 Registrar cobro en campo
+          </button>
+        </div>
+
+        <!-- Anaquel tab in order -->
+        <div id="tab-anaquel" style="display:none">
+          <div style="text-align:center;padding:16px 0">
+            <button class="btn btn-primary" onclick="showScreen('anaquel');updateNav('Foto de Anaquel','IA · Detección automática')">
+              📸 Tomar foto de anaquel
+            </button>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:8px">
+              El análisis tarda ~3 segundos. Funciona sin conexión.
+            </div>
+          </div>
+        </div>
+
+        <!-- FOTOS PROTOCOL TAB — v3 "Foto o No Existe" -->
+        <div id="tab-fotos" style="display:none">
+          <div style="background:var(--r50);border-radius:var(--r-md);border:1px solid var(--r200);padding:10px 12px;display:flex;gap:8px;align-items:flex-start;margin-bottom:12px">
+            <span style="font-size:16px">📸</span>
+            <div style="font-size:12px;color:var(--r700);line-height:1.5"><b>"Foto o No Existe"</b> — Las fotos desbloquean pasos. Sin foto, la visita queda incompleta y el bono se afecta.</div>
+          </div>
+          <div id="fotoProtocolList"></div>
+        </div>
+      </div>
+
+      <!-- Spacer for bottom bar -->
+      <div style="height:90px"></div>
+
+      <!-- Order total bar (fixed at bottom) -->
+      <div style="position:sticky;bottom:0;background:var(--surface);z-index:10">
+        <div class="order-total-bar">
+          <div>
+            <div class="order-total-lbl">Total del pedido</div>
+            <div class="order-total-val" id="orderTotal">$0</div>
+          </div>
+          <button class="btn btn-primary" onclick="confirmOrder()" id="confirmBtn">
+            ✓ Confirmar pedido
+          </button>
+        </div>
+      </div>
+
+    </div><!-- /screen-captura -->
+
+    <!-- ──────────────────────────────────────────
+         SCREEN: FOTO DE ANAQUEL (IA)
+    ────────────────────────────────────────── -->
+    <div class="screen" id="screen-anaquel">
+      <div class="section">
+        <!-- Camera frame -->
+        <div class="camera-frame" id="cameraFrame">
+          <svg class="camera-grid" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <line x1="33" y1="0" x2="33" y2="100" stroke="rgba(255,255,255,.15)" stroke-width=".5"/>
+            <line x1="67" y1="0" x2="67" y2="100" stroke="rgba(255,255,255,.15)" stroke-width=".5"/>
+            <line x1="0" y1="33" x2="100" y2="33" stroke="rgba(255,255,255,.15)" stroke-width=".5"/>
+            <line x1="0" y1="67" x2="100" y2="67" stroke="rgba(255,255,255,.15)" stroke-width=".5"/>
+          </svg>
+          <div class="camera-scan-line" id="scanLine"></div>
+          <!-- Detection bounding boxes (hidden initially) -->
+          <div class="detection-badge" id="det1" style="left:3%;top:10%;width:25%;height:55%">
+            <div class="detection-badge-label">Gansito c/6 · 97%</div>
+          </div>
+          <div class="detection-badge" id="det2" style="left:30%;top:10%;width:20%;height:55%">
+            <div class="detection-badge-label">Pan Blanco · 94%</div>
+          </div>
+          <div class="detection-badge" id="det3" style="left:52%;top:10%;width:22%;height:55%">
+            <div class="detection-badge-label">Tortillinas · 96%</div>
+          </div>
+          <div class="detection-badge" id="det4" style="left:76%;top:10%;width:20%;height:55%;border-color:var(--r400)">
+            <div class="detection-badge-label" style="background:var(--r500)">⚠ HUECO</div>
+          </div>
+          <div class="detection-badge" id="det5" style="left:3%;top:68%;width:30%;height:28%">
+            <div class="detection-badge-label">Choco Roles · 88%</div>
+          </div>
+          <div class="detection-badge" id="det6" style="left:35%;top:68%;width:28%;height:28%;border-color:var(--a400)">
+            <div class="detection-badge-label" style="background:var(--a500);color:var(--a900)">Marinela 28%</div>
+          </div>
+
+          <div class="camera-overlay-text" id="cameraPlaceholder">
+            <div style="font-size:32px;margin-bottom:8px">📷</div>
+            <div>Apunta al anaquel del cliente</div>
+            <div style="font-size:11px;margin-top:4px;opacity:.6">Mantén el ángulo frontal para mejor detección</div>
+          </div>
+        </div>
+
+        <!-- Scan button -->
+        <div style="text-align:center;margin-bottom:16px">
+          <button class="btn btn-primary" id="scanBtn" onclick="startScan()" style="min-width:180px">
+            📸 Analizar anaquel
+          </button>
+        </div>
+
+        <!-- Results (hidden until scan) -->
+        <div id="scanResults" style="display:none">
+          <div class="metrics-row cols-4" style="grid-template-columns:repeat(4,1fr);margin-bottom:12px">
+            <div class="metric-box"><div class="metric-val green">14</div><div class="metric-lbl">SKUs detectados</div></div>
+            <div class="metric-box"><div class="metric-val green">52%</div><div class="metric-lbl">Share Bimbo</div></div>
+            <div class="metric-box"><div class="metric-val red">1</div><div class="metric-lbl">Huecos</div></div>
+            <div class="metric-box"><div class="metric-val">92%</div><div class="metric-lbl">Confianza IA</div></div>
+          </div>
+
+          <!-- Share bar -->
+          <div class="section-title">Share of shelf</div>
+          <div class="bar-stack" style="margin-bottom:4px">
+            <div class="bar-seg" style="width:52%;background:var(--g600)">Bimbo 52%</div>
+            <div class="bar-seg" style="width:28%;background:var(--r500)">Marinela 28%</div>
+            <div class="bar-seg" style="width:12%;background:var(--gray400)">Gral 12%</div>
+            <div class="bar-seg" style="width:8%;background:var(--gray600)">Otro 8%</div>
+          </div>
+          <div style="font-size:10px;color:var(--text-muted);text-align:right;margin-bottom:12px">Meta Bimbo: >48% ✓</div>
+
+          <!-- Alerts -->
+          <div class="alert alert-red" style="margin-bottom:8px">
+            <span class="alert-icon">🔴</span>
+            <div><b>Hueco detectado</b> — posición vacía en zona central. Reponer en esta visita.</div>
+          </div>
+          <div class="alert alert-amber" style="margin-bottom:8px">
+            <span class="alert-icon">⚠️</span>
+            <div>Marinela ocupa 28% — 6pts arriba de su histórico. Revisar acuerdo de espacio.</div>
+          </div>
+          <div class="alert alert-green" style="margin-bottom:12px">
+            <span class="alert-icon">✓</span>
+            <div>Share Bimbo 52% — dentro del objetivo de zona (>48%)</div>
+          </div>
+
+          <!-- Detected SKUs -->
+          <div class="section-title">SKUs detectados</div>
+          <div id="detectedSkuList"></div>
+
+          <button class="btn btn-primary btn-full" style="margin-top:12px" onclick="showToast('✓ Análisis guardado · Enviando al servidor en segundo plano','✓')">
+            ✓ Guardar análisis
+          </button>
+        </div>
+      </div>
+    </div><!-- /screen-anaquel -->
+
+    <!-- ──────────────────────────────────────────
+         SCREEN: SUPERVISOR DASHBOARD
+    ────────────────────────────────────────── -->
+    <div class="screen" id="screen-supervisor">
+
+      <div class="supervisor-hero">
+        <div class="sv-title">Dashboard Supervisor</div>
+        <div class="sv-sub">Zona Norte MTY · 6 vendedores activos</div>
+        <div class="sv-metrics">
+          <div class="sv-metric"><div class="val">152</div><div class="lbl">Visitas hoy</div></div>
+          <div class="sv-metric"><div class="val" style="color:var(--g300)">$284K</div><div class="lbl">Vendido</div></div>
+          <div class="sv-metric"><div class="val" style="color:var(--a300)">3</div><div class="lbl">Alertas activas</div></div>
+          <div class="sv-metric"><div class="val">94%</div><div class="lbl">Cobertura</div></div>
+        </div>
+      </div>
+
+      <!-- Map placeholder -->
+      <div class="section">
+        <div class="section-title">Ubicación de rutas en tiempo real</div>
+        <div class="map-placeholder">
+          <div class="map-dot" style="top:30%;left:40%"></div>
+          <div class="map-dot" style="top:45%;left:60%;background:var(--b500)"></div>
+          <div class="map-dot" style="top:60%;left:30%;background:var(--a500)"></div>
+          <div class="map-dot" style="top:35%;left:70%;background:var(--p500)"></div>
+          <div class="map-dot" style="top:55%;left:50%;background:var(--r500)"></div>
+          <div style="font-size:24px;opacity:.2">🗺️</div>
+          <div>Mapa en tiempo real</div>
+          <div style="font-size:10px;opacity:.5">GPS cada 30 segundos</div>
+        </div>
+      </div>
+
+      <!-- Vendedores -->
+      <div class="section" style="padding-top:0">
+        <div class="section-title">Estado de vendedores</div>
+        <div id="vendedoresList"></div>
+      </div>
+
+      <!-- Alertas -->
+      <div class="section" style="padding-top:0;padding-bottom:20px">
+        <div class="section-title">⚠️ Alertas activas</div>
+        <div class="alert-row critical">
+          <div class="ar-title">Carlos M. · Visita de 42 min sin pedido</div>
+          <div class="ar-desc">Abarrotes El Sol · Posible problema de cobro o negativa. Contactar.</div>
+        </div>
+        <div class="alert-row warning">
+          <div class="ar-title">Luis R. · 4 visitas de &lt;15 segundos detectadas</div>
+          <div class="ar-desc">Posibles check-ins fantasma en Ruta Norte B. Verificar con GPS.</div>
+        </div>
+        <div class="alert-row success">
+          <div class="ar-title">Ana G. · Meta del día cumplida al 130%</div>
+          <div class="ar-desc">Disponible para ruta adicional si hay urgencia en otra zona.</div>
+        </div>
+      </div>
+
+    </div><!-- /screen-supervisor -->
+
+    <!-- ──────────────────────────────────────────
+         SCREEN: GAMIFICACIÓN
+    ────────────────────────────────────────── -->
+    <div class="screen" id="screen-gamificacion">
+
+      <div class="gamif-hero">
+        <!-- Level ring -->
+        <div class="gamer-level-ring">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="8"/>
+            <circle cx="50" cy="50" r="42" fill="none" stroke="#fff" stroke-width="8"
+              stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="79"
+              transform="rotate(-90 50 50)"/>
+          </svg>
+          <div class="gamer-level-center">
+            <div class="level-num">4</div>
+            <div class="level-label">Nivel</div>
+          </div>
+        </div>
+        <div class="points-total" id="gamifPoints">4,820</div>
+        <div class="points-sub">puntos acumulados</div>
+        <div class="points-progress">
+          <div class="pp-label">
+            <span>Nivel 4 — Especialista</span>
+            <span id="gamifNextPts">680 pts para Nivel 5</span>
+          </div>
+          <div class="pp-track">
+            <div class="pp-fill" id="gamifFill" style="width:68%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="section" style="padding-bottom:0">
+        <div class="tab-bar">
+          <button class="tab-item active" onclick="switchGamifTab('logros',this)">🏅 Logros</button>
+          <button class="tab-item" onclick="switchGamifTab('ranking',this)">🏆 Ranking</button>
+          <button class="tab-item" onclick="switchGamifTab('recompensas',this)">🎁 Canjear</button>
+        </div>
+
+        <!-- Logros -->
+        <div id="gtab-logros">
+          <div class="section-title">Desbloqueados ✓</div>
+          <div class="achievement-grid" id="achievementGrid"></div>
+          <div class="section-title" style="margin-top:16px">En progreso</div>
+          <div id="progressAchievements"></div>
+        </div>
+
+        <!-- Ranking -->
+        <div id="gtab-ranking" style="display:none">
+          <div class="chip-group" style="margin-bottom:12px">
+            <button class="chip active" onclick="switchRanking('zona',this)">Mi zona</button>
+            <button class="chip" onclick="switchRanking('cedis',this)">Mi CEDIS</button>
+            <button class="chip" onclick="switchRanking('similar',this)">Rutas similares</button>
+          </div>
+          <div id="rankingList"></div>
+          <div class="alert alert-blue" style="margin-top:8px">
+            <span class="alert-icon">ℹ️</span>
+            <span>Rankings globales desmotivan al 80% de los vendedores. Tu zona de 8 rutas te da competencia real y alcanzable.</span>
+          </div>
+        </div>
+
+        <!-- Recompensas -->
+        <div id="gtab-recompensas" style="display:none">
+          <div id="rewardsList"></div>
+        </div>
+      </div>
+
+      <!-- Earn points button -->
+      <div class="section" style="padding-bottom:20px">
+        <button class="btn btn-primary btn-full" onclick="earnPoints()">
+          ⚡ Simular visita perfecta (+puntos)
+        </button>
+        <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:6px">
+          En la app real los puntos se ganan automáticamente
+        </div>
+      </div>
+
+    </div><!-- /screen-gamificacion -->
+
+    <!-- ──────────────────────────────────────────
+         SCREEN: REGISTRO NUEVO CLIENTE (SIN INTERNET)  v3
+    ────────────────────────────────────────── -->
+    <div class="screen" id="screen-registro">
+      <div class="section">
+        <div class="alert alert-blue" style="margin-bottom:12px">
+          <span class="alert-icon">📵</span>
+          <div><b>Sin internet, sin correo</b> — Registro 100% con fotos. Funciona offline. Se sincroniza al conectarse.</div>
+        </div>
+
+        <div class="reg-step">
+          <div class="reg-step-hdr">
+            <div class="reg-num">1</div>
+            <div class="reg-title">Datos básicos del negocio</div>
+          </div>
+          <label class="field-lbl">Nombre del negocio *</label>
+          <input class="field-input" type="text" placeholder="Ej: Abarrotes Don Chuy" id="regNombre">
+          <label class="field-lbl">Tipo de negocio *</label>
+          <select class="field-input" id="regTipo">
+            <option value="">Seleccionar...</option>
+            <option>Tiendita tradicional</option>
+            <option>Minisuper</option>
+            <option>Fonda / Restaurante</option>
+            <option>Farmacia</option>
+            <option>Papelería</option>
+            <option>Cremería</option>
+            <option>Carnicería</option>
+            <option>Tortillería</option>
+            <option>Dulcería</option>
+            <option>Otro</option>
+          </select>
+          <label class="field-lbl">Nombre del dueño *</label>
+          <input class="field-input" type="text" placeholder="Ej: Roberto Martínez" id="regDueno">
+          <label class="field-lbl">Colonia / Referencia *</label>
+          <input class="field-input" type="text" placeholder="Ej: Col. Cumbres, frente al OXXO" id="regColonia">
+        </div>
+
+        <div class="reg-step">
+          <div class="reg-step-hdr">
+            <div class="reg-num">2</div>
+            <div class="reg-title">Foto de la fachada del negocio *</div>
+          </div>
+          <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;line-height:1.4">
+            Esta foto ES el expediente. Incluye el nombre del local visible. Sin foto, no hay registro.
+          </div>
+          <button class="facade-btn" id="facadeBtn" onclick="captureFacadePhoto()">
+            📷 Tomar foto de fachada
+          </button>
+          <div id="facadeThumb" style="display:none" class="foto-thumbnail">
+            📷 Fachada capturada
+            <span class="foto-timestamp" id="facadeTime"></span>
+          </div>
+        </div>
+
+        <div class="reg-step">
+          <div class="reg-step-hdr">
+            <div class="reg-num">3</div>
+            <div class="reg-title">Datos de contacto (opcionales)</div>
+          </div>
+          <label class="field-lbl">Teléfono celular del dueño</label>
+          <input class="field-input" type="tel" placeholder="Ej: 81 1234 5678" id="regTel">
+          <div style="font-size:11px;color:var(--text-muted);margin-top:6px">
+            ✓ No se requiere correo electrónico ni cuenta digital
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-full" style="margin-top:4px" onclick="saveNewClient()">
+          ✓ Registrar cliente nuevo
+        </button>
+        <div style="height:20px"></div>
+      </div>
+    </div><!-- /screen-registro -->
+
+  </div><!-- /main-content -->
+
+  <!-- Confirm overlay -->
+  <div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-card" style="max-width:380px">
+      <span class="confirm-icon">✅</span>
+      <div class="confirm-title">¡Pedido confirmado!</div>
+      <div class="confirm-amount" id="confirmAmount">$1,580</div>
+      <div class="confirm-sub" id="confirmSub">CFDI generado · Sincronizando con CEDIS · Stock del camión actualizado</div>
+
+      <!-- QR Receipt v3 — sin impresora -->
+      <div class="qr-receipt-sheet" id="qrReceiptPanel">
+        <div style="font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px">Comprobante para el cliente</div>
+        <div class="qr-box">
+          <!-- QR Code SVG pattern -->
+          <svg viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg" style="image-rendering:pixelated">
+            <rect width="21" height="21" fill="#0d100e"/>
+            <!-- QR finder patterns + data modules -->
+            <g fill="#fff">
+              <rect x="0" y="0" width="7" height="7"/><rect x="1" y="1" width="5" height="5" fill="#0d100e"/><rect x="2" y="2" width="3" height="3"/>
+              <rect x="14" y="0" width="7" height="7"/><rect x="15" y="1" width="5" height="5" fill="#0d100e"/><rect x="16" y="2" width="3" height="3"/>
+              <rect x="0" y="14" width="7" height="7"/><rect x="1" y="15" width="5" height="5" fill="#0d100e"/><rect x="2" y="16" width="3" height="3"/>
+              <!-- Data modules -->
+              <rect x="9" y="0" width="1" height="1"/><rect x="11" y="0" width="1" height="1"/>
+              <rect x="8" y="1" width="1" height="1"/><rect x="10" y="1" width="1" height="1"/><rect x="12" y="1" width="1" height="1"/>
+              <rect x="9" y="2" width="1" height="1"/><rect x="11" y="2" width="1" height="1"/>
+              <rect x="8" y="3" width="1" height="1"/><rect x="10" y="3" width="1" height="1"/>
+              <rect x="9" y="4" width="1" height="1"/><rect x="11" y="4" width="1" height="1"/><rect x="12" y="4" width="1" height="1"/>
+              <rect x="8" y="5" width="1" height="1"/><rect x="10" y="5" width="1" height="1"/>
+              <rect x="9" y="6" width="1" height="1"/><rect x="11" y="6" width="1" height="1"/>
+              <rect x="0" y="8" width="1" height="1"/><rect x="2" y="8" width="1" height="1"/><rect x="4" y="8" width="1" height="1"/><rect x="6" y="8" width="1" height="1"/>
+              <rect x="8" y="8" width="1" height="1"/><rect x="10" y="8" width="1" height="1"/><rect x="12" y="8" width="1" height="1"/>
+              <rect x="14" y="8" width="1" height="1"/><rect x="16" y="8" width="1" height="1"/><rect x="18" y="8" width="1" height="1"/><rect x="20" y="8" width="1" height="1"/>
+              <rect x="1" y="9" width="1" height="1"/><rect x="3" y="9" width="1" height="1"/><rect x="5" y="9" width="1" height="1"/>
+              <rect x="9" y="9" width="1" height="1"/><rect x="11" y="9" width="1" height="1"/><rect x="13" y="9" width="1" height="1"/>
+              <rect x="15" y="9" width="1" height="1"/><rect x="17" y="9" width="1" height="1"/><rect x="19" y="9" width="1" height="1"/>
+              <rect x="0" y="10" width="1" height="1"/><rect x="2" y="10" width="1" height="1"/><rect x="4" y="10" width="1" height="1"/>
+              <rect x="8" y="10" width="1" height="1"/><rect x="10" y="10" width="1" height="1"/><rect x="12" y="10" width="1" height="1"/>
+              <rect x="16" y="10" width="1" height="1"/><rect x="18" y="10" width="1" height="1"/><rect x="20" y="10" width="1" height="1"/>
+              <rect x="1" y="11" width="1" height="1"/><rect x="3" y="11" width="1" height="1"/><rect x="5" y="11" width="1" height="1"/>
+              <rect x="9" y="11" width="1" height="1"/><rect x="11" y="11" width="1" height="1"/><rect x="13" y="11" width="1" height="1"/>
+              <rect x="17" y="11" width="1" height="1"/><rect x="19" y="11" width="1" height="1"/>
+              <rect x="0" y="12" width="1" height="1"/><rect x="2" y="12" width="1" height="1"/><rect x="4" y="12" width="1" height="1"/>
+              <rect x="8" y="12" width="1" height="1"/><rect x="10" y="12" width="1" height="1"/><rect x="12" y="12" width="1" height="1"/>
+              <rect x="14" y="12" width="1" height="1"/><rect x="16" y="12" width="1" height="1"/><rect x="18" y="12" width="1" height="1"/><rect x="20" y="12" width="1" height="1"/>
+              <rect x="9" y="14" width="1" height="1"/><rect x="11" y="14" width="1" height="1"/><rect x="13" y="14" width="1" height="1"/>
+              <rect x="15" y="14" width="1" height="1"/><rect x="17" y="14" width="1" height="1"/><rect x="19" y="14" width="1" height="1"/>
+              <rect x="8" y="15" width="1" height="1"/><rect x="10" y="15" width="1" height="1"/><rect x="12" y="15" width="1" height="1"/>
+              <rect x="16" y="15" width="1" height="1"/><rect x="18" y="15" width="1" height="1"/><rect x="20" y="15" width="1" height="1"/>
+              <rect x="9" y="16" width="1" height="1"/><rect x="11" y="16" width="1" height="1"/><rect x="13" y="16" width="1" height="1"/>
+              <rect x="15" y="16" width="1" height="1"/><rect x="17" y="16" width="1" height="1"/>
+              <rect x="8" y="17" width="1" height="1"/><rect x="10" y="17" width="1" height="1"/><rect x="12" y="17" width="1" height="1"/>
+              <rect x="16" y="17" width="1" height="1"/><rect x="18" y="17" width="1" height="1"/><rect x="20" y="17" width="1" height="1"/>
+              <rect x="9" y="18" width="1" height="1"/><rect x="11" y="18" width="1" height="1"/><rect x="13" y="18" width="1" height="1"/>
+              <rect x="15" y="18" width="1" height="1"/><rect x="17" y="18" width="1" height="1"/>
+              <rect x="8" y="19" width="1" height="1"/><rect x="10" y="19" width="1" height="1"/>
+              <rect x="14" y="19" width="1" height="1"/><rect x="16" y="19" width="1" height="1"/><rect x="18" y="19" width="1" height="1"/><rect x="20" y="19" width="1" height="1"/>
+              <rect x="9" y="20" width="1" height="1"/><rect x="11" y="20" width="1" height="1"/><rect x="13" y="20" width="1" height="1"/>
+              <rect x="15" y="20" width="1" height="1"/><rect x="19" y="20" width="1" height="1"/>
+            </g>
+          </svg>
+        </div>
+        <div class="qr-order-num" id="qrOrderNum">P-1049</div>
+        <div class="qr-hint">El cliente fotografía este código o anota el número</div>
+        <div class="qr-alt-box">
+          📝 Sin celular: anotar número de pedido en libreta del cliente. Sin internet: se sincroniza automáticamente.
+        </div>
+      </div>
+
+      <div class="confirm-actions">
+        <button class="btn btn-primary btn-full" onclick="afterConfirm()">
+          ▶ Siguiente cliente
+        </button>
+        <button class="btn btn-secondary btn-full" onclick="closeConfirm()">
+          Quedarme aquí
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" id="nav-home" onclick="showScreen('home')">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z" stroke="currentColor" stroke-width="2"/><path d="M9 21V12h6v9" stroke="currentColor" stroke-width="2"/></svg>
+      </div>
+      <span class="nav-label">Inicio</span>
+    </button>
+    <button class="nav-item" id="nav-ruta" onclick="showScreen('ruta')">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="9" r="2.5" stroke="currentColor" stroke-width="2"/></svg>
+        <div class="nav-dot show" id="rutaDot"></div>
+      </div>
+      <span class="nav-label">Mi ruta</span>
+    </button>
+    <button class="nav-item" id="nav-captura" onclick="showScreen('captura')">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="7" width="20" height="15" rx="2" stroke="currentColor" stroke-width="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" stroke="currentColor" stroke-width="2"/><path d="M12 12v6M9 15h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+      <span class="nav-label">Pedido</span>
+    </button>
+    <button class="nav-item" id="nav-registro" onclick="showScreen('registro')">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M16 11c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zM8 11c1.66 0 3-1.34 3-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+      </div>
+      <span class="nav-label">Nuevo</span>
+    </button>
+    <button class="nav-item" id="nav-gamificacion" onclick="showScreen('gamificacion')">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="nav-label">Logros</span>
+    </button>
+  </nav>
+
+</div><!-- /app -->
+
+<script>/* ═══════════════════════════════════════════════════════
+   RutaDSD — App de Ventas en Campo
+   JavaScript Core — Estado, Lógica, UI
+═══════════════════════════════════════════════════════ */
+
+'use strict';
+
+// ── ESTADO GLOBAL ──────────────────────────────────────
+const STATE = {
+  currentScreen: 'home',
+  prevScreen: null,
+  timerInterval: null,
+  timerSecs: 0,
+  timerRunning: false,
+  currentClient: null,
+  points: 4820,
+  isOffline: false,
+  orderQtys: {},
+  visitedClients: new Set([0,1,2,3,4,5,6,7,8,9,10,11,12]),
+  // v3 additions
+  visitBudget: 7 * 60,     // 7 minutos en segundos (configurable por cliente)
+  fotoState: { 0:false, 1:false, 2:false, 3:false }, // 4 pasos de foto
+  alarmFired80: false,
+  alarmFired100: false,
+  timeScores: [],          // tiempos de visitas para score diario
+  audioCtx: null,
+};
+
+// ── DATA ───────────────────────────────────────────────
+const PRICES = {
+  gansito:185, pan_blanco:140, tortillinas:95, bimbollos:110,
+  mantecadas:92, donas:88, panque:75, wonder:130, barritas:62,
+  choco_roles:105, marinela_bar:68, nito:72, dona_azucar:85,
+  roles_canela:98, galletas:55
+};
+
+const SKU_HIGH = [
+  { id:'gansito',    name:'Gansito c/6',         color:'#0F6E56', suggested:5, last:4, note:'↑ sugerido x5 · Quincena', isNew:false },
+  { id:'pan_blanco', name:'Pan Blanco Grande',    color:'#185FA5', suggested:3, last:3, note:'×3 · estable',             isNew:false },
+  { id:'tortillinas',name:'Tortillinas Tía Rosa', color:'#534AB7', suggested:4, last:4, note:'×4 · siempre',             isNew:false },
+  { id:'bimbollos',  name:'Bimbollos c/6',        color:'#0F7A4A', suggested:2, last:2, note:'×2 · regular',             isNew:false },
+];
+
+const SKU_MID = [
+  { id:'donas',      name:'Donas Bimbo',    color:'#BA7517', suggested:0, last:0, note:'🆕 nuevo · vecino sí tiene', isNew:true },
+  { id:'choco_roles',name:'Choco Roles',    color:'#E24B4A', suggested:0, last:0, note:'Marinela - zona alta',       isNew:false },
+  { id:'dona_azucar',name:'Donas Azúcar',   color:'#BA7517', suggested:0, last:1, note:'Reactivar — 3 meses sin pedir', isNew:false },
+];
+
+const SKU_CATALOG = [
+  { id:'mantecadas', name:'Mantecadas c/8',   color:'#0F6E56' },
+  { id:'panque',     name:'Panqué Vainilla',  color:'#534AB7' },
+  { id:'wonder',     name:'Wonder Blanco',    color:'#888780' },
+  { id:'barritas',   name:'Barritas Marinela',color:'#888780' },
+  { id:'marinela_bar',name:'Marinela Barritas',color:'#E24B4A' },
+  { id:'nito',       name:'Nito Marinela',    color:'#993C1D' },
+  { id:'roles_canela',name:'Roles de Canela', color:'#BA7517' },
+  { id:'galletas',   name:'Galletas Marias',  color:'#444441' },
+];
+
+const CLIENTS = [
+  { id:0,  name:'Abarrotes Don Roberto',    meta:'Tiendita · Col. Cumbres',    badge:'badge-amber', badgeTxt:'Quincena', done:true  },
+  { id:1,  name:'Farmacia San José',         meta:'Farmacia · Centro Norte',    badge:'badge-amber', badgeTxt:'Adeudo $320', done:true },
+  { id:2,  name:'Fonda Doña Lupita',         meta:'Fonda · Col. Obrera',        badge:'badge-green', badgeTxt:'Al corriente', done:true },
+  { id:3,  name:'Minisuper El Roble',        meta:'Minisuper · Col. Valle',     badge:'badge-blue',  badgeTxt:'Nuevo', done:true },
+  { id:4,  name:'Papelería Escolar Cruz',    meta:'Papelería · Frente escuela', badge:'badge-green', badgeTxt:'Al corriente', done:true },
+  { id:5,  name:'Tienda Roma',               meta:'Tiendita · Col. Roma',       badge:'badge-green', badgeTxt:'Al corriente', done:true },
+  { id:6,  name:'Abarrotes La Esperanza',    meta:'Tiendita · Col. Vista',      badge:'badge-green', badgeTxt:'Al corriente', done:true },
+  { id:7,  name:'Minisuper Cumbres',         meta:'Minisuper · Col. Cumbres',   badge:'badge-green', badgeTxt:'Al corriente', done:true },
+  { id:8,  name:'Carnicería El Borrego',     meta:'Carnicería · Mercado 5',     badge:'badge-amber', badgeTxt:'Cobrar $180', done:true },
+  { id:9,  name:'Taquería Los Compadres',    meta:'Restaurante · Av. Lincoln',  badge:'badge-green', badgeTxt:'Al corriente', done:true },
+  { id:10, name:'Super Familiar García',     meta:'Minisuper · Col. Fierro',    badge:'badge-green', badgeTxt:'Al corriente', done:true },
+  { id:11, name:'Tienda La Guadalupana',     meta:'Tiendita · Col. Libertad',   badge:'badge-green', badgeTxt:'Al corriente', done:true },
+  { id:12, name:'Tortillería El Maizal',     meta:'Tortillería · Av. Madero',   badge:'badge-green', badgeTxt:'Al corriente', done:true },
+  { id:13, name:'Abarrotes Don Roberto',     meta:'Tiendita · Col. Cumbres',    badge:'badge-amber', badgeTxt:'⚡ Quincena', done:false, isNext:true },
+  { id:14, name:'Cenaduría La Tía',          meta:'Restaurante · Col. Obrera',  badge:'badge-green', badgeTxt:'Al corriente', done:false },
+  { id:15, name:'Super Del Norte',           meta:'Minisuper · Av. Del Norte',  badge:'badge-amber', badgeTxt:'Oportunidad', done:false },
+  { id:16, name:'Farmacia Juárez',           meta:'Farmacia · Centro',          badge:'badge-red',   badgeTxt:'⚠ Adeudo', done:false },
+  { id:17, name:'Abarrotes El Sol',          meta:'Tiendita · Col. Industrial', badge:'badge-red',   badgeTxt:'⚠ 42 min sin pedido', done:false },
+  { id:18, name:'Minisuper Tecnológico',     meta:'Minisuper · Fracc. Tec',     badge:'badge-blue',  badgeTxt:'Alta densidad', done:false },
+  { id:19, name:'Lonchería El Güero',        meta:'Fonda · Zona Industrial',    badge:'badge-green', badgeTxt:'Al corriente', done:false },
+  { id:20, name:'Tiendita Barrio Antiguo',   meta:'Tiendita · Barrio Antiguo',  badge:'badge-green', badgeTxt:'Al corriente', done:false },
+  { id:21, name:'Super La Colonia',          meta:'Minisuper · Col. Mitras',    badge:'badge-amber', badgeTxt:'Renovar exhibidor', done:false },
+  { id:22, name:'Dulcería La Paloma',        meta:'Dulcería · Centro',          badge:'badge-blue',  badgeTxt:'Nueva oportunidad', done:false },
+  { id:23, name:'Cremería Don Leche',        meta:'Cremería · Mercado 3',       badge:'badge-green', badgeTxt:'Al corriente', done:false },
+  { id:24, name:'Abarrotes y Más',           meta:'Tiendita · Col. Progreso',   badge:'badge-green', badgeTxt:'Al corriente', done:false },
+  { id:25, name:'Super Flash MTY',           meta:'Minisuper · Av. Constitución',badge:'badge-green',badgeTxt:'Al corriente', done:false },
+  { id:26, name:'Tacos La Barda',            meta:'Fonda · Av. Morones Prieto', badge:'badge-amber', badgeTxt:'Quincena', done:false },
+  { id:27, name:'Tienda El Amigo',           meta:'Tiendita · Col. Independencia',badge:'badge-green',badgeTxt:'Al corriente', done:false },
+  { id:28, name:'Cremería Cumbres',          meta:'Cremería · Col. Cumbres',    badge:'badge-blue',  badgeTxt:'Potencial alto', done:false },
+  { id:29, name:'Minisuper La Familia',      meta:'Minisuper · Col. Del Prado', badge:'badge-green', badgeTxt:'Al corriente', done:false },
+];
+
+const VENDEDORES = [
+  { name:'Ana García',   initials:'AG', color:'#1D9E75', visited:19, total:30, avg:78,  vol:'$221K', status:'ok'   },
+  { name:'Luis Rodríguez',initials:'LR',color:'#185FA5', visited:13, total:30, avg:82,  vol:'$198K', status:'ok',  isMe:true },
+  { name:'Carlos M.',    initials:'CM', color:'#E24B4A', visited:11, total:30, avg:145, vol:'$141K', status:'slow' },
+  { name:'Marco Torres', initials:'MT', color:'#534AB7', visited:17, total:30, avg:62,  vol:'$162K', status:'ok'   },
+  { name:'Diana Pérez',  initials:'DP', color:'#BA7517', visited:16, total:30, avg:89,  vol:'$187K', status:'ok'   },
+  { name:'Jorge Ruiz',   initials:'JR', color:'#993C1D', visited:14, total:30, avg:108, vol:'$157K', status:'warn' },
+];
+
+const ACHIEVEMENTS = [
+  { icon:'⚡', name:'Primer pedido',   desc:'Primer pedido del mes',        unlocked:true  },
+  { icon:'🎯', name:'100% cobertura',  desc:'Un día de cobertura perfecta',  unlocked:true  },
+  { icon:'🔥', name:'Racha de 5',      desc:'5 días consecutivos de meta',   unlocked:true  },
+  { icon:'🚀', name:'Superstar',       desc:'125% de meta en un mes',        unlocked:true  },
+  { icon:'⭐', name:'Mes de oro',      desc:'#1 en zona un mes',            unlocked:false },
+  { icon:'💎', name:'Diamante',        desc:'6 meses >100% de meta',        unlocked:false },
+  { icon:'🏆', name:'Élite nacional',  desc:'Top 50 vendedores nacionales',  unlocked:false },
+  { icon:'👑', name:'Leyenda',         desc:'3 años >110% de meta',         unlocked:false },
+  { icon:'📦', name:'Mix maestro',     desc:'20 SKUs distintos en 1 pedido', unlocked:false },
+];
+
+const PROGRESS_ACHIEVEMENTS = [
+  { icon:'🔥', name:'Racha de 10 días',  desc:'Llevas 4 de 10 días',            pct:40, color:'#E24B4A' },
+  { icon:'⭐', name:'Mes de oro',         desc:'87% de meta — necesita 100%',    pct:87, color:'#EF9F27' },
+  { icon:'📦', name:'Mix maestro',        desc:'14 SKUs de 20 en mejor pedido',  pct:70, color:'#185FA5' },
+];
+
+const RANKINGS = {
+  zona: [
+    { name:'Ana García',     pts:6240, vol:'$221K', pos:1 },
+    { name:'Luis Rodríguez', pts:4820, vol:'$198K', pos:2, isMe:true },
+    { name:'Diana Pérez',    pts:4410, vol:'$187K', pos:3 },
+    { name:'Marco Torres',   pts:3890, vol:'$162K', pos:4 },
+    { name:'Jorge Ruiz',     pts:3210, vol:'$157K', pos:5 },
+    { name:'Carlos M.',      pts:2840, vol:'$141K', pos:6 },
+  ],
+  cedis: [
+    { name:'María López',    pts:7100, vol:'$260K', pos:1 },
+    { name:'José Vargas',    pts:6830, vol:'$248K', pos:2 },
+    { name:'Ana García',     pts:6240, vol:'$221K', pos:3 },
+    { name:'Roberto Sosa',   pts:5910, vol:'$231K', pos:5 },
+    { name:'Luis Rodríguez', pts:4820, vol:'$198K', pos:7, isMe:true },
+  ],
+  similar: [
+    { name:'Luis Rodríguez', pts:4820, vol:'$198K', pos:1, isMe:true },
+    { name:'Pedro Nava',     pts:4640, vol:'$191K', pos:2 },
+    { name:'Sandra Cruz',    pts:4210, vol:'$179K', pos:3 },
+    { name:'Ernesto Vela',   pts:3980, vol:'$168K', pos:4 },
+  ],
+};
+
+const REWARDS = [
+  { icon:'🛒', name:'Vale de despensa $500',  pts:2000 },
+  { icon:'📅', name:'Día libre adicional',    pts:3500 },
+  { icon:'🧢', name:'Gorra de colección',     pts:800  },
+  { icon:'📱', name:'Tablet para la ruta',    pts:15000},
+  { icon:'💵', name:'Bono en efectivo $1,000',pts:5000 },
+  { icon:'🎖️', name:'Reconocimiento público', pts:1000 },
+];
+
+// v3 — PROTOCOLO FOTO O NO EXISTE
+const FOTO_PROTOCOL = [
+  { id:0, icon:'🏪', title:'Foto de entrada — anaquel',      sub:'Captura el anaquel completo al llegar. La IA detecta huecos automáticamente.',                                required:true  },
+  { id:1, icon:'📋', title:'Foto de exhibición propia',      sub:'Documenta los frentes y el material POP de Bimbo en el punto de venta.',                                      required:true  },
+  { id:2, icon:'❌', title:'Foto de rechazo (si aplica)',    sub:'Si el cliente no acepta producto, fotografía el motivo + el dueño visible.',                                   required:false },
+  { id:3, icon:'✅', title:'Foto de salida — pedido listo',  sub:'Captura el anaquel ya surtido + el número de pedido visible en pantalla.',                                     required:true  },
+];
+
+const DETECTED_SKUS = [
+  { name:'Gansito c/6',     brand:'Bimbo',    facings:5, conf:97, color:'#0F6E56' },
+  { name:'Pan Blanco Gde',  brand:'Bimbo',    facings:3, conf:94, color:'#1D9E75' },
+  { name:'Tortillinas',     brand:'Bimbo',    facings:4, conf:96, color:'#185FA5' },
+  { name:'Mantecadas c/8',  brand:'Bimbo',    facings:3, conf:92, color:'#0F6E56' },
+  { name:'Choco Roles',     brand:'Marinela', facings:4, conf:88, color:'#E24B4A' },
+  { name:'Barritas',        brand:'Marinela', facings:3, conf:85, color:'#993C1D' },
+  { name:'Pan Wonder',      brand:'Wonder',   facings:2, conf:83, color:'#888780' },
+];
+
+// ── INIT ───────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  initQtys();
+  initStatusTime();
+  renderClientList();
+  renderVendedores();
+  renderSkuLists();
+  renderCatalog(SKU_CATALOG);
+  renderAchievements();
+  renderProgressAchievements();
+  renderRanking('zona');
+  renderRewards();
+  renderDetectedSkus();
+  renderFotoProtocol();    // v3
+  startTimer();
+  updateOrderTotal();
+});
+
+function initQtys() {
+  // Initialize all SKU quantities
+  [...SKU_HIGH, ...SKU_MID, ...SKU_CATALOG].forEach(sku => {
+    STATE.orderQtys[sku.id] = sku.suggested || 0;
+  });
+  STATE.orderQtys['barritas'] = 0;
+}
+
+function initStatusTime() {
+  const update = () => {
+    const now = new Date();
+    const h = now.getHours();
+    const m = String(now.getMinutes()).padStart(2,'0');
+    const el = document.getElementById('statusTime');
+    if (el) el.textContent = `${h}:${m}`;
+  };
+  update();
+  setInterval(update, 30000);
+}
+
+// ── NAVIGATION ─────────────────────────────────────────
+function showScreen(name) {
+  STATE.prevScreen = STATE.currentScreen;
+  STATE.currentScreen = name;
+
+  // Hide all screens
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+
+  // Show target
+  const target = document.getElementById(`screen-${name}`);
+  if (target) target.classList.add('active');
+
+  // Update bottom nav
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navBtn = document.getElementById(`nav-${name}`);
+  if (navBtn) navBtn.classList.add('active');
+
+  // Update top nav
+  updateNavForScreen(name);
+}
+
+function updateNavForScreen(name) {
+  const backBtn = document.getElementById('navBack');
+  const cedisBar = document.getElementById('cedisBar');
+  const fotoBar = document.getElementById('fotoStepsBar');
+  const titles = {
+    home:         ['Mr. Ruta v3', 'Lunes 16 · Monterrey Norte'],
+    ruta:         ['Mi ruta del día', '30 clientes · Ruta Norte B'],
+    captura:      ['Captura de pedido', 'Sargento activo · 7 min meta'],
+    anaquel:      ['Foto de anaquel', 'IA · Detección automática'],
+    supervisor:   ['Dashboard Supervisor', 'Zona Norte MTY · En vivo'],
+    gamificacion: ['Mis logros', 'Luis Rodríguez · Nivel 4'],
+    registro:     ['Nuevo cliente', 'Sin internet · Registro por foto'],
+  };
+
+  const [title, sub] = titles[name] || ['Mr. Ruta v3', ''];
+  document.getElementById('navTitle').innerHTML = title.replace('v3','<span style="font-size:10px;background:var(--g400);color:var(--g900);padding:1px 6px;border-radius:4px;font-weight:800;vertical-align:middle">v3</span>');
+  document.getElementById('navSubtitle').textContent = sub;
+
+  const backScreens = ['captura','anaquel','registro'];
+  backBtn.classList.toggle('show', backScreens.includes(name));
+  if (fotoBar) fotoBar.style.display = name === 'captura' ? 'flex' : 'none';
+}
+
+function updateNav(title, sub) {
+  document.getElementById('navTitle').textContent = title;
+  document.getElementById('navSubtitle').textContent = sub;
+}
+
+function goBack() {
+  const back = STATE.prevScreen || 'ruta';
+  showScreen(back);
+}
+
+// ── SARGENTO TIMER v3 ──────────────────────────────────
+function startTimer() {
+  if (STATE.timerInterval) clearInterval(STATE.timerInterval);
+  STATE.timerSecs = 0;
+  STATE.timerRunning = true;
+  STATE.alarmFired80 = false;
+  STATE.alarmFired100 = false;
+  STATE.timerInterval = setInterval(tickTimer, 1000);
+}
+
+function stopTimer() {
+  clearInterval(STATE.timerInterval);
+  STATE.timerRunning = false;
+  // Record time for daily score
+  if (STATE.timerSecs > 0) STATE.timeScores.push(STATE.timerSecs);
+}
+
+function resetTimer() {
+  stopTimer();
+  STATE.timerSecs = 0;
+  STATE.alarmFired80 = false;
+  STATE.alarmFired100 = false;
+  updateSargentoUI(0);
+}
+
+function tickTimer() {
+  STATE.timerSecs++;
+  updateSargentoUI(STATE.timerSecs);
+}
+
+function updateSargentoUI(secs) {
+  const budget = STATE.visitBudget; // 420s = 7min
+  const pct = Math.min(secs / budget, 1);
+  const mins = Math.floor(secs / 60);
+  const s = String(secs % 60).padStart(2,'0');
+
+  const timeEl = document.getElementById('sargentoTime');
+  const limitEl = document.getElementById('sargentoLimit');
+  const barEl = document.getElementById('sargentoBarFill');
+  const chipEl = document.getElementById('sargentoChip');
+  const alarmEl = document.getElementById('sargentoAlarm');
+  const navSub = document.getElementById('navSubtitle');
+
+  if (!timeEl) return;
+
+  timeEl.textContent = `${mins}:${s}`;
+  if (limitEl) {
+    const budgetMins = Math.floor(budget / 60);
+    const budgetSecs = String(budget % 60).padStart(2,'0');
+    limitEl.textContent = `/ ${budgetMins}:${budgetSecs} meta`;
+  }
+
+  let barColor, chipStyle, chipText, statusText;
+
+  if (pct < 0.6) {
+    // 0-60% — verde óptimo
+    barColor = 'var(--g400)';
+    chipStyle = 'background:rgba(63,202,136,.2);color:var(--g300)';
+    chipText = '🟢 Óptimo';
+    statusText = '🟢 Sargento: zona ideal';
+    if (alarmEl) alarmEl.classList.remove('active');
+  } else if (pct < 0.8) {
+    // 60-80% — azul, preparar cierre
+    barColor = '#72A9F4';
+    chipStyle = 'background:rgba(114,169,244,.2);color:#72A9F4';
+    chipText = '🔵 Confirmar';
+    statusText = '🔵 Confirmar pedido ya';
+    if (alarmEl) alarmEl.classList.remove('active');
+  } else if (pct < 1.0) {
+    // 80-100% — amarillo, alarma suave
+    barColor = 'var(--a400)';
+    chipStyle = 'background:rgba(245,166,35,.2);color:var(--a300)';
+    chipText = '🟡 ¡Finalizar!';
+    statusText = '🟡 Finaliza la visita';
+    if (alarmEl) alarmEl.classList.remove('active');
+    if (!STATE.alarmFired80 && pct >= 0.8) {
+      STATE.alarmFired80 = true;
+      vibrate(300);
+      playBeep(440, 0.3, 'triangle'); // tono suave
+      showToast('⏱ 80% del tiempo — confirma el pedido ahora', null, 2500);
+    }
+  } else {
+    // 100%+ — rojo, alarma fuerte, parpadeo
+    barColor = 'var(--r300)';
+    chipStyle = 'background:rgba(244,122,122,.2);color:var(--r300)';
+    chipText = '🔴 TIEMPO';
+    statusText = '🔴 Tiempo agotado';
+    if (alarmEl) alarmEl.classList.add('active');
+    if (!STATE.alarmFired100) {
+      STATE.alarmFired100 = true;
+      vibrate([300,100,300,100,300]);
+      playBeep(880, 0.5, 'sawtooth'); // alarma fuerte
+      showToast('🚨 SARGENTO: Tiempo agotado — justifica la visita extendida', null, 4000);
+    }
+  }
+
+  if (barEl) { barEl.style.width = `${Math.min(pct * 100, 100)}%`; barEl.style.background = barColor; }
+  if (chipEl) { chipEl.style.cssText = chipStyle; chipEl.textContent = chipText; }
+  if (navSub && STATE.currentScreen === 'captura') navSub.textContent = `${statusText} · ${mins}:${s}`;
+
+  // Legacy display compatibility
+  const display = document.getElementById('timerDisplay');
+  if (display) display.textContent = `${mins}:${s}`;
+}
+
+// v3 — Web Audio API beep
+function playBeep(freq, vol, type) {
+  try {
+    if (!STATE.audioCtx) STATE.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = STATE.audioCtx.createOscillator();
+    const gain = STATE.audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(STATE.audioCtx.destination);
+    osc.type = type || 'sine';
+    osc.frequency.setValueAtTime(freq, STATE.audioCtx.currentTime);
+    gain.gain.setValueAtTime(vol, STATE.audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, STATE.audioCtx.currentTime + 0.6);
+    osc.start();
+    osc.stop(STATE.audioCtx.currentTime + 0.6);
+  } catch(e) { /* silencioso si no soportado */ }
+}
+
+function vibrate(pattern) {
+  try { if (navigator.vibrate) navigator.vibrate(pattern); } catch(e) {}
+}
+
+// ── FOTO PROTOCOL v3 — "Foto o No Existe" ──────────────
+function renderFotoProtocol() {
+  const el = document.getElementById('fotoProtocolList');
+  if (!el) return;
+  el.innerHTML = FOTO_PROTOCOL.map(step => {
+    const isDone = STATE.fotoState[step.id];
+    const isRequired = step.required;
+    return `
+    <div class="foto-req-card ${isDone ? 'done' : isRequired ? 'required' : 'optional'}" id="fotoCard-${step.id}">
+      <div class="foto-req-header">
+        <span class="foto-req-icon">${step.icon}</span>
+        <div class="foto-req-body">
+          <div class="foto-req-title">${step.title}</div>
+          <div class="foto-req-sub">${step.sub}</div>
+        </div>
+        <div class="foto-req-badge ${isDone ? 'done' : 'pending'}">${isDone ? '✓' : isRequired ? '!' : '?'}</div>
+      </div>
+      ${isDone
+        ? `<div class="foto-thumbnail">📷 Foto guardada · subiendo en segundo plano<span class="foto-timestamp" id="fotoTime-${step.id}"></span></div>`
+        : `<button class="foto-capture-btn" onclick="captureStepPhoto(${step.id})">📷 Tomar foto ahora</button>`
+      }
+    </div>`;
+  }).join('');
+}
+
+function captureStepPhoto(stepId) {
+  const btn = document.querySelector(`#fotoCard-${stepId} .foto-capture-btn`);
+  if (btn) { btn.textContent = '⏳ Capturando...'; btn.disabled = true; }
+
+  setTimeout(() => {
+    STATE.fotoState[stepId] = true;
+    updateFotoStepsBar();
+    renderFotoProtocol();
+    const dotDone = Object.values(STATE.fotoState).every(Boolean);
+    addPoints(10, `📸 Foto ${stepId+1}/4 capturada`);
+    if (dotDone) {
+      showToast('✅ Las 4 fotos completadas — visita 100% documentada', null, 3000);
+      const dot = document.getElementById('fotoPendingDot');
+      if (dot) dot.style.background = 'var(--g400)';
+    }
+  }, 1200);
+}
+
+function updateFotoStepsBar() {
+  const fotosCompletadas = Object.values(STATE.fotoState).filter(Boolean).length;
+  const countEl = document.getElementById('fotoBarCount');
+  if (countEl) countEl.textContent = `${fotosCompletadas}/4`;
+  for (let i = 0; i < 4; i++) {
+    const pill = document.getElementById(`fpill-${i}`);
+    if (!pill) continue;
+    pill.className = 'foto-pill ' + (STATE.fotoState[i] ? 'done' : i === fotosCompletadas ? 'active' : '');
+  }
+}
+
+function resetFotoState() {
+  STATE.fotoState = { 0:false, 1:false, 2:false, 3:false };
+  updateFotoStepsBar();
+  renderFotoProtocol();
+  const dot = document.getElementById('fotoPendingDot');
+  if (dot) dot.style.background = 'var(--r500)';
+}
+
+// ── OFFLINE CLIENT REGISTRATION v3 ────────────────────
+function captureFacadePhoto() {
+  const btn = document.getElementById('facadeBtn');
+  const thumb = document.getElementById('facadeThumb');
+  const timeEl = document.getElementById('facadeTime');
+  if (btn) { btn.textContent = '⏳ Capturando fachada...'; btn.disabled = true; }
+  setTimeout(() => {
+    if (btn) { btn.classList.add('captured'); btn.textContent = '✓ Fachada capturada — toca para retomar'; btn.disabled = false; }
+    if (thumb) { thumb.style.display = 'flex'; thumb.innerHTML = '🏪 Fachada del negocio<span class="foto-timestamp" id="facadeTime2"></span>'; }
+    const t2 = document.getElementById('facadeTime2');
+    if (t2) { const n = new Date(); t2.textContent = `${n.getHours()}:${String(n.getMinutes()).padStart(2,'0')}`; }
+    showToast('📷 Fachada capturada — registro offline guardado', null, 2500);
+  }, 1000);
+}
+
+function saveNewClient() {
+  const nombre = document.getElementById('regNombre')?.value?.trim();
+  const tipo = document.getElementById('regTipo')?.value;
+  const dueno = document.getElementById('regDueno')?.value?.trim();
+  if (!nombre || !tipo || !dueno) {
+    showToast('⚠️ Completa los datos obligatorios (nombre, tipo y dueño)', null, 2500);
+    return;
+  }
+  // Simulate save
+  showToast(`✅ ${nombre} registrado offline — se sincronizará con CEDIS al conectarse`, null, 4000);
+  setTimeout(() => {
+    document.getElementById('regNombre').value = '';
+    document.getElementById('regTipo').value = '';
+    document.getElementById('regDueno').value = '';
+    document.getElementById('regColonia').value = '';
+    document.getElementById('regTel').value = '';
+    const btn = document.getElementById('facadeBtn');
+    if (btn) { btn.classList.remove('captured'); btn.textContent = '📷 Tomar foto de fachada'; }
+    const thumb = document.getElementById('facadeThumb');
+    if (thumb) thumb.style.display = 'none';
+    showScreen('ruta');
+  }, 1500);
+}
+
+// ── EFFICIENCY SCORE v3 ────────────────────────────────
+function getEfficiencyScore() {
+  if (!STATE.timeScores.length) return 100;
+  const avg = STATE.timeScores.reduce((a,b) => a+b, 0) / STATE.timeScores.length;
+  const budget = STATE.visitBudget;
+  if (avg <= budget * 0.7) return 100;
+  if (avg <= budget) return 90;
+  if (avg <= budget * 1.2) return 78;
+  if (avg <= budget * 1.5) return 65;
+  return 50;
+}
+function renderClientList(filter = 'all') {
+  const list = document.getElementById('clientList');
+  if (!list) return;
+
+  let filtered = CLIENTS;
+  if (filter === 'pending') filtered = CLIENTS.filter(c => !c.done);
+  if (filter === 'done')    filtered = CLIENTS.filter(c => c.done);
+  if (filter === 'alert')   filtered = CLIENTS.filter(c => c.badge === 'badge-red' || c.badge === 'badge-amber');
+
+  list.innerHTML = filtered.map((c, idx) => {
+    const doneClass = c.done ? 'done' : '';
+    const activeClass = c.isNext ? 'active' : '';
+    const emoji = c.done ? '✓' : c.badge === 'badge-red' ? '⚠️' : c.isNext ? '▶' : '○';
+    return `
+    <div class="client-card ${doneClass} ${activeClass}"
+         onclick="clientCardClick(${c.id},'${escStr(c.name)}','${escStr(c.meta)}')">
+      <div class="client-card-inner">
+        <div class="client-num">${c.id + 1}</div>
+        <div class="client-info">
+          <div class="client-name">${c.name}</div>
+          <div class="client-meta">${c.meta}</div>
+        </div>
+        <div class="client-actions">
+          <span class="badge ${c.badge}">${c.badgeTxt}</span>
+          <span class="client-status-icon">${emoji}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterClients(filter, btn) {
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  renderClientList(filter);
+}
+
+function clientCardClick(id, name, meta) {
+  if (CLIENTS[id] && !CLIENTS[id].done) {
+    startCaptura(name.split(' ')[1] || name, name, meta);
+  } else if (CLIENTS[id] && CLIENTS[id].done) {
+    showToast(`✓ ${name} — ya visitado · Pedido guardado`);
+  }
+}
+
+function startCaptura(shortName, fullName, meta) {
+  STATE.currentClient = { id: shortName, name: fullName, meta };
+  document.getElementById('capturaClientName').textContent = fullName;
+  document.getElementById('capturaClientSub').textContent = `${meta} · Visita #14`;
+  resetTimer();
+  startTimer();
+  resetFotoState();        // v3 reset foto steps
+  // Set budget based on client type (v3)
+  const isNew = (meta || '').toLowerCase().includes('nuevo') || (meta || '').toLowerCase().includes('new');
+  STATE.visitBudget = isNew ? 12 * 60 : 7 * 60;
+  generateArgument(shortName);
+  showScreen('captura');
+}
+
+// ── ARGUMENT GENERATION ────────────────────────────────
+function generateArgument(clientName) {
+  const argBox = document.getElementById('argumentBox');
+  const argText = document.getElementById('argumentText');
+  if (!argBox || !argText) return;
+
+  argText.innerHTML = `
+    <div class="ai-generating">
+      <div class="ai-dots">
+        <div class="ai-dot"></div>
+        <div class="ai-dot"></div>
+        <div class="ai-dot"></div>
+      </div>
+      <span style="font-size:11px;color:var(--g600)">Generando argumento contextual...</span>
+    </div>`;
+
+  const arguments_map = {
+    'Roberto': '"Don Roberto, la semana pasada le <b>volaron los Gansitos</b> — y hoy es quincena. Le traigo 5 cajas, ¿le acomodo las mismas Tortillinas de siempre?"',
+    'Lupita':  '"Doña Lupita, el viernes pasado se quedó <b>sin Pan Blanco a las 11am</b>. Hoy es quincena y viene el fin de semana — le dejo 6 bolsas en lugar de 4, ¿no quiere quedarse corta el sábado?"',
+    'José':    '"Don José, tengo las <b>Donas Bimbo nuevas</b> que están pidiendo mucho en los negocios de esta zona. La farmacia de la esquina ya va en su tercera recarga. ¿Le dejo media caja para probar?"',
+    'default': '"Hoy es <b>quincena</b> — sus clientes tienen más efectivo. Con base en su historial de las últimas 8 visitas, le traigo el surtido óptimo listo para confirmar."',
+  };
+
+  const key = Object.keys(arguments_map).find(k => clientName.toLowerCase().includes(k.toLowerCase())) || 'default';
+
+  setTimeout(() => {
+    argText.innerHTML = arguments_map[key];
+    argBox.style.animation = 'fadeIn .3s ease';
+  }, 1200);
+}
+
+// ── SKU RENDERING ──────────────────────────────────────
+function renderSkuLists() {
+  renderSkuGroup('skuHighList', SKU_HIGH);
+  renderSkuGroup('skuMidList', SKU_MID);
+}
+
+function renderSkuGroup(containerId, skus) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = skus.map(sku => buildSkuRow(sku, true)).join('');
+}
+
+function buildSkuRow(sku, highlight = false) {
+  const qty = STATE.orderQtys[sku.id] || 0;
+  const badgeHtml = sku.isNew
+    ? `<span class="sku-badge new">🆕 nuevo</span>`
+    : sku.suggested > 0
+    ? `<span class="sku-badge">↑ x${sku.suggested}</span>`
+    : '';
+  return `
+    <div class="sku-row ${highlight && sku.suggested > 0 ? 'highlight' : ''}" id="skurow-${sku.id}">
+      <div class="sku-color-dot" style="background:${sku.color}"></div>
+      <div class="sku-info">
+        <div class="sku-name">${sku.name}${badgeHtml}</div>
+        <div class="sku-sub">${sku.note || ''}</div>
+      </div>
+      <div class="qty-ctrl">
+        <button class="qty-btn" onclick="changeQty('${sku.id}',-1)">−</button>
+        <div class="qty-val" id="q-${sku.id}">${qty}</div>
+        <button class="qty-btn" onclick="changeQty('${sku.id}',1)">+</button>
+      </div>
+    </div>`;
+}
+
+function renderCatalog(skus) {
+  const el = document.getElementById('catalogList');
+  if (!el) return;
+  el.innerHTML = skus.map(sku => {
+    const qty = STATE.orderQtys[sku.id] || 0;
+    return `
+    <div class="sku-row" id="skurow-cat-${sku.id}">
+      <div class="sku-color-dot" style="background:${sku.color}"></div>
+      <div class="sku-info">
+        <div class="sku-name">${sku.name}</div>
+        <div class="sku-sub">$${PRICES[sku.id] || 90} MXN/caja</div>
+      </div>
+      <div class="qty-ctrl">
+        <button class="qty-btn" onclick="changeQty('${sku.id}',-1)">−</button>
+        <div class="qty-val" id="q-cat-${sku.id}">${qty}</div>
+        <button class="qty-btn" onclick="changeQty('${sku.id}',1)">+</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterCatalog(query) {
+  const q = query.toLowerCase();
+  const filtered = q ? SKU_CATALOG.filter(s => s.name.toLowerCase().includes(q)) : SKU_CATALOG;
+  renderCatalog(filtered);
+}
+
+function changeQty(skuId, delta) {
+  const current = STATE.orderQtys[skuId] || 0;
+  const newVal = Math.max(0, current + delta);
+  STATE.orderQtys[skuId] = newVal;
+
+  // Update all qty displays for this sku
+  ['', '-cat-'].forEach(prefix => {
+    const el = document.getElementById(`q${prefix}${skuId}`);
+    if (el) {
+      el.textContent = newVal;
+      // Flash animation
+      el.style.transform = 'scale(1.4)';
+      el.style.color = delta > 0 ? 'var(--g600)' : 'var(--r500)';
+      setTimeout(() => {
+        el.style.transform = '';
+        el.style.color = '';
+      }, 200);
+    }
+  });
+
+  updateOrderTotal();
+}
+
+function updateOrderTotal() {
+  let total = 0;
+  Object.entries(STATE.orderQtys).forEach(([id, qty]) => {
+    total += (PRICES[id] || 0) * qty;
+  });
+  const el = document.getElementById('orderTotal');
+  if (el) el.textContent = `$${total.toLocaleString('es-MX')}`;
+
+  // Enable/disable confirm button
+  const btn = document.getElementById('confirmBtn');
+  if (btn) {
+    btn.disabled = total === 0;
+    btn.style.opacity = total === 0 ? '.5' : '1';
+  }
+
+  return total;
+}
+
+function toggleLowSkus() {
+  const list = document.getElementById('skuLowList');
+  const toggle = document.getElementById('lowSkuToggle');
+  if (!list) return;
+  const isHidden = list.style.display === 'none';
+  list.style.display = isHidden ? 'block' : 'none';
+  toggle.textContent = isHidden
+    ? '▾ Baja rotación (6 SKUs) — ocultar'
+    : '▸ Baja rotación (6 SKUs) — toca para ver';
+}
+
+// ── ORDER CONFIRMATION ─────────────────────────────────
+function confirmOrder() {
+  const total = updateOrderTotal();
+  if (total === 0) {
+    showToast('⚠️ Agrega al menos un producto al pedido', null, 2000);
+    return;
+  }
+
+  // v3 — warn if required photos missing
+  const requiredDone = FOTO_PROTOCOL.filter(s => s.required).every(s => STATE.fotoState[s.id]);
+  if (!requiredDone) {
+    showToast('📸 Faltan fotos obligatorias — ve a la pestaña Fotos', null, 3000);
+  }
+
+  stopTimer();
+  const timeStr = formatTime(STATE.timerSecs);
+  const efficiency = getEfficiencyScore();
+
+  // v3 — generate QR order ID
+  const orderId = 'P-' + (1049 + Math.floor(Math.random() * 900));
+  const qrNum = document.getElementById('qrOrderNum');
+  if (qrNum) qrNum.textContent = orderId;
+
+  document.getElementById('confirmAmount').textContent = `$${total.toLocaleString('es-MX')}`;
+  document.getElementById('confirmSub').textContent =
+    `CFDI generado · Sincronizando con CEDIS · Tiempo: ${timeStr} · Eficiencia: ${efficiency}%`;
+  document.getElementById('confirmOverlay').classList.add('show');
+  const totalStr = document.getElementById('orderTotal').textContent;
+  broadcastOrderToCEDIS(totalStr, STATE.currentClient?.name);
+
+  // Award points
+  addPoints(80, '✅ Pedido confirmado');
+  if (STATE.timerSecs <= STATE.visitBudget) addPoints(15, '⚡ Visita dentro del tiempo Sargento');
+  if (requiredDone) addPoints(20, '📸 Fotos completas — visita perfecta');
+}
+
+function closeConfirm() {
+  document.getElementById('confirmOverlay').classList.remove('show');
+}
+
+function afterConfirm() {
+  closeConfirm();
+  // Mark current client as visited
+  if (STATE.currentClient) {
+    STATE.visitedClients.add(STATE.currentClient.id);
+  }
+  // Reset order
+  initQtys();
+  updateOrderTotal();
+  resetTimer();
+  renderSkuLists();
+  showScreen('ruta');
+  showToast('✓ Pedido sincronizado con CEDIS · Siguiente cliente listo', null, 3000);
+}
+
+// ── SCAN ANAQUEL ────────────────────────────────────────
+let scanDone = false;
+function startScan() {
+  if (scanDone) { resetScan(); return; }
+  const btn = document.getElementById('scanBtn');
+  const scanLine = document.getElementById('scanLine');
+  const placeholder = document.getElementById('cameraPlaceholder');
+
+  btn.textContent = '⏳ Analizando...';
+  btn.disabled = true;
+  scanLine.classList.add('active');
+  if (placeholder) placeholder.style.display = 'none';
+
+  // Show bboxes progressively
+  const dets = ['det1','det2','det3','det4','det5','det6'];
+  dets.forEach((id, i) => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('show');
+    }, 400 + i * 250);
+  });
+
+  setTimeout(() => {
+    scanLine.classList.remove('active');
+    btn.textContent = '🔄 Nueva foto';
+    btn.disabled = false;
+    document.getElementById('scanResults').style.display = 'block';
+    scanDone = true;
+    addPoints(5, '📸 Foto de anaquel subida');
+    showToast('✅ Análisis completado · 14 SKUs detectados', null, 3000);
+  }, 2800);
+}
+
+function resetScan() {
+  scanDone = false;
+  document.getElementById('scanResults').style.display = 'none';
+  document.getElementById('scanBtn').textContent = '📸 Analizar anaquel';
+  const placeholder = document.getElementById('cameraPlaceholder');
+  if (placeholder) placeholder.style.display = '';
+  ['det1','det2','det3','det4','det5','det6'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('show');
+  });
+  const scanLine = document.getElementById('scanLine');
+  if (scanLine) scanLine.classList.remove('active');
+}
+
+function renderDetectedSkus() {
+  const el = document.getElementById('detectedSkuList');
+  if (!el) return;
+  el.innerHTML = DETECTED_SKUS.map(s => `
+    <div class="sku-row">
+      <div class="sku-color-dot" style="background:${s.color}"></div>
+      <div class="sku-info">
+        <div class="sku-name">${s.name} <span class="badge badge-gray">${s.brand}</span></div>
+        <div class="sku-sub">${s.facings} facings</div>
+      </div>
+      <span class="badge ${s.conf >= 90 ? 'badge-green' : s.conf >= 80 ? 'badge-amber' : 'badge-red'}">${s.conf}%</span>
+    </div>`).join('');
+}
+
+// ── SUPERVISOR ─────────────────────────────────────────
+function renderVendedores() {
+  const el = document.getElementById('vendedoresList');
+  if (!el) return;
+  el.innerHTML = VENDEDORES.map(v => {
+    const pct = Math.round(v.visited / v.total * 100);
+    const statusColor = v.status === 'ok' ? 'var(--g600)' : v.status === 'warn' ? 'var(--a600)' : 'var(--r500)';
+    const avgColor = v.avg > 120 ? 'var(--r500)' : v.avg < 85 ? 'var(--g600)' : 'var(--text-primary)';
+    const meStyle = v.isMe ? 'border:1.5px solid var(--g400);background:var(--g50)' : '';
+    return `
+    <div class="vendedor-row" style="${meStyle}" onclick="showToast('👤 ${v.name} · ${v.visited}/${v.total} clientes · ${v.avg}s promedio')">
+      <div class="vendedor-row-header">
+        <div class="vendedor-avatar" style="background:${v.color}">${v.initials}</div>
+        <div style="flex:1">
+          <div class="vendedor-name">${v.name}${v.isMe ? ' <span class="badge badge-green">Yo</span>' : ''}</div>
+          <div class="vendedor-meta">${v.visited}/${v.total} clientes · ${v.vol} · ~${v.avg}s/cliente</div>
+        </div>
+        <span class="badge ${v.status === 'ok' ? 'badge-green' : v.status === 'warn' ? 'badge-amber' : 'badge-red'}">
+          ${v.status === 'ok' ? 'OK ✓' : v.status === 'warn' ? '⚠ Lento' : '🔴 Alerta'}
+        </span>
+      </div>
+      <div class="vendedor-progress-label">
+        <span>Avance</span>
+        <span style="color:${statusColor}">${pct}%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" style="width:${pct}%;background:${v.color}"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── GAMIFICACIÓN ───────────────────────────────────────
+function renderAchievements() {
+  const el = document.getElementById('achievementGrid');
+  if (!el) return;
+  el.innerHTML = ACHIEVEMENTS.map(a => `
+    <div class="achievement ${a.unlocked ? 'unlocked' : 'locked'}"
+         onclick="${a.unlocked ? `showToast('🏅 Logro: ${a.name} — ${a.desc}')` : `showToast('🔒 Logro bloqueado: ${a.desc}')`}">
+      <div class="ach-icon">${a.icon}</div>
+      <div class="ach-name">${a.name}</div>
+      <div class="ach-desc">${a.desc}</div>
+      ${a.unlocked ? '<span class="badge badge-amber" style="margin-top:5px;font-size:8px">✓ Desbloqueado</span>' : ''}
+    </div>`).join('');
+}
+
+function renderProgressAchievements() {
+  const el = document.getElementById('progressAchievements');
+  if (!el) return;
+  el.innerHTML = PROGRESS_ACHIEVEMENTS.map(a => `
+    <div class="card" style="margin-bottom:8px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <div style="font-size:13px;font-weight:700">${a.icon} ${a.name}</div>
+        <div style="font-size:13px;font-weight:700;color:${a.color}">${a.pct}%</div>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" style="width:${a.pct}%;background:${a.color}"></div>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:5px">${a.desc}</div>
+    </div>`).join('');
+}
+
+function renderRanking(key) {
+  const el = document.getElementById('rankingList');
+  if (!el) return;
+  const data = RANKINGS[key] || RANKINGS.zona;
+  el.innerHTML = data.map(r => {
+    const rankClass = r.pos === 1 ? 'gold' : r.isMe ? 'me' : '';
+    const rankBadgeClass = r.pos === 1 ? 'rank-1' : r.pos === 2 ? 'rank-2' : r.pos === 3 ? 'rank-3' : 'rank-n';
+    return `
+    <div class="leaderboard-row ${rankClass}">
+      <div class="rank-badge ${rankBadgeClass}">${r.pos}</div>
+      <div class="lb-name">${r.name}${r.isMe ? ' <span class="badge badge-green" style="font-size:8px">Tú</span>' : ''}</div>
+      <span style="font-size:11px;color:var(--text-muted);margin-right:8px">${r.vol}</span>
+      <div class="lb-pts">${r.pts.toLocaleString()} pts</div>
+    </div>`;
+  }).join('');
+}
+
+function switchRanking(key, btn) {
+  btn.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  renderRanking(key);
+}
+
+function renderRewards() {
+  const el = document.getElementById('rewardsList');
+  if (!el) return;
+  el.innerHTML = REWARDS.map(r => {
+    const canRedeem = STATE.points >= r.pts;
+    return `
+    <div class="card" style="display:flex;align-items:center;gap:12px;margin-bottom:8px;${canRedeem ? 'border-color:var(--g300)' : ''}">
+      <div style="font-size:28px">${r.icon}</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:700">${r.name}</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${r.pts.toLocaleString()} puntos</div>
+      </div>
+      <button class="btn btn-sm ${canRedeem ? 'btn-primary' : 'btn-secondary'}"
+              onclick="${canRedeem ? `redeemReward('${r.name}',${r.pts})` : `showToast('Necesitas ${(r.pts - STATE.points).toLocaleString()} puntos más')`}"
+              ${!canRedeem ? 'style="opacity:.5"' : ''}>
+        ${canRedeem ? 'Canjear' : 'Bloqueado'}
+      </button>
+    </div>`;
+  }).join('');
+}
+
+function redeemReward(name, pts) {
+  STATE.points -= pts;
+  updatePointsDisplay();
+  renderRewards();
+  showToast(`🎁 ¡${name} canjeado! · Tu supervisor recibirá la solicitud`, null, 4000);
+}
+
+let earnCount = 0;
+const EARN_ACTIONS = [
+  { pts:15, msg:'⚡ Visita perfecta <90s' },
+  { pts:80, msg:'📦 Meta de volumen diaria' },
+  { pts:50, msg:'🎯 Cobertura 100% del día' },
+  { pts:30, msg:'✨ SKU nuevo introducido' },
+  { pts:5,  msg:'📸 Foto de anaquel subida' },
+  { pts:40, msg:'🚀 Pedido incremental +20%' },
+];
+
+function earnPoints() {
+  const action = EARN_ACTIONS[earnCount % EARN_ACTIONS.length];
+  earnCount++;
+  addPoints(action.pts, action.msg);
+}
+
+function addPoints(pts, msg) {
+  STATE.points += pts;
+  updatePointsDisplay();
+  showToast(`${msg} · +${pts} pts 🔥`, null, 2500);
+}
+
+function updatePointsDisplay() {
+  const el = document.getElementById('gamifPoints');
+  if (el) el.textContent = STATE.points.toLocaleString();
+  const nextEl = document.getElementById('gamifNextPts');
+  const target = 5500;
+  if (nextEl) {
+    const remaining = Math.max(0, target - STATE.points);
+    nextEl.textContent = remaining > 0 ? `${remaining.toLocaleString()} pts para Nivel 5` : '¡Nivel 5 desbloqueado! 🎉';
+  }
+  const fill = document.getElementById('gamifFill');
+  if (fill) {
+    const pct = Math.min(100, Math.round((STATE.points - 3500) / (target - 3500) * 100));
+    fill.style.width = `${Math.max(0,pct)}%`;
+  }
+  renderRewards();
+}
+
+// ── TAB SWITCHING ──────────────────────────────────────
+function switchOrderTab(tab, btn) {
+  btn.parentElement.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  ['sugerido','catalogo','cobro','anaquel','fotos'].forEach(id => {
+    const el = document.getElementById(`tab-${id}`);
+    if (el) el.style.display = id === tab ? 'block' : 'none';
+  });
+}
+
+function switchGamifTab(tab, btn) {
+  btn.parentElement.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  ['logros','ranking','recompensas'].forEach(id => {
+    const el = document.getElementById(`gtab-${id}`);
+    if (el) el.style.display = id === tab ? 'block' : 'none';
+  });
+}
+
+// ── TOAST ──────────────────────────────────────────────
+let toastTimeout = null;
+function showToast(msg, icon, duration = 3000) {
+  const toast = document.getElementById('toast');
+  const text = document.getElementById('toastText');
+  const spinner = document.getElementById('toastSpinner');
+  if (!toast || !text) return;
+
+  if (toastTimeout) clearTimeout(toastTimeout);
+  text.innerHTML = msg;
+  spinner.style.display = 'none';
+  toast.classList.remove('hidden');
+  toast.classList.add('show');
+
+  toastTimeout = setTimeout(() => {
+    toast.classList.remove('show');
+    toast.classList.add('hidden');
+  }, duration);
+}
+
+// ── UTILS ──────────────────────────────────────────────
+function formatTime(secs) {
+  const m = Math.floor(secs / 60);
+  const s = String(secs % 60).padStart(2,'0');
+  return `${m}:${s}`;
+}
+
+function escStr(str) {
+  return str.replace(/'/g, "\\'").replace(/"/g, '\\"');
+}
+
+// ── OFFLINE SIMULATION ─────────────────────────────────
+let offlineTimer = null;
+document.addEventListener('keydown', e => {
+  if (e.key === 'o' || e.key === 'O') toggleOffline();
+});
+
+function toggleOffline() {
+  STATE.isOffline = !STATE.isOffline;
+  const chip = document.getElementById('offlineChip');
+  const signals = document.querySelectorAll('.status-signal span');
+  if (chip) chip.classList.toggle('show', STATE.isOffline);
+  signals.forEach((s, i) => {
+    s.style.opacity = STATE.isOffline ? (i < 1 ? '.3' : '.1') : '.9';
+  });
+  if (STATE.isOffline) {
+    showToast('📵 Modo offline activado — los pedidos se guardan localmente', null, 4000);
+  } else {
+    showToast('📶 Conexión restaurada — sincronizando 3 pedidos pendientes...', null, 3000);
+  }
+}
+
+// ── GESTURES (swipe navigation) ────────────────────────
+let touchStartX = 0;
+let touchStartY = 0;
+
+document.getElementById('mainContent').addEventListener('touchstart', e => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+}, { passive: true });
+
+document.getElementById('mainContent').addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
+  if (Math.abs(dx) > 80 && dy < 50) {
+    if (dx > 0 && ['captura','anaquel'].includes(STATE.currentScreen)) {
+      goBack();
+    }
+  }
+}, { passive: true });
+
+// ── AUTO-DEMO ───────────────────────────────────────────
+// Periodically update time display
+setInterval(() => {
+  initStatusTime();
+}, 60000);
+
+
+// ── BROADCAST CHANNEL — Comunicación con CEDIS ──────────
+const DSD_CHANNEL = 'tostisanas-cedis-channel';
+let appBC = null;
+let appOrderCounter = 1048;
+
+function initAppChannel() {
+  try {
+    appBC = new BroadcastChannel(DSD_CHANNEL);
+    appBC.onmessage = (event) => {
+      const data = event.data;
+      if (data.type === 'CEDIS_ORDER_ACK') {
+        showToast('✅ CEDIS confirmó el pedido · CFDI generado', null, 3000);
+      }
+      if (data.type === 'CEDIS_PING') {
+        appBC.postMessage({ type:'PING', timestamp: Date.now(), app:'RutaDSD' });
+      }
+    };
+    console.log('✅ Canal con CEDIS iniciado:', DSD_CHANNEL);
+  } catch(e) { console.warn('BroadcastChannel no disponible'); }
+}
+
+function broadcastOrderToCEDIS(total, clientName) {
+  if (!appBC) return;
+  appOrderCounter++;
+  const orderData = {
+    type: 'ORDER_CONFIRMED',
+    orderId: 'P-' + appOrderCounter,
+    vendedor: 'Luis R.',
+    ruta: 'Centro A',
+    cliente: clientName || (STATE.currentClient?.name || 'Cliente'),
+    total: total,
+    cajas: Math.round(parseInt(total.replace(/[^0-9]/g,'')) / 180) || 5,
+    timestamp: Date.now(),
+  };
+  appBC.postMessage(orderData);
+  console.log('📤 Pedido enviado al CEDIS:', orderData);
+}
+
+initAppChannel();
+console.log('🚀 Tostisanas App de Campo iniciada — Versión 3.0');
+console.log('🏅 Sargento Timer: 7min meta · Alarma 80% y 100%');
+console.log('📸 Protocolo Foto: 4 pasos obligatorios');
+console.log('📵 Registro offline: sin internet ni correo');
+console.log('💡 Tip: Presiona "O" para simular modo offline/online');
+</script>
+</body>
+</html>

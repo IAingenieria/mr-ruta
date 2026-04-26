@@ -25,9 +25,28 @@ export const TABLE_IDS = {
   meetings:  941366,
 } as const;
 
+// Fetches all pages from Baserow (handles pagination automatically)
+const fetchAllPages = async (tableId: number): Promise<{ count: number; results: unknown[] }> => {
+  let results: unknown[] = [];
+  let nextPath: string | null = listEndpoint(tableId);
+
+  while (nextPath) {
+    const { data } = await baserow.get(nextPath);
+    results = results.concat(data.results);
+    if (data.next) {
+      // data.next is an absolute URL — strip the base to get a relative path
+      nextPath = data.next.replace(BASE_URL, "");
+    } else {
+      nextPath = null;
+    }
+  }
+
+  return { count: results.length, results };
+};
+
 // Generic CRUD
 const crud = (tableId: number) => ({
-  fetchAll: () => baserow.get(listEndpoint(tableId)).then((r) => r.data),
+  fetchAll: () => fetchAllPages(tableId),
   create:   (data: unknown) => baserow.post(listEndpoint(tableId), data).then((r) => r.data),
   update:   (rowId: number, data: unknown) =>
     baserow.patch(rowEndpoint(tableId, rowId), data).then((r) => r.data),

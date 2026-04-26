@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(node -e \"const fs=require\\('fs'\\); try { const j=JSON.parse\\(fs.readFileSync\\('c:/Users/Dell/Documents/CLAUDE DESKTOP/Mr. Ruta/CRM Hub/digital-hub-crm/baserow_import.json','utf8'\\)\\); console.log\\('✅ JSON válido · tipo:', Array.isArray\\(j\\)?'array':'objeto', '· tablas:', j[0]?.tables?.length\\); } catch\\(e\\) { console.error\\('❌ Error:', e.message\\); }\")",
+      "Bash(npx tsc *)"
+    ]
+  }
+}

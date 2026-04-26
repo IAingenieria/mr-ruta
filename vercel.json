@@ -1,12 +1,11 @@
 {
+  "buildCommand": "node build.js",
+  "outputDirectory": "dist",
   "rewrites": [
+    { "source": "/crm/:path*", "destination": "/crm.html" },
+    { "source": "/crm", "destination": "/crm.html" },
     { "source": "/formulario", "destination": "/formulario.html" },
     { "source": "/cuestionario", "destination": "/cuestionario.html" },
     { "source": "/", "destination": "/MrRuta_Website_Final.html" }
-  ],
-  "redirects": [
-    { "source": "/crm",   "destination": "https://digital-hub-crm.vercel.app", "permanent": false },
-    { "source": "/login", "destination": "https://digital-hub-crm.vercel.app", "permanent": false },
-    { "source": "/app",   "destination": "https://digital-hub-crm.vercel.app", "permanent": false }
   ]
 }

@@ -16,12 +16,11 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
+    outDir: path.resolve(__dirname, "../../dist"),
+    emptyOutDir: false,
     rollupOptions: {
       input: {
-        main: path.resolve(__dirname, "index.html"),
         crm: path.resolve(__dirname, "crm.html"),
-        cuestionario: path.resolve(__dirname, "cuestionario.html"),
-        formulario: path.resolve(__dirname, "formulario.html"),
       },
     },
   },

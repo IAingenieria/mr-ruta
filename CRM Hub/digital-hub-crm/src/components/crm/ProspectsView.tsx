@@ -442,20 +442,30 @@ const rowToProspect = (row: Record<string, unknown>): Prospect => {
     interacciones = rawInter as Interaction[];
   }
 
-  // Extraer estado y municipio de Notas: "Ciudad: Monterrey, Nuevo León | ..."
+  // Estado y municipio: prueba columnas directas (minúscula y mayúscula) y luego Notas
   const notas = str(row["Notas"]);
   const ciudadMatch = notas.match(/Ciudad:\s*([^,|]+),\s*([^|]+)/);
-  const municipio = ciudadMatch ? ciudadMatch[1].trim() : "";
-  const estado    = ciudadMatch ? ciudadMatch[2].trim() : "";
+  const municipio =
+    str(row["ciudad"] || row["Ciudad"] || row["municipio"] || row["Municipio"]) ||
+    (ciudadMatch ? ciudadMatch[1].trim() : "");
+  const estado =
+    str(row["estado"] || row["Estado"]) ||
+    (ciudadMatch ? ciudadMatch[2].trim() : "");
+
+  // nombre_negocio → Empresa; categoria → Sector (fallbacks para importaciones del CSV)
+  const empresa = str(row["Empresa"] || row["nombre_negocio"]);
+  const sector  = str(row["Sector"]  || row["categoria"]);
+  const telefono = str(row["Teléfono"] || row["telefono"]);
+  const email    = str(row["Email"]    || row["email"]);
 
   return {
     id:                String(row["id"] ?? Math.random()),
-    nombre:            str(row["Nombre"]),
-    empresa:           str(row["Empresa"]),
+    nombre:            str(row["Nombre"] || row["nombre_negocio"]),
+    empresa,
     cargo:             str(row["Cargo"]),
-    sector:            str(row["Sector"]),
-    email:             str(row["Email"]),
-    telefono:          str(row["Teléfono"]),
+    sector,
+    email,
+    telefono,
     whatsapp:          str(row["WhatsApp"]),
     etapa,
     valorEstimado:     num(row["Valor estimado"]),

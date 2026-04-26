@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Read(//c/Users/Dell/Documents/CLAUDE DESKTOP/**)",
+      "Bash(git add *)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\Dell\\Documents\\CLAUDE DESKTOP\\Mr. Ruta",
+      "C:\\Users\\Dell\\Downloads\\Otros"
+    ]
+  }
+}
