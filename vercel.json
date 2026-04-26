@@ -1,6 +1,10 @@
 {
   "buildCommand": "node build.js",
   "outputDirectory": "dist",
+  "redirects": [
+    { "source": "/login", "destination": "/crm", "permanent": false },
+    { "source": "/app", "destination": "/crm", "permanent": false }
+  ],
   "rewrites": [
     { "source": "/crm/:path*", "destination": "/crm.html" },
     { "source": "/crm", "destination": "/crm.html" },
