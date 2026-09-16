@@ -16,13 +16,13 @@ export const SITIO = {
 export const waLink = (texto: string) =>
   SITIO.whatsapp ? `https://wa.me/${SITIO.whatsapp}?text=${encodeURIComponent(texto)}` : "/contacto";
 
-// Wizard de demo pre-llenado: el worker ignora parámetros que no conoce.
+// La demo guiada vive en el sitio (/demo) y al final crea la demo real en el worker.
 export const demoLink = (giro?: string, ciudad?: string) => {
   const p = new URLSearchParams();
   if (giro) p.set("giro", giro);
   if (ciudad) p.set("ciudad", ciudad);
   const q = p.toString();
-  return `${SITIO.demoUrl}/${q ? "?" + q : ""}`;
+  return `/demo${q ? "?" + q : ""}`;
 };
 
 // Cifras verificadas en campo (no cambiar sin fuente): ver docs internos de la plataforma.
