@@ -4,11 +4,11 @@ export const SITIO = {
   dominio: process.env.NEXT_PUBLIC_SITE_URL || "https://www.mr-ruta.com",
   empresa: "Goodman Tech",
   ciudad: "México",                       // [Ciudad] — pendiente de Luis
-  whatsapp: process.env.NEXT_PUBLIC_WHATSAPP || "",   // solo dígitos con lada país, p. ej. 528100000000 — pendiente de Luis
+  whatsapp: process.env.NEXT_PUBLIC_WHATSAPP || "528126350902",   // Luis, 16-sep-2026
   demoUrl: "https://demo.mr-ruta.com",
   leadsEndpoint: process.env.NEXT_PUBLIC_LEADS_ENDPOINT || "https://demo.mr-ruta.com/api/sitio/lead",
   gtmId: process.env.NEXT_PUBLIC_GTM_ID || "",         // pendiente de Luis
-  mostrarPrecios: process.env.NEXT_PUBLIC_MOSTRAR_PRECIOS === "1",
+  mostrarPrecios: process.env.NEXT_PUBLIC_MOSTRAR_PRECIOS !== "0",   // Luis, 16-sep-2026: se publican; "0" los oculta
   fuenteRegistros: "Registros propios de Mr Ruta, verificados antes de mostrarse",
   fechaRegistros: "septiembre 2026",
 };
@@ -44,7 +44,7 @@ export const FAQ_GENERAL: { p: string; r: string }[] = [
   { p: "¿Qué es el pedido sugerido?", r: "Lo que dejaste en la visita anterior menos lo que regresó. Si no hay historial sugiere cero: el sistema nunca inventa demanda." },
   { p: "¿De dónde salen los negocios del Radar?", r: "De nuestros registros actualizados de cada ciudad, verificados uno por uno contra Google Business antes de mostrarse. En una muestra de 250 puntos, 14.4 % ya habían cerrado: esos nunca se sirven." },
   { p: "¿Cuánto tarda la demo?", r: "Treinta segundos. Contestas cinco preguntas (empresa, giro, ciudad, unidades y choferes) y recibes tu propia demo con pedidos de tu giro en tu ciudad. La liga vive 30 días." },
-  { p: "¿Cuánto tarda en estar corriendo mi instancia?", r: "[TIEMPO DE ARRANQUE] a partir de que nos mandas tu lista de productos y tus unidades. La demo sale el mismo día." },
+  { p: "¿Cuánto tarda en estar corriendo mi instancia?", r: "Una semana a partir de que nos mandas tu lista de productos y tus unidades. La demo sale el mismo día." },
   { p: "¿Cuánto cuesta?", r: "Hay tres planes según el tamaño de la operación y el nivel de acompañamiento. Los detalles están en la página de planes." },
   { p: "¿Quién ve mis datos?", r: "Solo tu empresa. Cada cliente tiene su propia instancia con su base de datos; no hay una base compartida entre distribuidoras." },
 ];

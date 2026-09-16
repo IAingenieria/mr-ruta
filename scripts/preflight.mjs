@@ -32,9 +32,7 @@ for (const c of CARPETAS) barrer(join(RAIZ, c));
 // Datos que no deben publicarse vacíos
 const sitio = readFileSync(join(RAIZ, "src/content/sitio.ts"), "utf8");
 const avisos = [];
-if (!process.env.NEXT_PUBLIC_WHATSAPP) avisos.push("NEXT_PUBLIC_WHATSAPP no definido: los botones de WhatsApp llevan a /contacto.");
 if (!process.env.NEXT_PUBLIC_GTM_ID) avisos.push("NEXT_PUBLIC_GTM_ID no definido: sin medición.");
-if (/\[TIEMPO DE ARRANQUE\]/.test(sitio)) avisos.push("FAQ con [TIEMPO DE ARRANQUE] sin definir.");
 
 if (hallazgos.length) {
   console.error("\nPREFLIGHT: palabras prohibidas en contenido público:\n" + hallazgos.map((h) => "  " + h).join("\n"));
