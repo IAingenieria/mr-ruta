@@ -18,7 +18,7 @@ const PLANES = [
 
 export default function Planes() {
   const migas = [{ name: "Inicio", path: "/" }, { name: "Planes", path: "/planes" }];
-  const faq = [FAQ_GENERAL[10], FAQ_GENERAL[2], FAQ_GENERAL[11], FAQ_GENERAL[8], { p: "¿Puedo empezar con una sucursal y crecer?", r: "Sí. Cada sucursal es una instancia; se agregan conforme las necesitas y cada una tiene su propio tablero." }];
+  const faq = [FAQ_GENERAL[10], FAQ_GENERAL[9], FAQ_GENERAL[2], FAQ_GENERAL[11], { p: "¿Puedo empezar con una sucursal y crecer?", r: "Sí. Cada sucursal es una instancia; se agregan conforme las necesitas y cada una tiene su propio tablero." }];
   return (
     <>
       <JsonLd data={[breadcrumb(migas), faqPage(faq)]} />
