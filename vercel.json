@@ -3,9 +3,35 @@
   "buildCommand": "npm run build",
   "installCommand": "npm install",
   "redirects": [
-    { "source": "/login", "destination": "/", "permanent": false },
-    { "source": "/app", "destination": "/", "permanent": false },
-    { "source": "/formulario", "destination": "/contacto", "permanent": false },
-    { "source": "/cuestionario", "destination": "/contacto", "permanent": false }
+    {
+      "source": "/login",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/app",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/formulario",
+      "destination": "/contacto",
+      "permanent": false
+    },
+    {
+      "source": "/cuestionario",
+      "destination": "/contacto",
+      "permanent": false
+    },
+    {
+      "source": "/crm",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/crm/:path*",
+      "destination": "/",
+      "permanent": false
+    }
   ]
 }
