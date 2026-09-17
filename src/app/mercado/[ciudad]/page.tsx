@@ -43,7 +43,7 @@ export default async function Page({ params }: { params: Promise<{ ciudad: strin
     { p: `¿Cuántas tiendas de abarrotes hay en ${z.nombre}?`, r: `En la zona de reparto de ${z.nombre} (radio de ${RADIO_KM} km) contamos ${fmt(z.categorias.abarrotes)} tiendas de abarrotes y misceláneas, más ${fmt(z.categorias.minisuper)} minisúpers, según nuestros registros actualizados a ${SITIO.fechaRegistros}.` },
     { p: `¿Cuántos restaurantes y fondas hay en ${z.nombre}?`, r: `${fmt(z.categorias.restaurantes)} establecimientos de preparación de alimentos (restaurantes, fondas, taquerías, cafeterías y neverías) en la zona de reparto de ${z.nombre}.` },
     { p: "¿De dónde salen estos números?", r: `De nuestros registros propios de negocios de cada ciudad, con dirección y coordenada, actualizados a ${SITIO.fechaRegistros}. Cada negocio cuenta en una sola zona, la de centro más cercano dentro de ${RADIO_KM} km. Para una bodega concreta lo recalculamos a 10 km de su dirección.` },
-    { p: "¿Todos estos negocios están abiertos?", r: "No necesariamente: un negocio cierra cualquier día. Por eso el Radar verifica cada uno contra Google Business antes de mostrarlo; en una muestra de 250 puntos, 14.4 % ya habían cerrado." },
+    { p: "¿Todos estos negocios están abiertos?", r: "No necesariamente: un negocio cierra cualquier día. Por eso el Radar verifica cada uno contra Google Business antes de mostrarlo, y los que ya cerraron no aparecen." },
   ];
   return (
     <>

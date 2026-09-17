@@ -3,7 +3,6 @@ import Link from "next/link";
 import { GIROS } from "@/content/giros";
 import { CIFRAS, FAQ_GENERAL, demoLink } from "@/content/sitio";
 import { meta, software, faqPage } from "@/lib/seo";
-import { fmt } from "@/lib/zonas";
 import { Seccion, Eyebrow, H2, FAQ, CTAFinal, JsonLd, Flecha, Telefono } from "@/components/ui";
 import { LeadForm } from "@/components/LeadForm";
 
@@ -43,8 +42,8 @@ export default function Home() {
           <div className="relative flex justify-center items-center min-h-[520px] md:min-h-[640px]">
             <div className="absolute top-2 right-0 md:top-6 md:right-10 bg-white rounded-lg px-4 py-3 shadow-2xl flex flex-col">
               <span className="eyebrow !text-[11px] text-carbon">Ruta ordenada</span>
-              <span className="display text-[34px] md:text-[40px] text-asfalto">{CIFRAS.kmOrdenada.despues} km <span className="text-gris text-[20px] normal-case tracking-normal">en vez de {CIFRAS.kmOrdenada.antes}</span></span>
-              <span className="text-[13px] text-carbon">Mismas {CIFRAS.kmOrdenada.paradas} paradas · medido en campo, {CIFRAS.kmOrdenada.cuando}</span>
+              <span className="display text-[26px] md:text-[30px] leading-none text-asfalto">Las mismas paradas,<br />menos kilómetros</span>
+              <span className="text-[13px] text-carbon">Ordenada en un clic, con regreso a la bodega</span>
             </div>
             <Telefono src="/img/app-sugerido.jpg" alt="App del vendedor de Mr Ruta: pedido sugerido por cliente" w={280} prioridad />
             <div className="absolute bottom-2 left-0 md:bottom-8 md:left-5 bg-naranja rounded-lg px-4 py-3 shadow-2xl flex flex-col max-w-[260px]">
@@ -59,13 +58,15 @@ export default function Home() {
       <section className="bg-white border-b border-plata-2">
         <div className="mx-auto max-w-[1440px] px-5 md:px-[72px] py-8 md:py-10 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
           {[
-            [`${CIFRAS.cerradosPct} %`, "de los negocios registrados ya cerraron. Verificamos cada uno antes de mandarte.", "border-naranja"],
-            [fmt(CIFRAS.tienditas5km), "tienditas encontradas a 5 km de la planta de una panificadora del Estado de México.", "border-naranja-2"],
-            ["-40 %", `de kilómetros en la misma ruta al ordenarla (${CIFRAS.kmOrdenada.despues} km contra ${CIFRAS.kmOrdenada.antes}).`, "border-carbon"],
-            [`${CIFRAS.demoSegundos} s`, "para tener tu propia demo corriendo, con tu giro, tu ciudad y tus unidades.", "border-plata"],
+            // Los cuatro dolores del dueño de una distribuidora, en cualquier ciudad del país.
+            // Sin cifras: una medición de una planta no es la realidad de todas (Luis, 16-sep).
+            ["Clientes que te faltan", "Tus camionetas pasan todos los días frente a negocios que no te compran. El Radar te dice cuáles, en tu ciudad, y verifica que sigan abiertos.", "border-naranja"],
+            ["Lo que se regresa", "Lo que regresa a la bodega ya lo pagaste. El pedido sugerido deja en cada tienda lo que se vende, no lo que sobra.", "border-naranja-2"],
+            ["La ruta de cada día", "Ordenada en un clic, con menos kilómetros y sin depender de la memoria de un chofer que un día se va.", "border-carbon"],
+            ["Lo que pasa en la calle", "Cada entrega con foto, hora, ubicación y firma. Si te dicen que no llegó, tú tienes la prueba.", "border-plata"],
           ].map(([n, t, b]) => (
             <div key={n} className={`flex flex-col gap-1.5 border-l-4 ${b} pl-4 md:pl-5`}>
-              <span className="display text-[36px] md:text-[48px] text-asfalto">{n}</span>
+              <span className="display text-[24px] md:text-[30px] leading-none text-asfalto">{n}</span>
               <span className="text-[13px] md:text-[15px] text-carbon leading-snug">{t}</span>
             </div>
           ))}
