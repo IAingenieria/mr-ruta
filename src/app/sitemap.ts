@@ -13,7 +13,7 @@ const u = (p: string) => `${SITIO.dominio}${p}`;
 
 export default async function sitemap({ id }: { id: string }): Promise<MetadataRoute.Sitemap> {
   if (id === "nucleo") {
-    return ["/", "/reparto", "/producto", "/producto/radar", "/producto/vendedor", "/producto/despacho", "/mercado", "/planes", "/comparativas", "/casos", "/glosario", "/contacto"]
+    return ["/", "/demo", "/reparto", "/producto", "/producto/radar", "/producto/vendedor", "/producto/despacho", "/mercado", "/planes", "/comparativas", "/casos", "/glosario", "/contacto"]
       .map((p) => ({ url: u(p), lastModified, changeFrequency: "weekly" as const, priority: p === "/" ? 1 : 0.8 }));
   }
   if (id === "giros") return GIROS.map((g) => ({ url: u(`/reparto/${g.slug}`), lastModified, changeFrequency: "weekly" as const, priority: 0.9 }));
