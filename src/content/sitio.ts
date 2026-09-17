@@ -42,7 +42,7 @@ export const FAQ_GENERAL: { p: string; r: string }[] = [
   { p: "¿Cómo se comprueba una entrega?", r: "Con foto tomada con la cámara en el momento (no de la galería), ubicación, hora y firma del cliente en pantalla. Sin foto no se puede cerrar la entrega." },
   { p: "¿Cómo se ordena la ruta?", r: "El sistema calcula el orden de las paradas y la abre en Google Maps como una ruta continua, de la bodega a la bodega. En una ruta real de 15 paradas bajó de 21.7 a 13 kilómetros." },
   { p: "¿Qué es el pedido sugerido?", r: "Lo que dejaste en la visita anterior menos lo que regresó. Si no hay historial sugiere cero: el sistema nunca inventa demanda." },
-  { p: "¿De dónde salen los negocios del Radar?", r: "De nuestros registros actualizados de cada ciudad, verificados uno por uno contra Google Business antes de mostrarse. En una muestra de 250 puntos, 14.4 % ya habían cerrado: esos nunca se sirven." },
+  { p: "¿De dónde salen los negocios del Radar?", r: "De nuestros registros actualizados de cada ciudad, verificados uno por uno contra Google Business antes de mostrarse. Un negocio cierra cualquier día; los que ya cerraron nunca se sirven." },
   { p: "¿Cuánto tarda la demo?", r: "Treinta segundos. Contestas cinco preguntas (empresa, giro, ciudad, unidades y choferes) y recibes tu propia demo con pedidos de tu giro en tu ciudad. La liga vive 30 días." },
   { p: "¿Cuánto tarda en estar corriendo mi instancia?", r: "Una semana a partir de que nos mandas tu lista de productos y tus unidades. La demo sale el mismo día." },
   { p: "¿Cuánto cuesta?", r: "Hay tres planes según el tamaño de la operación y el nivel de acompañamiento. Los detalles están en la página de planes." },
