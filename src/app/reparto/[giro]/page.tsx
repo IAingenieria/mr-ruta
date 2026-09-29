@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ giro: str
   const { giro } = await params; const g = giroPorSlug(giro); if (!g) return {};
   return meta({
     title: `${g.tituloSeo} | Mr Ruta`,
-    description: `Ruta ordenada, pedido sugerido y devolución contada para ${g.corto}. Reparto de ${g.producto} con evidencia de entrega. Crea tu demo con tu giro en 30 segundos.`.slice(0, 155),
+    description: `Ruta ordenada, pedido sugerido y devolución contada para ${g.corto}. Reparto de ${g.producto} con evidencia de entrega. Agenda tu demostración con tu giro.`.slice(0, 155),
     path: `/reparto/${g.slug}`,
   });
 }

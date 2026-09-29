@@ -3,7 +3,7 @@ import { useState } from "react";
 import { GIROS } from "@/content/giros";
 import { SITIO } from "@/content/sitio";
 
-type Tipo = "radar" | "demo" | "contacto";
+type Tipo = "demo" | "contacto";
 
 // Un solo camino para todo lead del sitio. Nunca finge el envío: si el servidor
 // no confirma, se muestra el error y el WhatsApp como salida.
@@ -32,7 +32,7 @@ export function LeadForm({ tipo, giro, ciudad, titulo, sub, boton }: { tipo: Tip
       const j = await r.json().catch(() => ({}));
       if (!r.ok || !j.ok) throw new Error(j.error || `HTTP ${r.status}`);
       setEstado("ok");
-      try { (window as unknown as { dataLayer?: unknown[] }).dataLayer?.push({ event: tipo === "radar" ? "radar_solicitado" : "lead_form", tipo, giro: datos.giro || giro || "" }); } catch {}
+      try { (window as unknown as { dataLayer?: unknown[] }).dataLayer?.push({ event: "lead_form", tipo, giro: datos.giro || giro || "" }); } catch {}
     } catch (err) {
       setEstado("error"); setMsg("No se pudo enviar. Escríbenos por WhatsApp y te contestamos hoy.");
       console.error(err);
@@ -43,7 +43,7 @@ export function LeadForm({ tipo, giro, ciudad, titulo, sub, boton }: { tipo: Tip
     return (
       <div className="card p-8 flex flex-col gap-3 shadow-xl">
         <span className="display text-[30px] text-asfalto">Recibido.</span>
-        <p className="text-[16px] text-carbon leading-relaxed">{tipo === "radar" ? "Contamos los negocios alrededor de tu bodega y te mandamos el número con el mapa." : "Te escribe una persona del equipo, no un bot."}</p>
+        <p className="text-[16px] text-carbon leading-relaxed">Te escribe una persona del equipo, no un bot.</p>
       </div>
     );
   }
@@ -67,16 +67,9 @@ export function LeadForm({ tipo, giro, ciudad, titulo, sub, boton }: { tipo: Tip
           </select>
         </label>
       )}
-      {tipo === "radar" && (
-        <label className="flex flex-col gap-1.5 text-[13px] font-bold uppercase tracking-wider text-carbon">Dirección de tu bodega o planta
-          <input name="direccion" required placeholder="Calle, colonia, ciudad" className="h-12 border-[1.5px] border-plata rounded-md px-3.5 text-[16px] font-normal normal-case tracking-normal text-asfalto" />
-        </label>
-      )}
-      {tipo !== "radar" && (
-        <label className="flex flex-col gap-1.5 text-[13px] font-bold uppercase tracking-wider text-carbon">Empresa
-          <input name="empresa" autoComplete="organization" className="h-12 border-[1.5px] border-plata rounded-md px-3.5 text-[16px] font-normal normal-case tracking-normal text-asfalto" />
-        </label>
-      )}
+      <label className="flex flex-col gap-1.5 text-[13px] font-bold uppercase tracking-wider text-carbon">Empresa
+        <input name="empresa" autoComplete="organization" className="h-12 border-[1.5px] border-plata rounded-md px-3.5 text-[16px] font-normal normal-case tracking-normal text-asfalto" />
+      </label>
       <label className="flex flex-col gap-1.5 text-[13px] font-bold uppercase tracking-wider text-carbon">WhatsApp
         <input name="whatsapp" inputMode="tel" autoComplete="tel" placeholder="81 0000 0000" className="h-12 border-[1.5px] border-plata rounded-md px-3.5 text-[16px] font-normal normal-case tracking-normal text-asfalto" />
       </label>
@@ -92,7 +85,7 @@ export function LeadForm({ tipo, giro, ciudad, titulo, sub, boton }: { tipo: Tip
       )}
       <button type="submit" disabled={estado === "enviando"} className="btn btn-naranja !min-h-[54px] disabled:opacity-60">{estado === "enviando" ? "Enviando…" : boton}</button>
       {estado === "error" && <p role="alert" className="text-[14px] text-naranja-2 font-semibold">{msg}</p>}
-      <span className="text-[13px] text-gris text-center">Sin costo. Te escribe una persona, no un bot.</span>
+      <span className="text-[13px] text-gris text-center">Te escribe una persona, no un bot.</span>
     </form>
   );
 }

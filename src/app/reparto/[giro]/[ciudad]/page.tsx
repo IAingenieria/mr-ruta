@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ giro: str
   const n = fmt(negociosGiroEnZona(g, z));
   return meta({
     title: (() => { const t = `${g.tituloSeo} en ${z.nombre}`; return t.length + 10 <= 60 ? `${t} | Mr Ruta` : t; })(),
-    description: `${n} negocios que compran ${g.producto.split(",")[0]} en la zona de ${z.nombre}, según nuestros registros actualizados. Ruta ordenada y pedido sugerido en el celular del vendedor. Crea tu demo en 30 s.`.slice(0, 155),
+    description: `${n} negocios que compran ${g.producto.split(",")[0]} en la zona de ${z.nombre}, según nuestros registros actualizados. Ruta ordenada y pedido sugerido en el celular del vendedor. Agenda tu demostración.`.slice(0, 155),
     path: `/reparto/${g.slug}/${z.slug}`,
   });
 }

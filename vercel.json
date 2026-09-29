@@ -4,6 +4,21 @@
   "installCommand": "npm install",
   "redirects": [
     {
+      "source": "/producto/radar",
+      "destination": "/producto",
+      "permanent": true
+    },
+    {
+      "source": "/demo",
+      "destination": "/contacto",
+      "permanent": true
+    },
+    {
+      "source": "/planes",
+      "destination": "/contacto",
+      "permanent": true
+    },
+    {
       "source": "/login",
       "destination": "/",
       "permanent": false

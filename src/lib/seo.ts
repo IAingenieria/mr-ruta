@@ -33,8 +33,7 @@ export const software = () => ({
   applicationCategory: "BusinessApplication",
   operatingSystem: "Android, iOS, Web",
   url: SITIO.dominio,
-  description: "Plataforma de reparto y venta en ruta para distribuidoras con flota propia: Radar de clientes nuevos, app del vendedor con pedido sugerido y devolución, despacho con ruta ordenada y evidencia de entrega.",
-  offers: { "@type": "Offer", availability: "https://schema.org/InStock", priceCurrency: "MXN" },
+  description: "Plataforma de reparto y venta en ruta para distribuidoras con flota propia: app del vendedor con pedido sugerido y devolución, despacho con ruta ordenada y evidencia de entrega.",
 });
 
 export const faqPage = (faq: { p: string; r: string }[]) => ({

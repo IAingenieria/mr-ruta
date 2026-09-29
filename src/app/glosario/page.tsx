@@ -4,7 +4,7 @@ import { Seccion, Eyebrow, Migas, JsonLd, CTAFinal } from "@/components/ui";
 
 export const metadata = meta({
   title: "Glosario de reparto y venta en ruta: 12 términos | Mr Ruta",
-  description: "Venta neta en ruta, pedido sugerido, preventa y autoventa, evidencia de entrega, ruta continua, Radar, devolución, carga del día y liquidación.",
+  description: "Venta neta en ruta, pedido sugerido, preventa y autoventa, evidencia de entrega, ruta continua, devolución, carga del día y liquidación, en pocas frases.",
   path: "/glosario",
 });
 
@@ -22,7 +22,7 @@ export default function Glosario() {
         <div className="flex flex-col gap-4 max-w-[900px]">
           <Eyebrow>Vocabulario del oficio</Eyebrow>
           <h1 className="display text-[44px] md:text-[72px] text-asfalto">Glosario de reparto y venta en ruta</h1>
-          <p className="text-[18px] md:text-[20px] leading-relaxed">Doce términos que usamos en Mr Ruta y en las distribuidoras con las que trabajamos, definidos en dos o tres frases. Cada definición es <b className="ancla">autocontenida</b>: se puede citar sola.</p>
+          <p className="text-[18px] md:text-[20px] leading-relaxed">Once términos que usamos en Mr Ruta y en las distribuidoras con las que trabajamos, definidos en dos o tres frases. Cada definición es <b className="ancla">autocontenida</b>: se puede citar sola.</p>
         </div>
       </Seccion>
       <Seccion className="pb-16 md:pb-24">
@@ -35,7 +35,7 @@ export default function Glosario() {
           ))}
         </dl>
       </Seccion>
-      <CTAFinal titulo="Míralo funcionando con tu giro." sub="Cinco preguntas y tu demo está corriendo en 30 segundos." />
+      <CTAFinal titulo="Míralo funcionando con tu giro." sub="Escríbenos y te preparamos la demostración." />
     </>
   );
 }

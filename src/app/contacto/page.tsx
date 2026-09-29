@@ -1,11 +1,11 @@
-import { SITIO, waLink, demoLink } from "@/content/sitio";
+import { SITIO, waLink } from "@/content/sitio";
 import { meta, breadcrumb } from "@/lib/seo";
-import { Seccion, Eyebrow, Migas, JsonLd, Flecha, WhatsAppIcon } from "@/components/ui";
+import { Seccion, Eyebrow, Migas, JsonLd, WhatsAppIcon } from "@/components/ui";
 import { LeadForm } from "@/components/LeadForm";
 
 export const metadata = meta({
   title: "Contacto | Mr Ruta — software de reparto y venta en ruta",
-  description: "Escríbenos por WhatsApp o deja tus datos y te contesta una persona del equipo el mismo día. Si prefieres verlo antes, crea tu demo en 30 segundos.",
+  description: "Escríbenos por WhatsApp o deja tus datos y te contesta una persona del equipo el mismo día. Te preparamos una demostración con tu giro y tu ciudad.",
   path: "/contacto",
 });
 
@@ -20,10 +20,9 @@ export default function Contacto() {
           <div className="flex flex-col gap-6">
             <Eyebrow>Contacto</Eyebrow>
             <h1 className="display text-[44px] md:text-[72px] text-asfalto">Te contesta una persona, no un bot</h1>
-            <p className="text-[18px] md:text-[20px] leading-relaxed">Escríbenos por WhatsApp o deja tus datos. Si prefieres verlo antes de hablar, <b className="ancla">crea tu demo en 30 segundos</b> con tu giro y tu ciudad.</p>
+            <p className="text-[18px] md:text-[20px] leading-relaxed">Escríbenos por WhatsApp o deja tus datos y te preparamos una <b className="ancla">demostración con tu giro y tu ciudad</b>.</p>
             <div className="flex flex-col sm:flex-row gap-4">
               {SITIO.whatsapp && <a href={waLink("Hola, quiero hablar con alguien de Mr Ruta.")} target="_blank" rel="noopener" className="btn btn-naranja !min-h-[58px]"><WhatsAppIcon size={22} /> WhatsApp</a>}
-              <a href={demoLink()} className="btn btn-linea !min-h-[58px]">Crear mi demo <Flecha /></a>
             </div>
             <p className="text-[14px] text-gris">{SITIO.empresa} · {SITIO.ciudad}</p>
           </div>

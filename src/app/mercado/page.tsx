@@ -21,7 +21,7 @@ export default function Mercado() {
         <div className="flex flex-col gap-4 max-w-[900px]">
           <Eyebrow>Registros propios, verificados</Eyebrow>
           <h1 className="display text-[44px] md:text-[72px] text-asfalto">Cuántos negocios hay en cada ciudad, por tipo</h1>
-          <p className="text-[18px] md:text-[20px] leading-relaxed">Contamos, uno por uno, los <b className="ancla">negocios que compran a una distribuidora</b> en la zona de reparto de cada ciudad (radio de {RADIO_KM} km): abarrotes, fondas, carnicerías, paleterías, talleres, ferreterías y {"30"} tipos más. Son <b className="ancla">nuestros registros actualizados</b>, los mismos que usa el Radar, y cada negocio cuenta en una sola zona.</p>
+          <p className="text-[18px] md:text-[20px] leading-relaxed">Contamos, uno por uno, los <b className="ancla">negocios que compran a una distribuidora</b> en la zona de reparto de cada ciudad (radio de {RADIO_KM} km): abarrotes, fondas, carnicerías, paleterías, talleres, ferreterías y {"30"} tipos más. Son <b className="ancla">nuestros registros actualizados</b> y cada negocio cuenta en una sola zona.</p>
           <p className="text-[14px] text-gris">{SITIO.fuenteRegistros}. Actualizado {SITIO.fechaRegistros}.</p>
         </div>
       </Seccion>
@@ -46,7 +46,7 @@ export default function Mercado() {
           </table>
         </div>
       </Seccion>
-      <CTAFinal titulo="¿Y a 10 km de tu bodega?" sub="Te lo contamos gratis con tu dirección exacta y te mandamos el mapa." />
+      <CTAFinal titulo="Tu demostración, con tu ciudad." sub="Escríbenos y te la preparamos con tu giro, tus unidades y tus choferes." />
     </>
   );
 }

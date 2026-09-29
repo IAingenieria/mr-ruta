@@ -1,6 +1,6 @@
 # mr-ruta.com — sitio público (Next.js 15)
 
-Sitio multi-landing de Mr Ruta: home, 14 giros, 140 páginas giro × ciudad, 15 páginas de mercado por ciudad, producto, planes, comparativas, mediciones, glosario, contacto. Todo estático (SSG); los leads van al worker de demos (`demo.mr-ruta.com/api/sitio/lead`).
+Sitio multi-landing de Mr Ruta: home, 14 giros, 140 páginas giro × ciudad, 15 páginas de mercado por ciudad, producto, comparativas, mediciones, glosario, contacto. Todo estático (SSG); los leads van al worker de demos (`demo.mr-ruta.com/api/sitio/lead`).
 
 ## Cómo se trabaja
 
@@ -25,7 +25,6 @@ node scripts/auditar.mjs http://localhost:3051   # 1 h1 · title ≤ 60 · desc 
 | `NEXT_PUBLIC_SITE_URL` | `https://www.mr-ruta.com` (canonical, sitemaps, Schema) |
 | `NEXT_PUBLIC_WHATSAPP` | por defecto `528126350902`; cámbialo aquí si cambia el número |
 | `NEXT_PUBLIC_GTM_ID` | `GTM-XXXXXXX`; sin él no hay medición |
-| `NEXT_PUBLIC_MOSTRAR_PRECIOS` | los importes se muestran por defecto; `0` los oculta |
 | `NEXT_PUBLIC_LEADS_ENDPOINT` | por defecto `https://demo.mr-ruta.com/api/sitio/lead` |
 
 ## Regla de contenido

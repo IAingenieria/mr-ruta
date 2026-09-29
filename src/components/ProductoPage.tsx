@@ -2,32 +2,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { demoLink, FAQ_GENERAL } from "@/content/sitio";
 import { meta, breadcrumb, faqPage } from "@/lib/seo";
-import { Seccion, Eyebrow, H2, Migas, JsonLd, CTAFinal, FAQ, Flecha, Telefono, Check, AnswerFirst } from "@/components/ui";
+import { Seccion, Eyebrow, H2, Migas, JsonLd, CTAFinal, FAQ, Flecha, Foto, Check, AnswerFirst, type FotoId } from "@/components/ui";
 
 export type Producto = {
   slug: string; nombre: string; titulo: string; descripcion: string; answer: string;
-  bloques: { h: string; p: string }[]; incluye: string[]; img: string; faq: { p: string; r: string }[];
+  bloques: { h: string; p: string }[]; incluye: string[]; img: FotoId; faq: { p: string; r: string }[];
 };
 
 export const PRODUCTOS: Producto[] = [
-  {
-    slug: "radar", nombre: "Radar", titulo: "Radar de clientes nuevos para distribuidoras",
-    descripcion: "Diez negocios abiertos por día, cerca de tu ruta y que no son clientes, tomados de nuestros registros actualizados y verificados uno por uno. Los cerrados nunca se muestran.",
-    answer: "El <b>Radar de clientes nuevos</b> de Mr Ruta sirve cada día una lista corta de negocios de tu giro que están cerca de la ruta y todavía no te compran. Salen de <b>nuestros registros actualizados de la ciudad</b> y cada uno se verifica contra Google Business antes de mostrarse: <b>los cerrados nunca aparecen</b>.",
-    bloques: [
-      { h: "¿Por qué se verifica cada negocio?", p: "Porque un listado lo tiene cualquiera y un negocio cierra cualquier día. Un vendedor mandado a puertas cerradas deja de creer en la herramienta la primera semana." },
-      { h: "Dos grados de certeza que no se mezclan", p: "Si el nombre coincide, la reseña y la calificación son de ese negocio. Si solo coincide el domicilio, se muestra «hoy en ese domicilio: otro nombre» sin calificación. Nunca se le atribuye a un negocio la reputación del vecino." },
-      { h: "Del Radar a la ruta en un toque", p: "El vendedor aprueba el negocio y aparece en su recorrido del día, ya ordenado con las demás paradas. Lo que descarta no vuelve a salir." },
-      { h: "Cuánto mercado te falta", p: "Con la dirección de tu bodega contamos los negocios de tu giro a 10 km y te mandamos el número con el mapa. Es el punto de partida para saber cuántas paradas más caben en las rutas que ya tienes." },
-    ],
-    incluye: ["Diez negocios por día (ajustable)", "Verificación contra Google Business antes de mostrar", "Aprobar o descartar cada negocio en un toque", "Ficha con dirección, distancia a la parada más cercana y teléfono cuando existe", "Conteo del mercado alrededor de tu bodega", "Registros actualizados por ciudad"],
-    img: "/img/app-ruta.jpg",
-    faq: [
-      { p: "¿Cuántos negocios muestra el Radar por día?", r: "Diez por día por defecto, ajustable. Es una lista corta a propósito: se visitan en la misma ruta, sin desviarse, y al día siguiente hay otros diez." },
-      { p: "¿De dónde salen los negocios?", r: "De nuestros registros actualizados de cada ciudad, con dirección y coordenada, verificados uno por uno contra Google Business antes de mostrarse." },
-      { p: "¿Qué pasa si un negocio ya es mi cliente?", r: "El vendedor lo descarta y no vuelve a aparecer. Al arrancar tu instancia cargamos tu cartera para que el Radar solo muestre los que no están en ella." },
-    ],
-  },
   {
     slug: "vendedor", nombre: "App del vendedor", titulo: "App del vendedor de ruta: pedido sugerido y devolución",
     descripcion: "Carga del día, pedido sugerido por cliente, devolución y cobro en una pantalla. Alta de clientes en campo con foto de fachada. Funciona sin señal.",
@@ -39,7 +21,7 @@ export const PRODUCTOS: Producto[] = [
       { h: "Ruta ordenada a Google Maps", p: "Un toque ordena las paradas y abre la ruta continua en Google Maps, de la bodega a la bodega. En una ruta real de 15 paradas: 13 km en vez de 21.7." },
     ],
     incluye: ["Inicio con nombre, unidad y siguiente cliente", "Carga del día por producto y presentación", "Pedido sugerido, catálogo con fotos, devolución y cobro", "Alta de cliente con foto de fachada y GPS", "Ruta ordenada con liga continua a Google Maps", "Corte del día: despachado, devuelto, cobrado", "Modo sin señal con sincronización automática"],
-    img: "/img/app-devolucion.jpg",
+    img: "entrega",
     faq: [
       { p: "¿Se instala desde una tienda de aplicaciones?", r: "No. Corre en el navegador del celular (Android o iPhone) y se abre desde una liga o un código QR. No hay que instalar ni actualizar nada." },
       { p: "¿Qué pasa si se va la señal a media ruta?", r: "Nada visible para el vendedor: el pedido, la devolución y la evidencia se guardan en el teléfono y se sincronizan solos al recuperar señal." },
@@ -57,7 +39,7 @@ export const PRODUCTOS: Producto[] = [
       { h: "Tablero del día y análisis del mes", p: "Despacho ve qué unidad va en qué parada y qué falta. Dirección ve venta neta, merma en pesos y comparativo de rutas por mes." },
     ],
     incluye: ["Lectura de pedidos desde Excel, Odoo o Microsip", "Bandeja de direcciones a revisar", "Asignación de pedidos por unidad", "Ruta ordenada por unidad", "Evidencia de entrega: foto, GPS, hora, firma", "Rechazos y devoluciones con motivo", "Tablero del día y análisis del mes"],
-    img: "/img/app-corte.jpg",
+    img: "flota",
     faq: [
       { p: "¿Qué formatos de pedido lee?", r: "Excel con tus columnas, Odoo y Microsip. Para otros sistemas se arma un conector en el arranque." },
       { p: "¿Se puede corregir una dirección antes de salir?", r: "Sí. La bandeja muestra las direcciones dudosas y el despacho las corrige en el mapa; la corrección se guarda para las siguientes entregas." },
@@ -71,7 +53,7 @@ export const productoPorSlug = (s: string) => PRODUCTOS.find((p) => p.slug === s
 export function ProductoPage({ p }: { p: Producto }) {
   const path = `/producto/${p.slug}`;
   const migas = [{ name: "Inicio", path: "/" }, { name: "Producto", path: "/producto" }, { name: p.nombre, path }];
-  const faq = [...p.faq, FAQ_GENERAL[2], FAQ_GENERAL[11]];
+  const faq = [...p.faq, FAQ_GENERAL[2], ...FAQ_GENERAL.filter((f) => f.p === "¿Quién ve mis datos?")];
   return (
     <>
       <JsonLd data={[breadcrumb(migas), faqPage(faq)]} />
@@ -83,11 +65,11 @@ export function ProductoPage({ p }: { p: Producto }) {
             <h1 className="display text-[44px] md:text-[72px] text-asfalto">{p.titulo}</h1>
             <AnswerFirst html={p.answer} className="max-w-[620px]" />
             <div className="flex flex-col sm:flex-row gap-4">
-              <a href={demoLink()} className="btn btn-naranja !min-h-[58px] md:!px-8 text-[17px]">Verlo en mi demo <Flecha /></a>
-              <Link href="/producto" className="btn btn-linea !min-h-[58px]">Las tres apps</Link>
+              <a href={demoLink()} className="btn btn-naranja !min-h-[58px] md:!px-8 text-[17px]">Agenda tu demostración <Flecha /></a>
+              <Link href="/producto" className="btn btn-linea !min-h-[58px]">Ver el producto</Link>
             </div>
           </div>
-          <div className="flex justify-center"><Telefono src={p.img} alt={`${p.nombre} de Mr Ruta en el celular`} w={280} prioridad /></div>
+          <div className="flex justify-center"><Foto f={p.img} w={440} prioridad /></div>
         </div>
       </Seccion>
       <section className="bg-white border-y border-plata-2">
@@ -112,7 +94,7 @@ export function ProductoPage({ p }: { p: Producto }) {
         </div>
       </Seccion>
       <section className="bg-white border-y border-plata-2"><div className="mx-auto max-w-[1440px] px-5 md:px-[72px] py-16 md:py-24"><FAQ items={faq} titulo={`Preguntas sobre ${p.nombre.toLowerCase()}`} /></div></section>
-      <div className="pt-16 md:pt-24"><CTAFinal titulo="Míralo con tu giro y tu ciudad, en 30 segundos." sub="Cinco preguntas. La liga y el QR te llegan al momento y viven 30 días." /></div>
+      <div className="pt-16 md:pt-24"><CTAFinal titulo="Míralo con tu giro y tu ciudad." sub="Escríbenos y te preparamos la demostración con tus productos y tus unidades." /></div>
     </>
   );
 }

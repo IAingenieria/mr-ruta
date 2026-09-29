@@ -33,8 +33,7 @@ export function Header() {
           ))}
         </nav>
         <div className="flex items-center gap-3">
-          <a href={`${SITIO.demoUrl}/`} className="hidden md:inline text-[15px] font-semibold text-carbon hover:text-naranja-2">Entrar a mi demo</a>
-          <a href={demoLink()} className="btn btn-naranja !min-h-[44px] !px-4 md:!px-6 text-[14px] md:text-[16px]">Crea tu demo en 30 s</a>
+          <a href={demoLink()} className="btn btn-naranja !min-h-[44px] !px-4 md:!px-6 text-[14px] md:text-[16px]">Agenda tu demostración</a>
           <details className="lg:hidden relative">
             <summary aria-label="Menú" className="w-11 h-11 flex items-center justify-center rounded-md border border-plata-2">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#54585A" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
@@ -43,7 +42,6 @@ export function Header() {
               {NAV.map((n) => (
                 <Link key={n.href} href={n.href} className="px-3 py-3 text-[15px] font-semibold text-carbon hover:text-naranja-2">{n.label}</Link>
               ))}
-              <a href={`${SITIO.demoUrl}/`} className="px-3 py-3 text-[15px] font-semibold text-carbon">Entrar a mi demo</a>
             </div>
           </details>
         </div>
@@ -55,7 +53,7 @@ export function Header() {
 export function Footer() {
   const cols = [
     { t: "Giros", l: [["/reparto/panaderia", "Panadería"], ["/reparto/tortilleria", "Tortillería"], ["/reparto/helados-y-hielo", "Helados y hielo"], ["/reparto/frutas-y-verduras", "Frutas y verduras"], ["/reparto/carnicos-y-pollo", "Cárnicos y pollo"], ["/reparto", "Todos los giros"]] },
-    { t: "Producto", l: [["/producto/radar", "Radar"], ["/producto/vendedor", "App del vendedor"], ["/producto/despacho", "Despacho y evidencia"], ["/mercado", "Mercado por ciudad"], ["/planes", "Planes"]] },
+    { t: "Producto", l: [["/producto/vendedor", "App del vendedor"], ["/producto/despacho", "Despacho y evidencia"], ["/mercado", "Mercado por ciudad"]] },
     { t: "Empresa", l: [["/casos", "Mediciones en campo"], ["/glosario", "Glosario de reparto"], ["/comparativas", "Cómo elegir software de reparto"], ["/contacto", "Contacto"], ["/aviso-de-privacidad", "Aviso de privacidad"]] },
   ];
   return (
@@ -129,7 +127,7 @@ export function FAQ({ items, titulo = "Preguntas frecuentes", eyebrow = "Antes d
   );
 }
 
-export function CTAFinal({ titulo, sub, giro, ciudad }: { titulo: React.ReactNode; sub: string; giro?: string; ciudad?: string }) {
+export function CTAFinal({ titulo, sub }: { titulo: React.ReactNode; sub: string }) {
   return (
     <Seccion className="pb-20 md:pb-24">
       <div className="bg-naranja rounded-2xl p-8 md:p-16 flex flex-col md:flex-row justify-between md:items-center gap-8 relative overflow-hidden">
@@ -140,7 +138,7 @@ export function CTAFinal({ titulo, sub, giro, ciudad }: { titulo: React.ReactNod
           <h2 className="display text-[34px] md:text-[52px] text-asfalto">{titulo}</h2>
           <p className="text-[17px] md:text-[18px] text-asfalto">{sub}</p>
         </div>
-        <a href={demoLink(giro, ciudad)} className="btn btn-oscuro !min-h-[60px] md:!px-8 text-[17px] shrink-0 relative">Crear mi demo <Flecha color="#fff" /></a>
+        <a href={demoLink()} className="btn btn-oscuro !min-h-[60px] md:!px-8 text-[17px] shrink-0 relative">Agenda tu demostración <Flecha color="#fff" /></a>
       </div>
     </Seccion>
   );
@@ -161,8 +159,16 @@ export const Migas = ({ items }: { items: { name: string; path: string }[] }) =>
   </nav>
 );
 
-export const Telefono = ({ src, alt, w = 280, prioridad = false }: { src: string; alt: string; w?: number; prioridad?: boolean }) => (
-  <div className="rounded-[34px] p-2.5 bg-[#0E0F10] shadow-2xl" style={{ width: w + 20 }}>
-    <Image src={src} alt={alt} width={360} height={800} priority={prioridad} className="rounded-[26px] w-full h-auto" sizes={`${w}px`} />
-  </div>
-);
+// Fotos de marca. El sitio no muestra pantallas de la app (Luis, 29-sep-2026: la competencia las copia).
+export const FOTOS = {
+  hero: { src: "/img/fotos/hero.jpg", w: 900, h: 1205, alt: "Vendedor de Mr Ruta con su tableta junto al camión de reparto" },
+  giro: { src: "/img/fotos/giro.jpg", w: 900, h: 1205, alt: "Repartidor bajando una caja de la camioneta frente a una tienda" },
+  entrega: { src: "/img/fotos/entrega.jpg", w: 900, h: 1205, alt: "Entrega firmada en la tableta en el mostrador de una tienda" },
+  flota: { src: "/img/fotos/flota.jpg", w: 1200, h: 670, alt: "Flota de camiones de reparto en el andén de carga" },
+} as const;
+export type FotoId = keyof typeof FOTOS;
+
+export const Foto = ({ f, w = 440, prioridad = false, className = "" }: { f: FotoId; w?: number; prioridad?: boolean; className?: string }) => {
+  const x = FOTOS[f];
+  return <Image src={x.src} alt={x.alt} width={x.w} height={x.h} priority={prioridad} className={`rounded-2xl w-full h-auto shadow-2xl ${className}`} style={{ maxWidth: w }} sizes={`${w}px`} />;
+};
