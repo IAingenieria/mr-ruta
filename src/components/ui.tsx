@@ -159,8 +159,16 @@ export const Migas = ({ items }: { items: { name: string; path: string }[] }) =>
   </nav>
 );
 
-export const Telefono = ({ src, alt, w = 280, prioridad = false }: { src: string; alt: string; w?: number; prioridad?: boolean }) => (
-  <div className="rounded-[34px] p-2.5 bg-[#0E0F10] shadow-2xl" style={{ width: w + 20 }}>
-    <Image src={src} alt={alt} width={360} height={800} priority={prioridad} className="rounded-[26px] w-full h-auto" sizes={`${w}px`} />
-  </div>
-);
+// Fotos de marca. El sitio no muestra pantallas de la app (Luis, 29-sep-2026: la competencia las copia).
+export const FOTOS = {
+  hero: { src: "/img/fotos/hero.jpg", w: 900, h: 1205, alt: "Vendedor de Mr Ruta con su tableta junto al camión de reparto" },
+  giro: { src: "/img/fotos/giro.jpg", w: 900, h: 1205, alt: "Repartidor bajando una caja de la camioneta frente a una tienda" },
+  entrega: { src: "/img/fotos/entrega.jpg", w: 900, h: 1205, alt: "Entrega firmada en la tableta en el mostrador de una tienda" },
+  flota: { src: "/img/fotos/flota.jpg", w: 1200, h: 670, alt: "Flota de camiones de reparto en el andén de carga" },
+} as const;
+export type FotoId = keyof typeof FOTOS;
+
+export const Foto = ({ f, w = 440, prioridad = false, className = "" }: { f: FotoId; w?: number; prioridad?: boolean; className?: string }) => {
+  const x = FOTOS[f];
+  return <Image src={x.src} alt={x.alt} width={x.w} height={x.h} priority={prioridad} className={`rounded-2xl w-full h-auto shadow-2xl ${className}`} style={{ maxWidth: w }} sizes={`${w}px`} />;
+};

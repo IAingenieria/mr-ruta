@@ -2,11 +2,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { demoLink, FAQ_GENERAL } from "@/content/sitio";
 import { meta, breadcrumb, faqPage } from "@/lib/seo";
-import { Seccion, Eyebrow, H2, Migas, JsonLd, CTAFinal, FAQ, Flecha, Telefono, Check, AnswerFirst } from "@/components/ui";
+import { Seccion, Eyebrow, H2, Migas, JsonLd, CTAFinal, FAQ, Flecha, Foto, Check, AnswerFirst, type FotoId } from "@/components/ui";
 
 export type Producto = {
   slug: string; nombre: string; titulo: string; descripcion: string; answer: string;
-  bloques: { h: string; p: string }[]; incluye: string[]; img: string; faq: { p: string; r: string }[];
+  bloques: { h: string; p: string }[]; incluye: string[]; img: FotoId; faq: { p: string; r: string }[];
 };
 
 export const PRODUCTOS: Producto[] = [
@@ -21,7 +21,7 @@ export const PRODUCTOS: Producto[] = [
       { h: "Cuánto mercado te falta", p: "Con la dirección de tu bodega contamos los negocios de tu giro a 10 km y te mandamos el número con el mapa. Es el punto de partida para saber cuántas paradas más caben en las rutas que ya tienes." },
     ],
     incluye: ["Diez negocios por día (ajustable)", "Verificación contra Google Business antes de mostrar", "Aprobar o descartar cada negocio en un toque", "Ficha con dirección, distancia a la parada más cercana y teléfono cuando existe", "Conteo del mercado alrededor de tu bodega", "Registros actualizados por ciudad"],
-    img: "/img/app-ruta.jpg",
+    img: "giro",
     faq: [
       { p: "¿Cuántos negocios muestra el Radar por día?", r: "Diez por día por defecto, ajustable. Es una lista corta a propósito: se visitan en la misma ruta, sin desviarse, y al día siguiente hay otros diez." },
       { p: "¿De dónde salen los negocios?", r: "De nuestros registros actualizados de cada ciudad, con dirección y coordenada, verificados uno por uno contra Google Business antes de mostrarse." },
@@ -39,7 +39,7 @@ export const PRODUCTOS: Producto[] = [
       { h: "Ruta ordenada a Google Maps", p: "Un toque ordena las paradas y abre la ruta continua en Google Maps, de la bodega a la bodega. En una ruta real de 15 paradas: 13 km en vez de 21.7." },
     ],
     incluye: ["Inicio con nombre, unidad y siguiente cliente", "Carga del día por producto y presentación", "Pedido sugerido, catálogo con fotos, devolución y cobro", "Alta de cliente con foto de fachada y GPS", "Ruta ordenada con liga continua a Google Maps", "Corte del día: despachado, devuelto, cobrado", "Modo sin señal con sincronización automática"],
-    img: "/img/app-devolucion.jpg",
+    img: "entrega",
     faq: [
       { p: "¿Se instala desde una tienda de aplicaciones?", r: "No. Corre en el navegador del celular (Android o iPhone) y se abre desde una liga o un código QR. No hay que instalar ni actualizar nada." },
       { p: "¿Qué pasa si se va la señal a media ruta?", r: "Nada visible para el vendedor: el pedido, la devolución y la evidencia se guardan en el teléfono y se sincronizan solos al recuperar señal." },
@@ -57,7 +57,7 @@ export const PRODUCTOS: Producto[] = [
       { h: "Tablero del día y análisis del mes", p: "Despacho ve qué unidad va en qué parada y qué falta. Dirección ve venta neta, merma en pesos y comparativo de rutas por mes." },
     ],
     incluye: ["Lectura de pedidos desde Excel, Odoo o Microsip", "Bandeja de direcciones a revisar", "Asignación de pedidos por unidad", "Ruta ordenada por unidad", "Evidencia de entrega: foto, GPS, hora, firma", "Rechazos y devoluciones con motivo", "Tablero del día y análisis del mes"],
-    img: "/img/app-corte.jpg",
+    img: "flota",
     faq: [
       { p: "¿Qué formatos de pedido lee?", r: "Excel con tus columnas, Odoo y Microsip. Para otros sistemas se arma un conector en el arranque." },
       { p: "¿Se puede corregir una dirección antes de salir?", r: "Sí. La bandeja muestra las direcciones dudosas y el despacho las corrige en el mapa; la corrección se guarda para las siguientes entregas." },
@@ -87,7 +87,7 @@ export function ProductoPage({ p }: { p: Producto }) {
               <Link href="/producto" className="btn btn-linea !min-h-[58px]">Las tres apps</Link>
             </div>
           </div>
-          <div className="flex justify-center"><Telefono src={p.img} alt={`${p.nombre} de Mr Ruta en el celular`} w={280} prioridad /></div>
+          <div className="flex justify-center"><Foto f={p.img} w={440} prioridad /></div>
         </div>
       </Seccion>
       <section className="bg-white border-y border-plata-2">

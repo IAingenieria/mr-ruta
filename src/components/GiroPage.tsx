@@ -1,13 +1,10 @@
 import Link from "next/link";
-import Image from "next/image";
 import type { Giro } from "@/content/giros";
 import { FAQ_GENERAL, demoLink, waLink, SITIO } from "@/content/sitio";
 import { fmt, tier1, negociosGiroEnZona, RADIO_KM, type Zona } from "@/lib/zonas";
-import { Seccion, Eyebrow, H2, FAQ, CTAFinal, JsonLd, Flecha, Telefono, Migas, AnswerFirst, Check } from "@/components/ui";
+import { Seccion, Eyebrow, H2, FAQ, CTAFinal, JsonLd, Flecha, Foto, Migas, AnswerFirst, Check } from "@/components/ui";
 import { LeadForm } from "@/components/LeadForm";
 import { breadcrumb, faqPage, service } from "@/lib/seo";
-
-const IMG = ["/img/app-inicio.jpg", "/img/app-ruta.jpg", "/img/app-devolucion.jpg", "/img/app-corte.jpg"];
 
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
@@ -47,7 +44,7 @@ export function GiroPage({ giro, zona }: { giro: Giro; zona?: Zona }) {
             </ul>
           </div>
           <div className="relative flex justify-center">
-            <Telefono src="/img/app-sugerido.jpg" alt={`Pedido sugerido en la app del vendedor para ${giro.corto}`} w={280} prioridad />
+            <Foto f="giro" w={440} prioridad />
             <div className="absolute bottom-6 left-0 bg-asfalto text-white rounded-lg px-4 py-3 shadow-2xl flex flex-col">
               <span className="eyebrow !text-[11px] text-naranja">Sugerido por cliente</span>
               <span className="text-[15px] font-semibold">Dejaste 18, regresaron 2 → sugiere 16</span>
@@ -99,9 +96,8 @@ export function GiroPage({ giro, zona }: { giro: Giro; zona?: Zona }) {
           <H2>De la carga de madrugada al corte de la tarde.</H2>
         </div>
         <div className="grid gap-7 md:grid-cols-4">
-          {giro.dia.map((d, i) => (
+          {giro.dia.map((d) => (
             <div key={d.hora} className="flex flex-col gap-4">
-              <Image src={IMG[i]} alt={`${d.titulo} en la app de Mr Ruta`} width={360} height={800} className="w-full h-auto rounded-[18px] border-[5px] border-[#0E0F10]" sizes="(min-width: 768px) 25vw, 90vw" />
               <h3 className="display text-[26px] text-asfalto">{d.hora} · {d.titulo}</h3>
               <p className="text-[15px] leading-relaxed text-carbon">{d.texto}</p>
             </div>

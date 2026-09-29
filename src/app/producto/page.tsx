@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { PRODUCTOS } from "@/components/ProductoPage";
 import { meta, breadcrumb } from "@/lib/seo";
-import { Seccion, Eyebrow, Migas, JsonLd, CTAFinal, Telefono } from "@/components/ui";
+import { Seccion, Eyebrow, Migas, JsonLd, CTAFinal, Foto } from "@/components/ui";
 
 export const metadata = meta({
   title: "Radar, app del vendedor y despacho | Mr Ruta",
@@ -28,7 +28,7 @@ export default function Producto() {
             <Link key={p.slug} href={`/producto/${p.slug}`} className="card p-7 flex flex-col gap-4 hover:border-naranja">
               <div className="flex items-center gap-3"><span className="display text-[44px] text-naranja leading-none">0{i + 1}</span><span className="display text-[28px] text-asfalto">{p.nombre}</span></div>
               <p className="text-[15px] leading-relaxed text-carbon">{p.descripcion}</p>
-              <div className="flex justify-center mt-auto"><Telefono src={p.img} alt={p.nombre} w={200} /></div>
+              <div className="flex justify-center mt-auto"><Foto f={p.img} w={360} className="aspect-[4/5] object-cover" /></div>
             </Link>
           ))}
         </div>

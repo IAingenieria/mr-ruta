@@ -3,7 +3,7 @@ import Link from "next/link";
 import { GIROS } from "@/content/giros";
 import { FAQ_GENERAL, demoLink } from "@/content/sitio";
 import { meta, software, faqPage } from "@/lib/seo";
-import { Seccion, Eyebrow, H2, FAQ, CTAFinal, JsonLd, Flecha, Telefono } from "@/components/ui";
+import { Seccion, Eyebrow, H2, FAQ, CTAFinal, JsonLd, Flecha, Foto } from "@/components/ui";
 import { LeadForm } from "@/components/LeadForm";
 
 export const metadata = meta({
@@ -45,7 +45,7 @@ export default function Home() {
               <span className="display text-[26px] md:text-[30px] leading-none text-asfalto">Las mismas paradas,<br />menos kilómetros</span>
               <span className="text-[13px] text-carbon">Ordenada en un clic, con regreso a la bodega</span>
             </div>
-            <Telefono src="/img/app-sugerido.jpg" alt="App del vendedor de Mr Ruta: pedido sugerido por cliente" w={280} prioridad />
+            <Foto f="hero" w={440} prioridad />
             <div className="absolute bottom-2 left-0 md:bottom-8 md:left-5 bg-naranja rounded-lg px-4 py-3 shadow-2xl flex flex-col max-w-[260px]">
               <span className="eyebrow !text-[11px] text-asfalto">Sugerido</span>
               <span className="text-[15px] font-semibold text-asfalto">Lo que dejaste menos lo que regresó. Sin historial no inventa demanda.</span>
@@ -103,14 +103,14 @@ export default function Home() {
       <section className="bg-white border-y border-plata-2">
         <div className="mx-auto max-w-[1440px] px-5 md:px-[72px] py-16 md:py-24 flex flex-col gap-12">
           <div className="flex flex-col gap-3 max-w-[820px]">
-            <Eyebrow>El producto, en pantalla</Eyebrow>
+            <Eyebrow>El producto</Eyebrow>
             <H2>Encontrar, vender, entregar. Un solo sistema, tres apps.</H2>
           </div>
           <div className="grid gap-10 md:grid-cols-3">
             {[
-              { n: "01", t: "Radar", href: "/producto/radar", d: "Cruza nuestros registros actualizados de tu giro con Google Business y te sirve 10 negocios abiertos por día, a la mano del vendedor. Los cerrados nunca se muestran.", img: null },
-              { n: "02", t: "Vendedor", href: "/producto/vendedor", d: "Carga del día, pedido sugerido, devolución y cobro en la misma pantalla. La venta neta es lo que se despachó menos lo que regresó.", img: "/img/app-devolucion.jpg" },
-              { n: "03", t: "Despacho y ruta", href: "/producto/despacho", d: "La ruta se ordena sola y se abre en Google Maps con regreso a la bodega. Cada entrega deja foto con cámara real, GPS, hora y firma.", img: "/img/app-ruta.jpg" },
+              { n: "01", t: "Radar", href: "/producto/radar", d: "Cruza nuestros registros actualizados de tu giro con Google Business y te sirve 10 negocios abiertos por día, a la mano del vendedor. Los cerrados nunca se muestran.", img: "giro" as const },
+              { n: "02", t: "Vendedor", href: "/producto/vendedor", d: "Carga del día, pedido sugerido, devolución y cobro en la misma pantalla. La venta neta es lo que se despachó menos lo que regresó.", img: "entrega" as const },
+              { n: "03", t: "Despacho y ruta", href: "/producto/despacho", d: "La ruta se ordena sola y se abre en Google Maps con regreso a la bodega. Cada entrega deja foto con cámara real, GPS, hora y firma.", img: "flota" as const },
             ].map((p) => (
               <div key={p.n} className="flex flex-col gap-5">
                 <div className="flex items-center gap-3">
@@ -118,21 +118,7 @@ export default function Home() {
                   <Link href={p.href} className="display text-[28px] md:text-[30px] text-asfalto hover:text-naranja-2">{p.t}</Link>
                 </div>
                 <p className="text-[16px] leading-relaxed text-carbon">{p.d}</p>
-                {p.img ? (
-                  <div className="flex justify-center"><Telefono src={p.img} alt={`Pantalla de ${p.t} en Mr Ruta`} w={220} /></div>
-                ) : (
-                  <div className="bg-humo rounded-xl p-6 flex flex-col gap-3 min-h-[420px]">
-                    <div className="flex justify-between items-center"><span className="eyebrow text-carbon">Radar del día</span><span className="text-[12px] font-bold text-asfalto bg-naranja rounded px-2 py-0.5">10 de 106</span></div>
-                    {[["Abarrotes La Espiga", "Abierto · confirmado por nombre · 4.3 ★ (27)", "A 640 m de la parada 6", false], ["Miscelánea Doña Chuy", "Abierto · en ese domicilio hoy: otro nombre", "A 210 m de la parada 9", false], ["Tienda El Paso", "Cerrado permanentemente · no se sirve", "", true]].map(([a, b, c, x]) => (
-                      <div key={String(a)} className={`card p-3.5 flex flex-col gap-1 ${x ? "opacity-55" : ""}`}>
-                        <span className={`text-[15px] font-bold text-asfalto ${x ? "line-through" : ""}`}>{a}</span>
-                        <span className={`text-[13px] ${x ? "text-naranja-2 font-semibold" : "text-carbon"}`}>{b}</span>
-                        {c && <span className="text-[13px] text-carbon">{c}</span>}
-                      </div>
-                    ))}
-                    <div className="flex gap-2 mt-auto"><span className="flex-1 text-center text-[14px] font-bold text-white bg-carbon rounded-md py-2.5">Ya es cliente</span><span className="flex-1 text-center text-[14px] font-bold text-asfalto bg-naranja rounded-md py-2.5">A la ruta</span></div>
-                  </div>
-                )}
+                <div className="flex justify-center"><Foto f={p.img} w={360} className="aspect-[4/5] object-cover" /></div>
               </div>
             ))}
           </div>
