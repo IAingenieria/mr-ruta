@@ -149,7 +149,7 @@ export function GiroPage({ giro, zona }: { giro: Giro; zona?: Zona }) {
       <section className="bg-white border-y border-plata-2">
         <div className="mx-auto max-w-[1440px] px-5 md:px-[72px] py-16 md:py-24 grid gap-10 md:grid-cols-[1.1fr_0.9fr] md:items-center">
           <div className="flex flex-col gap-4">
-            <Eyebrow>Gratis, en un minuto</Eyebrow>
+            <Eyebrow>Radar de clientes nuevos</Eyebrow>
             <H2>¿Cuántos {giro.mercado[0].etiqueta.toLowerCase()} hay a 10 km de tu bodega{zona ? ` en ${zona.nombre}` : ""}?</H2>
             <p className="text-[17px] leading-relaxed text-carbon">Los contamos con nuestros registros actualizados, uno por uno, y te mandamos el número con el mapa. Es el mismo Radar que después usa tu vendedor.</p>
           </div>

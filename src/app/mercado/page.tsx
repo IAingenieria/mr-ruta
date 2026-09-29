@@ -46,7 +46,7 @@ export default function Mercado() {
           </table>
         </div>
       </Seccion>
-      <CTAFinal titulo="¿Y a 10 km de tu bodega?" sub="Te lo contamos gratis con tu dirección exacta y te mandamos el mapa." />
+      <CTAFinal titulo="¿Y a 10 km de tu bodega?" sub="Te lo contamos con tu dirección exacta y te mandamos el mapa." />
     </>
   );
 }

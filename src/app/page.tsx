@@ -153,11 +153,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* RADAR GRATIS */}
+      {/* RADAR */}
       <Seccion className="py-16 md:py-24">
         <div className="grid gap-10 md:grid-cols-[1.1fr_0.9fr] md:items-center">
           <div className="flex flex-col gap-4">
-            <Eyebrow>Gratis, en un minuto</Eyebrow>
+            <Eyebrow>Radar de clientes nuevos</Eyebrow>
             <H2>¿Cuántos negocios de tu giro hay a 10 km de tu bodega?</H2>
             <p className="text-[17px] md:text-[18px] leading-relaxed text-carbon">Los contamos con nuestros registros actualizados de la ciudad, uno por uno, y te mandamos el número con el mapa. Es el mismo Radar que después usa tu vendedor.</p>
             <Link href="/mercado" className="font-bold text-naranja-2 hover:text-naranja">Ver el mercado por ciudad →</Link>

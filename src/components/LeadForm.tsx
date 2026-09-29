@@ -92,7 +92,7 @@ export function LeadForm({ tipo, giro, ciudad, titulo, sub, boton }: { tipo: Tip
       )}
       <button type="submit" disabled={estado === "enviando"} className="btn btn-naranja !min-h-[54px] disabled:opacity-60">{estado === "enviando" ? "Enviando…" : boton}</button>
       {estado === "error" && <p role="alert" className="text-[14px] text-naranja-2 font-semibold">{msg}</p>}
-      <span className="text-[13px] text-gris text-center">Sin costo. Te escribe una persona, no un bot.</span>
+      <span className="text-[13px] text-gris text-center">Te escribe una persona, no un bot.</span>
     </form>
   );
 }
