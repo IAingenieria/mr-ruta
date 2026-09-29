@@ -39,7 +39,7 @@ export function GiroPage({ giro, zona }: { giro: Giro; zona?: Zona }) {
             <h1 className="display text-[44px] md:text-[76px] text-asfalto">{h1}</h1>
             <AnswerFirst html={answer} className="max-w-[620px] text-tinta" />
             <div className="flex flex-col sm:flex-row gap-4">
-              <a href={demoLink(giro.slug, zona?.nombre)} className="btn btn-naranja !min-h-[58px] md:!px-8 text-[17px]">Crear demo de {giro.corto.split(" ")[0] === "distribuidoras" ? giro.nombre.toLowerCase() : giro.corto}{zona ? ` en ${zona.nombre}` : ""} <Flecha /></a>
+              <a href={demoLink()} className="btn btn-naranja !min-h-[58px] md:!px-8 text-[17px]">Agenda tu demostración <Flecha /></a>
               <a href={waLink(`Hola, tengo una distribuidora de ${giro.producto}${zona ? ` en ${zona.nombre}` : ""} y quiero ver Mr Ruta.`)} className="btn btn-linea !min-h-[58px]">Hablar por WhatsApp</a>
             </div>
             <ul className="flex flex-wrap gap-x-7 gap-y-2 text-[14px] font-semibold text-carbon">
@@ -172,7 +172,7 @@ export function GiroPage({ giro, zona }: { giro: Giro; zona?: Zona }) {
         </div>
       </Seccion>
 
-      <CTAFinal titulo={zona ? `Mira una distribuidora de ${giro.producto.split(",")[0]} de ${zona.nombre} repartiendo con Mr Ruta.` : `Mira una distribuidora de ${giro.producto.split(",")[0]} repartiendo con Mr Ruta.`} sub={`Pedidos de ${giro.producto.split(",")[0]}, ${zona ? `colonias de ${zona.nombre}` : "tu ciudad"}, tus unidades y tus vendedores. En 30 segundos.`} giro={giro.slug} ciudad={zona?.nombre} />
+      <CTAFinal titulo={zona ? `Mira una distribuidora de ${giro.producto.split(",")[0]} de ${zona.nombre} repartiendo con Mr Ruta.` : `Mira una distribuidora de ${giro.producto.split(",")[0]} repartiendo con Mr Ruta.`} sub={`Pedidos de ${giro.producto.split(",")[0]}, ${zona ? `colonias de ${zona.nombre}` : "tu ciudad"}, tus unidades y tus vendedores.`} />
     </>
   );
 }

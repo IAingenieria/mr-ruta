@@ -33,7 +33,7 @@ export default function Producto() {
           ))}
         </div>
       </Seccion>
-      <CTAFinal titulo="Las tres apps, con tu giro y tu ciudad, en 30 segundos." sub="Cinco preguntas. La liga y el QR te llegan al momento y viven 30 días." />
+      <CTAFinal titulo="Las tres apps, con tu giro y tu ciudad." sub="Escríbenos y te preparamos la demostración con tus productos y tus unidades." />
     </>
   );
 }

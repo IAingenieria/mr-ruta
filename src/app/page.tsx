@@ -1,14 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { GIROS } from "@/content/giros";
-import { CIFRAS, FAQ_GENERAL, demoLink } from "@/content/sitio";
+import { FAQ_GENERAL, demoLink } from "@/content/sitio";
 import { meta, software, faqPage } from "@/lib/seo";
 import { Seccion, Eyebrow, H2, FAQ, CTAFinal, JsonLd, Flecha, Telefono } from "@/components/ui";
 import { LeadForm } from "@/components/LeadForm";
 
 export const metadata = meta({
   title: "Software de reparto y venta en ruta | Mr Ruta",
-  description: "Ruta ordenada, pedido sugerido por cliente, evidencia de entrega con foto y firma, y un Radar que encuentra los negocios que faltan. Demo en 30 segundos.",
+  description: "Ruta ordenada, pedido sugerido por cliente, evidencia de entrega con foto y firma, y un Radar que encuentra los negocios que faltan. Pide tu demostración.",
   path: "/",
 });
 
@@ -34,10 +34,10 @@ export default function Home() {
             <h1 className="display text-[50px] md:text-[88px] text-white">Tus camionetas ya pasan frente a los clientes <span className="text-naranja">que no tienes.</span></h1>
             <p className="text-[18px] md:text-[21px] leading-relaxed text-plata max-w-[560px]">Mr Ruta le dice a tu distribuidora <strong className="text-white">dónde están los negocios que faltan</strong>, ordena la ruta del día y deja al vendedor con el pedido sugerido en la mano. Sin cambiar de camioneta ni de sistema de facturación.</p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <a href={demoLink()} className="btn btn-naranja !min-h-[58px] md:!px-8 text-[17px]">Crea tu demo en {CIFRAS.demoSegundos} segundos <Flecha /></a>
+              <a href={demoLink()} className="btn btn-naranja !min-h-[58px] md:!px-8 text-[17px]">Agenda tu demostración <Flecha /></a>
               <Link href="/producto" className="btn btn-linea-clara !min-h-[58px]">Ver un día de ruta</Link>
             </div>
-            <p className="text-[14px] text-gris">Con pedidos de tu giro, en tu ciudad, con tus choferes. Sin tarjeta, sin llamada.</p>
+            <p className="text-[14px] text-gris">Con pedidos de tu giro, en tu ciudad, con tus choferes. Te la muestra una persona.</p>
           </div>
           <div className="relative flex justify-center items-center min-h-[520px] md:min-h-[640px]">
             <div className="absolute top-2 right-0 md:top-6 md:right-10 bg-white rounded-lg px-4 py-3 shadow-2xl flex flex-col">
@@ -94,7 +94,7 @@ export default function Home() {
           <div className="bg-asfalto rounded-[10px] p-7 flex flex-col gap-3 justify-between">
             <span className="display text-[28px] md:text-[30px] text-white">¿Otro giro?</span>
             <span className="text-[15px] leading-relaxed text-plata">Lácteos, congelados, abarrotes, botanas, bebidas, gas LP, refacciones, limpieza, materiales. Si tu producto sale en camioneta, hay ruta.</span>
-            <a href={demoLink()} className="btn btn-naranja self-start !min-h-[46px]">Crear demo con mi giro</a>
+            <a href={demoLink()} className="btn btn-naranja self-start !min-h-[46px]">Agenda tu demostración</a>
           </div>
         </div>
       </Seccion>
@@ -172,7 +172,7 @@ export default function Home() {
       </section>
 
       <div className="pt-16 md:pt-24">
-        <CTAFinal titulo={<>Tu demo, con tu giro y tu ciudad, en {CIFRAS.demoSegundos} segundos.</>} sub="Cinco preguntas. La liga y el QR te llegan al momento y viven 30 días." />
+        <CTAFinal titulo="Tu demostración, con tu giro y tu ciudad." sub="Escríbenos y te la preparamos con tus productos, tus unidades y tus choferes." />
       </div>
     </>
   );

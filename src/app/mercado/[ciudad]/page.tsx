@@ -86,7 +86,7 @@ export default async function Page({ params }: { params: Promise<{ ciudad: strin
       </Seccion>
 
       <section className="bg-white border-y border-plata-2"><div className="mx-auto max-w-[1440px] px-5 md:px-[72px] py-16 md:py-24"><FAQ items={faq} titulo={`Preguntas sobre el mercado de ${z.nombre}`} eyebrow="Datos" /></div></section>
-      <div className="pt-16 md:pt-24"><CTAFinal titulo={`Tu demo con pedidos en colonias de ${z.nombre}, en 30 segundos.`} sub="Con tu giro, tus unidades y tus choferes. La liga vive 30 días." ciudad={z.nombre} /></div>
+      <div className="pt-16 md:pt-24"><CTAFinal titulo={`Tu demostración con pedidos en colonias de ${z.nombre}.`} sub="Con tu giro, tus unidades y tus choferes." /></div>
     </>
   );
 }

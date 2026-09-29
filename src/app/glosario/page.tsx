@@ -35,7 +35,7 @@ export default function Glosario() {
           ))}
         </dl>
       </Seccion>
-      <CTAFinal titulo="Míralo funcionando con tu giro." sub="Cinco preguntas y tu demo está corriendo en 30 segundos." />
+      <CTAFinal titulo="Míralo funcionando con tu giro." sub="Escríbenos y te preparamos la demostración." />
     </>
   );
 }

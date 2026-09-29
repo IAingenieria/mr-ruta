@@ -43,7 +43,7 @@ export default function Casos() {
           <p className="text-[15px] leading-relaxed text-carbon">Kilómetros: misma lista de {CIFRAS.kmOrdenada.paradas} paradas reales, ruta como la hacía el vendedor contra ruta ordenada por Mr Ruta, distancia calculada sobre calles ({CIFRAS.kmOrdenada.cuando}). Negocios cerrados: muestra de {CIFRAS.verificadosMuestra} puntos de nuestros registros verificados uno por uno contra Google Business; {CIFRAS.cerradosPct} % con cierre confirmado. Mercado: conteo de negocios con dirección y coordenada en nuestros registros dentro del radio indicado.</p>
         </div>
       </Seccion>
-      <CTAFinal titulo="Repite la medición con tu ruta." sub="Crea tu demo, pega tus paradas y compara tu orden contra el de Mr Ruta, en kilómetros." />
+      <CTAFinal titulo="Repite la medición con tu ruta." sub="Mándanos tus paradas y comparamos tu orden contra el de Mr Ruta, en kilómetros." />
     </>
   );
 }

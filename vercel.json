@@ -4,6 +4,16 @@
   "installCommand": "npm install",
   "redirects": [
     {
+      "source": "/demo",
+      "destination": "/contacto",
+      "permanent": true
+    },
+    {
+      "source": "/planes",
+      "destination": "/contacto",
+      "permanent": true
+    },
+    {
       "source": "/login",
       "destination": "/",
       "permanent": false

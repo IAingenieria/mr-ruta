@@ -32,7 +32,7 @@ export default function Reparto() {
           ))}
         </div>
       </Seccion>
-      <CTAFinal titulo="¿Tu giro no está? Crea la demo con «otra distribución»." sub="Cinco preguntas y ves tu operación corriendo. Después ajustamos el catálogo y los pasos a tu producto." />
+      <CTAFinal titulo="¿Tu giro no está? Escríbenos." sub="Te preparamos la demostración y ajustamos el catálogo y los pasos a tu producto." />
     </>
   );
 }

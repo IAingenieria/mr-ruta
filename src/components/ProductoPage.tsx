@@ -71,7 +71,7 @@ export const productoPorSlug = (s: string) => PRODUCTOS.find((p) => p.slug === s
 export function ProductoPage({ p }: { p: Producto }) {
   const path = `/producto/${p.slug}`;
   const migas = [{ name: "Inicio", path: "/" }, { name: "Producto", path: "/producto" }, { name: p.nombre, path }];
-  const faq = [...p.faq, FAQ_GENERAL[2], FAQ_GENERAL[11]];
+  const faq = [...p.faq, FAQ_GENERAL[2], ...FAQ_GENERAL.filter((f) => f.p === "¿Quién ve mis datos?")];
   return (
     <>
       <JsonLd data={[breadcrumb(migas), faqPage(faq)]} />
@@ -83,7 +83,7 @@ export function ProductoPage({ p }: { p: Producto }) {
             <h1 className="display text-[44px] md:text-[72px] text-asfalto">{p.titulo}</h1>
             <AnswerFirst html={p.answer} className="max-w-[620px]" />
             <div className="flex flex-col sm:flex-row gap-4">
-              <a href={demoLink()} className="btn btn-naranja !min-h-[58px] md:!px-8 text-[17px]">Verlo en mi demo <Flecha /></a>
+              <a href={demoLink()} className="btn btn-naranja !min-h-[58px] md:!px-8 text-[17px]">Agenda tu demostración <Flecha /></a>
               <Link href="/producto" className="btn btn-linea !min-h-[58px]">Las tres apps</Link>
             </div>
           </div>
@@ -112,7 +112,7 @@ export function ProductoPage({ p }: { p: Producto }) {
         </div>
       </Seccion>
       <section className="bg-white border-y border-plata-2"><div className="mx-auto max-w-[1440px] px-5 md:px-[72px] py-16 md:py-24"><FAQ items={faq} titulo={`Preguntas sobre ${p.nombre.toLowerCase()}`} /></div></section>
-      <div className="pt-16 md:pt-24"><CTAFinal titulo="Míralo con tu giro y tu ciudad, en 30 segundos." sub="Cinco preguntas. La liga y el QR te llegan al momento y viven 30 días." /></div>
+      <div className="pt-16 md:pt-24"><CTAFinal titulo="Míralo con tu giro y tu ciudad." sub="Escríbenos y te preparamos la demostración con tus productos y tus unidades." /></div>
     </>
   );
 }
