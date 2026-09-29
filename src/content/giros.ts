@@ -74,7 +74,6 @@ export const GIROS: Giro[] = [
     faq: [
       { p: "¿Se puede vender por kilo y por paquete a la vez?", r: "Sí. Cada producto entra al catálogo con su unidad (kilo, paquete, docena) y su precio. El repartidor teclea la cantidad en la unidad que usa esa tienda." },
       { p: "¿Cómo se maneja el efectivo de la ruta?", r: "Cada parada registra lo cobrado y lo que quedó a crédito. Al corte, el sistema muestra cuánto efectivo debe entregar cada repartidor y la diferencia contra lo despachado." },
-      { p: "¿Puedo saber a qué abarrotes no les vendo todavía?", r: "Sí. El Radar te muestra, a partir de nuestros registros actualizados de la ciudad, los abarrotes, fondas y carnicerías que están a unas cuadras de tu ruta y aún no son clientes." },
     ],
     rutapack: true,
   },
@@ -101,7 +100,6 @@ export const GIROS: Giro[] = [
     faq: [
       { p: "¿Lleva el control de envases retornables?", r: "Sí. En cada visita se registran los envases o charolas entregados y recogidos por cliente, y queda en el historial de esa parada." },
       { p: "¿Cómo se comprueba que el producto llegó en buen estado?", r: "Con la evidencia de entrega: foto tomada con la cámara en el momento (no de la galería), hora, ubicación y firma del cliente en pantalla." },
-      { p: "¿Puedo ver dónde hay paleterías que no me compran?", r: "Sí. El Radar te muestra las paleterías, neverías y tiendas de tu ciudad que no están en tu cartera, verificadas una por una antes de mostrarse." },
     ],
     rutapack: true,
   },
@@ -182,7 +180,6 @@ export const GIROS: Giro[] = [
     faq: [
       { p: "¿Cómo evito cargar de más a una cremería?", r: "Con el sugerido por cliente: lo que dejaste la visita pasada menos lo que regresó. Si un producto regresa, la siguiente vez se sugiere menos; el sistema nunca inventa demanda." },
       { p: "¿Qué pasa si el cliente no paga completo?", r: "El vendedor registra lo cobrado y lo que quedó pendiente en la misma parada; aparece en el corte del día y en el historial del cliente." },
-      { p: "¿Cómo encuentro cremerías que no me compran?", r: "El Radar te muestra las cremerías, abarrotes y cafeterías de tu ciudad que no están en tu cartera, verificadas antes de mostrarse." },
     ],
     rutapack: false,
   },
@@ -236,7 +233,6 @@ export const GIROS: Giro[] = [
     faq: [
       { p: "¿Maneja preventa y entrega por separado?", r: "Sí. El preventista vende hoy en su ruta y el chofer entrega mañana con la carga ya armada; cada uno tiene su app y su corte." },
       { p: "¿El vendedor ve el precio correcto de cada producto?", r: "Sí. El catálogo entra con tus presentaciones y precios, y el vendedor teclea solo la cantidad; el total se calcula en la pantalla." },
-      { p: "¿Cuántas tiendas hay en mi zona que no me compran?", r: "Lo contamos con nuestros registros actualizados de tu ciudad y te mostramos el mapa; el Radar te sirve diez por día para visitarlas." },
     ],
     rutapack: false,
   },

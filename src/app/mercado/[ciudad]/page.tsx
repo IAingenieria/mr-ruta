@@ -5,7 +5,6 @@ import { SITIO } from "@/content/sitio";
 import { meta, breadcrumb, dataset, faqPage } from "@/lib/seo";
 import { zonasMercado, zonaPorSlug, fmt, RADIO_KM, tier1, negociosGiroEnZona } from "@/lib/zonas";
 import { Seccion, Eyebrow, H2, Migas, JsonLd, CTAFinal, FAQ } from "@/components/ui";
-import { LeadForm } from "@/components/LeadForm";
 
 export const dynamicParams = false;
 export function generateStaticParams() { return zonasMercado().map((z) => ({ ciudad: z.slug })); }
@@ -42,8 +41,7 @@ export default async function Page({ params }: { params: Promise<{ ciudad: strin
   const faq = [
     { p: `¿Cuántas tiendas de abarrotes hay en ${z.nombre}?`, r: `En la zona de reparto de ${z.nombre} (radio de ${RADIO_KM} km) contamos ${fmt(z.categorias.abarrotes)} tiendas de abarrotes y misceláneas, más ${fmt(z.categorias.minisuper)} minisúpers, según nuestros registros actualizados a ${SITIO.fechaRegistros}.` },
     { p: `¿Cuántos restaurantes y fondas hay en ${z.nombre}?`, r: `${fmt(z.categorias.restaurantes)} establecimientos de preparación de alimentos (restaurantes, fondas, taquerías, cafeterías y neverías) en la zona de reparto de ${z.nombre}.` },
-    { p: "¿De dónde salen estos números?", r: `De nuestros registros propios de negocios de cada ciudad, con dirección y coordenada, actualizados a ${SITIO.fechaRegistros}. Cada negocio cuenta en una sola zona, la de centro más cercano dentro de ${RADIO_KM} km. Para una bodega concreta lo recalculamos a 10 km de su dirección.` },
-    { p: "¿Todos estos negocios están abiertos?", r: "No necesariamente: un negocio cierra cualquier día. Por eso el Radar verifica cada uno contra Google Business antes de mostrarlo, y los que ya cerraron no aparecen." },
+    { p: "¿De dónde salen estos números?", r: `De nuestros registros propios de negocios de cada ciudad, con dirección y coordenada, actualizados a ${SITIO.fechaRegistros}. Cada negocio cuenta en una sola zona, la de centro más cercano dentro de ${RADIO_KM} km.` },
   ];
   return (
     <>
@@ -80,7 +78,6 @@ export default async function Page({ params }: { params: Promise<{ ciudad: strin
                 ))}
               </ul>
             </div>
-            <LeadForm tipo="radar" ciudad={z.slug} titulo={`Contar los de mi bodega en ${z.nombre}`} sub="A 10 km de tu dirección exacta, con mapa." boton="Contar mis negocios" />
           </div>
         </div>
       </Seccion>

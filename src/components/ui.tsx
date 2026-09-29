@@ -53,7 +53,7 @@ export function Header() {
 export function Footer() {
   const cols = [
     { t: "Giros", l: [["/reparto/panaderia", "Panadería"], ["/reparto/tortilleria", "Tortillería"], ["/reparto/helados-y-hielo", "Helados y hielo"], ["/reparto/frutas-y-verduras", "Frutas y verduras"], ["/reparto/carnicos-y-pollo", "Cárnicos y pollo"], ["/reparto", "Todos los giros"]] },
-    { t: "Producto", l: [["/producto/radar", "Radar"], ["/producto/vendedor", "App del vendedor"], ["/producto/despacho", "Despacho y evidencia"], ["/mercado", "Mercado por ciudad"]] },
+    { t: "Producto", l: [["/producto/vendedor", "App del vendedor"], ["/producto/despacho", "Despacho y evidencia"], ["/mercado", "Mercado por ciudad"]] },
     { t: "Empresa", l: [["/casos", "Mediciones en campo"], ["/glosario", "Glosario de reparto"], ["/comparativas", "Cómo elegir software de reparto"], ["/contacto", "Contacto"], ["/aviso-de-privacidad", "Aviso de privacidad"]] },
   ];
   return (

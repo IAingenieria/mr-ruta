@@ -6,7 +6,7 @@ import { Seccion, Eyebrow, Migas, JsonLd, CTAFinal } from "@/components/ui";
 
 export const metadata = meta({
   title: "Mediciones en campo del software de reparto Mr Ruta",
-  description: "Lo medido en demostrativos con datos reales de distribuidoras: kilómetros ahorrados al ordenar la ruta, negocios cerrados detectados y mercado contado.",
+  description: "Lo medido en demostrativos con datos reales de distribuidoras: kilómetros ahorrados al ordenar la ruta y los negocios contados en cada ciudad.",
   path: "/casos",
 });
 
@@ -40,7 +40,7 @@ export default function Casos() {
         </div>
         <div className="mt-10 card p-7 flex flex-col gap-2 max-w-[900px]">
           <span className="eyebrow text-carbon">Cómo se midió</span>
-          <p className="text-[15px] leading-relaxed text-carbon">Kilómetros: misma lista de {CIFRAS.kmOrdenada.paradas} paradas reales, ruta como la hacía el vendedor contra ruta ordenada por Mr Ruta, distancia calculada sobre calles ({CIFRAS.kmOrdenada.cuando}). Negocios cerrados: muestra de {CIFRAS.verificadosMuestra} puntos de nuestros registros verificados uno por uno contra Google Business; {CIFRAS.cerradosPct} % con cierre confirmado. Mercado: conteo de negocios con dirección y coordenada en nuestros registros dentro del radio indicado.</p>
+          <p className="text-[15px] leading-relaxed text-carbon">Kilómetros: misma lista de {CIFRAS.kmOrdenada.paradas} paradas reales, ruta como la hacía el vendedor contra ruta ordenada por Mr Ruta, distancia calculada sobre calles ({CIFRAS.kmOrdenada.cuando}). Mercado: conteo de negocios con dirección y coordenada en nuestros registros dentro del radio indicado.</p>
         </div>
       </Seccion>
       <CTAFinal titulo="Repite la medición con tu ruta." sub="Mándanos tus paradas y comparamos tu orden contra el de Mr Ruta, en kilómetros." />

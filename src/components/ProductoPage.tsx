@@ -11,24 +11,6 @@ export type Producto = {
 
 export const PRODUCTOS: Producto[] = [
   {
-    slug: "radar", nombre: "Radar", titulo: "Radar de clientes nuevos para distribuidoras",
-    descripcion: "Diez negocios abiertos por día, cerca de tu ruta y que no son clientes, tomados de nuestros registros actualizados y verificados uno por uno. Los cerrados nunca se muestran.",
-    answer: "El <b>Radar de clientes nuevos</b> de Mr Ruta sirve cada día una lista corta de negocios de tu giro que están cerca de la ruta y todavía no te compran. Salen de <b>nuestros registros actualizados de la ciudad</b> y cada uno se verifica contra Google Business antes de mostrarse: <b>los cerrados nunca aparecen</b>.",
-    bloques: [
-      { h: "¿Por qué se verifica cada negocio?", p: "Porque un listado lo tiene cualquiera y un negocio cierra cualquier día. Un vendedor mandado a puertas cerradas deja de creer en la herramienta la primera semana." },
-      { h: "Dos grados de certeza que no se mezclan", p: "Si el nombre coincide, la reseña y la calificación son de ese negocio. Si solo coincide el domicilio, se muestra «hoy en ese domicilio: otro nombre» sin calificación. Nunca se le atribuye a un negocio la reputación del vecino." },
-      { h: "Del Radar a la ruta en un toque", p: "El vendedor aprueba el negocio y aparece en su recorrido del día, ya ordenado con las demás paradas. Lo que descarta no vuelve a salir." },
-      { h: "Cuánto mercado te falta", p: "Con la dirección de tu bodega contamos los negocios de tu giro a 10 km y te mandamos el número con el mapa. Es el punto de partida para saber cuántas paradas más caben en las rutas que ya tienes." },
-    ],
-    incluye: ["Diez negocios por día (ajustable)", "Verificación contra Google Business antes de mostrar", "Aprobar o descartar cada negocio en un toque", "Ficha con dirección, distancia a la parada más cercana y teléfono cuando existe", "Conteo del mercado alrededor de tu bodega", "Registros actualizados por ciudad"],
-    img: "giro",
-    faq: [
-      { p: "¿Cuántos negocios muestra el Radar por día?", r: "Diez por día por defecto, ajustable. Es una lista corta a propósito: se visitan en la misma ruta, sin desviarse, y al día siguiente hay otros diez." },
-      { p: "¿De dónde salen los negocios?", r: "De nuestros registros actualizados de cada ciudad, con dirección y coordenada, verificados uno por uno contra Google Business antes de mostrarse." },
-      { p: "¿Qué pasa si un negocio ya es mi cliente?", r: "El vendedor lo descarta y no vuelve a aparecer. Al arrancar tu instancia cargamos tu cartera para que el Radar solo muestre los que no están en ella." },
-    ],
-  },
-  {
     slug: "vendedor", nombre: "App del vendedor", titulo: "App del vendedor de ruta: pedido sugerido y devolución",
     descripcion: "Carga del día, pedido sugerido por cliente, devolución y cobro en una pantalla. Alta de clientes en campo con foto de fachada. Funciona sin señal.",
     answer: "La <b>app del vendedor de ruta</b> de Mr Ruta pone en el celular la carga del día, el <b>pedido sugerido por cliente</b>, la devolución y el cobro en una sola pantalla. La venta neta es lo que se despachó menos lo que regresó, y <b>funciona sin señal</b>: se sincroniza sola al recuperarla.",
@@ -84,7 +66,7 @@ export function ProductoPage({ p }: { p: Producto }) {
             <AnswerFirst html={p.answer} className="max-w-[620px]" />
             <div className="flex flex-col sm:flex-row gap-4">
               <a href={demoLink()} className="btn btn-naranja !min-h-[58px] md:!px-8 text-[17px]">Agenda tu demostración <Flecha /></a>
-              <Link href="/producto" className="btn btn-linea !min-h-[58px]">Las tres apps</Link>
+              <Link href="/producto" className="btn btn-linea !min-h-[58px]">Ver el producto</Link>
             </div>
           </div>
           <div className="flex justify-center"><Foto f={p.img} w={440} prioridad /></div>

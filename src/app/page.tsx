@@ -4,11 +4,10 @@ import { GIROS } from "@/content/giros";
 import { FAQ_GENERAL, demoLink } from "@/content/sitio";
 import { meta, software, faqPage } from "@/lib/seo";
 import { Seccion, Eyebrow, H2, FAQ, CTAFinal, JsonLd, Flecha, Foto } from "@/components/ui";
-import { LeadForm } from "@/components/LeadForm";
 
 export const metadata = meta({
   title: "Software de reparto y venta en ruta | Mr Ruta",
-  description: "Ruta ordenada, pedido sugerido por cliente, evidencia de entrega con foto y firma, y un Radar que encuentra los negocios que faltan. Pide tu demostración.",
+  description: "Ruta ordenada, pedido sugerido por cliente y evidencia de entrega con foto y firma para distribuidoras con flota propia. Pide tu demostración.",
   path: "/",
 });
 
@@ -31,8 +30,8 @@ export default function Home() {
               <span className="flex gap-1.5" aria-hidden="true"><span className="stripe !w-2 !h-[18px] bg-naranja" /><span className="stripe !w-2 !h-[18px] bg-naranja-2" /></span>
               Reparto y venta en ruta · Distribuidoras de México
             </div>
-            <h1 className="display text-[50px] md:text-[88px] text-white">Tus camionetas ya pasan frente a los clientes <span className="text-naranja">que no tienes.</span></h1>
-            <p className="text-[18px] md:text-[21px] leading-relaxed text-plata max-w-[560px]">Mr Ruta le dice a tu distribuidora <strong className="text-white">dónde están los negocios que faltan</strong>, ordena la ruta del día y deja al vendedor con el pedido sugerido en la mano. Sin cambiar de camioneta ni de sistema de facturación.</p>
+            <h1 className="display text-[50px] md:text-[88px] text-white">Cada ruta ordenada, cada entrega <span className="text-naranja">con prueba.</span></h1>
+            <p className="text-[18px] md:text-[21px] leading-relaxed text-plata max-w-[560px]">Mr Ruta <strong className="text-white">ordena la ruta del día</strong>, deja al vendedor con el pedido sugerido en la mano y guarda la prueba de cada entrega. Sin cambiar de camioneta ni de sistema de facturación.</p>
             <div className="flex flex-col sm:flex-row gap-4">
               <a href={demoLink()} className="btn btn-naranja !min-h-[58px] md:!px-8 text-[17px]">Agenda tu demostración <Flecha /></a>
               <Link href="/producto" className="btn btn-linea-clara !min-h-[58px]">Ver un día de ruta</Link>
@@ -60,7 +59,7 @@ export default function Home() {
           {[
             // Los cuatro dolores del dueño de una distribuidora, en cualquier ciudad del país.
             // Sin cifras: una medición de una planta no es la realidad de todas (Luis, 16-sep).
-            ["Clientes que te faltan", "Tus camionetas pasan todos los días frente a negocios que no te compran. El Radar te dice cuáles, en tu ciudad, y verifica que sigan abiertos.", "border-naranja"],
+            ["El cobro del día", "Lo cobrado y lo pendiente de cada cliente, cuadrado al cerrar la ruta. Sin reconstruirlo de memoria en la tarde.", "border-naranja"],
             ["Lo que se regresa", "Lo que regresa a la bodega ya lo pagaste. El pedido sugerido deja en cada tienda lo que se vende, no lo que sobra.", "border-naranja-2"],
             ["La ruta de cada día", "Ordenada en un clic, con menos kilómetros y sin depender de la memoria de un chofer que un día se va.", "border-carbon"],
             ["Lo que pasa en la calle", "Cada entrega con foto, hora, ubicación y firma. Si te dicen que no llegó, tú tienes la prueba.", "border-plata"],
@@ -104,13 +103,12 @@ export default function Home() {
         <div className="mx-auto max-w-[1440px] px-5 md:px-[72px] py-16 md:py-24 flex flex-col gap-12">
           <div className="flex flex-col gap-3 max-w-[820px]">
             <Eyebrow>El producto</Eyebrow>
-            <H2>Encontrar, vender, entregar. Un solo sistema, tres apps.</H2>
+            <H2>Vender y entregar. Un solo sistema, dos apps.</H2>
           </div>
-          <div className="grid gap-10 md:grid-cols-3">
+          <div className="grid gap-10 md:grid-cols-2">
             {[
-              { n: "01", t: "Radar", href: "/producto/radar", d: "Cruza nuestros registros actualizados de tu giro con Google Business y te sirve 10 negocios abiertos por día, a la mano del vendedor. Los cerrados nunca se muestran.", img: "giro" as const },
-              { n: "02", t: "Vendedor", href: "/producto/vendedor", d: "Carga del día, pedido sugerido, devolución y cobro en la misma pantalla. La venta neta es lo que se despachó menos lo que regresó.", img: "entrega" as const },
-              { n: "03", t: "Despacho y ruta", href: "/producto/despacho", d: "La ruta se ordena sola y se abre en Google Maps con regreso a la bodega. Cada entrega deja foto con cámara real, GPS, hora y firma.", img: "flota" as const },
+              { n: "01", t: "Vendedor", href: "/producto/vendedor", d: "Carga del día, pedido sugerido, devolución y cobro en la misma pantalla. La venta neta es lo que se despachó menos lo que regresó.", img: "entrega" as const },
+              { n: "02", t: "Despacho y ruta", href: "/producto/despacho", d: "La ruta se ordena sola y se abre en Google Maps con regreso a la bodega. Cada entrega deja foto con cámara real, GPS, hora y firma.", img: "flota" as const },
             ].map((p) => (
               <div key={p.n} className="flex flex-col gap-5">
                 <div className="flex items-center gap-3">
@@ -132,25 +130,12 @@ export default function Home() {
           <Eyebrow oscuro>Lo que cuesta rutear a mano</Eyebrow>
           <H2 claro>Lo que regresa a la bodega ya se pagó en materia prima y en horas de camioneta.</H2>
           <div className="flex flex-col gap-4">
-            {[["bg-naranja", "La ruta la arma una persona de memoria.", "Si se enferma o se va, se va con ella."], ["bg-naranja-2", "Reportar volumen bruto premia cargar de más.", "Nadie mide lo que regresa por parada."], ["bg-plata", "Los clientes nuevos llegan por casualidad.", "Las camionetas pasan frente a ellos todos los días."]].map(([c, a, b]) => (
+            {[["bg-naranja", "La ruta la arma una persona de memoria.", "Si se enferma o se va, se va con ella."], ["bg-naranja-2", "Reportar volumen bruto premia cargar de más.", "Nadie mide lo que regresa por parada."], ["bg-plata", "El corte se cuadra en papel.", "Lo cobrado y lo devuelto se reconstruye de memoria al final del día."]].map(([c, a, b]) => (
               <div key={a} className="flex gap-4 items-start"><span className={`stripe !w-2.5 !h-[26px] ${c} shrink-0 mt-0.5`} aria-hidden="true" /><span className="text-[17px] leading-relaxed text-plata"><strong className="text-white">{a}</strong> {b}</span></div>
             ))}
           </div>
         </div>
       </section>
-
-      {/* RADAR */}
-      <Seccion className="py-16 md:py-24">
-        <div className="grid gap-10 md:grid-cols-[1.1fr_0.9fr] md:items-center">
-          <div className="flex flex-col gap-4">
-            <Eyebrow>Radar de clientes nuevos</Eyebrow>
-            <H2>¿Cuántos negocios de tu giro hay a 10 km de tu bodega?</H2>
-            <p className="text-[17px] md:text-[18px] leading-relaxed text-carbon">Los contamos con nuestros registros actualizados de la ciudad, uno por uno, y te mandamos el número con el mapa. Es el mismo Radar que después usa tu vendedor.</p>
-            <Link href="/mercado" className="font-bold text-naranja-2 hover:text-naranja">Ver el mercado por ciudad →</Link>
-          </div>
-          <LeadForm tipo="radar" titulo="Contar mis negocios" boton="Contar mis negocios" />
-        </div>
-      </Seccion>
 
       {/* FAQ */}
       <section className="bg-white border-y border-plata-2">

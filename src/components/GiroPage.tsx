@@ -3,7 +3,6 @@ import type { Giro } from "@/content/giros";
 import { FAQ_GENERAL, demoLink, waLink, SITIO } from "@/content/sitio";
 import { fmt, tier1, negociosGiroEnZona, RADIO_KM, type Zona } from "@/lib/zonas";
 import { Seccion, Eyebrow, H2, FAQ, CTAFinal, JsonLd, Flecha, Foto, Migas, AnswerFirst, Check } from "@/components/ui";
-import { LeadForm } from "@/components/LeadForm";
 import { breadcrumb, faqPage, service } from "@/lib/seo";
 
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -61,7 +60,7 @@ export function GiroPage({ giro, zona }: { giro: Giro; zona?: Zona }) {
             <H2 claro>{zona ? `Negocios que compran ${giro.producto.split(",")[0].split(" y ")[0]} en ${zona.nombre}` : `Quién te compra ${giro.producto.split(",")[0].split(" y ")[0]} en cada ciudad`}</H2>
             <p className="text-[17px] leading-relaxed text-plata">
               {zona
-                ? <>Negocios con dirección y coordenada en nuestros registros actualizados de la zona de reparto de {zona.nombre} (radio de {RADIO_KM} km{zona.subzonas.length > 1 ? `, incluye ${zona.subzonas.filter((s) => s !== zona.nombre.split("–")[0]).join(", ")}` : ""}). Un negocio cierra cualquier día: el Radar los cruza contra Google Business antes de mandarte y <strong className="text-white">los cerrados nunca se muestran</strong>.</>
+                ? <>Negocios con dirección y coordenada en nuestros registros actualizados de la zona de reparto de {zona.nombre} (radio de {RADIO_KM} km{zona.subzonas.length > 1 ? `, incluye ${zona.subzonas.filter((s) => s !== zona.nombre.split("–")[0]).join(", ")}` : ""}).</>
                 : <>Estas son las zonas de México con más negocios que compran {giro.producto.split(",")[0]}, según nuestros registros actualizados. Cada ciudad tiene su propia página con el conteo por tipo de negocio y su demo.</>}
             </p>
             <Link href={zona ? `/mercado/${zona.slug}` : "/mercado"} className="btn btn-naranja self-start">{zona ? `Ver todo el mercado de ${zona.nombre}` : "Ver el mercado por ciudad"}</Link>
@@ -125,7 +124,7 @@ export function GiroPage({ giro, zona }: { giro: Giro; zona?: Zona }) {
             <Eyebrow>Ya viene cargado</Eyebrow>
             <H2>Qué trae el rutapack de {giro.nombre.toLowerCase()}</H2>
             <ul className="flex flex-col gap-3 text-[16px] text-carbon">
-              {["Catálogo con tus productos, presentaciones y fotos", "Tipos de negocio del giro para dar de alta clientes en campo", "Pasos de entrega y evidencia (foto con cámara, ubicación, hora, firma)", "Pedido sugerido, devolución y cobro en una pantalla", "Ruta ordenada con liga continua a Google Maps", "Tablero del día para el despacho y análisis del mes para dirección", "Radar con los negocios de tu giro que no son clientes"].map((t) => (
+              {["Catálogo con tus productos, presentaciones y fotos", "Tipos de negocio del giro para dar de alta clientes en campo", "Pasos de entrega y evidencia (foto con cámara, ubicación, hora, firma)", "Pedido sugerido, devolución y cobro en una pantalla", "Ruta ordenada con liga continua a Google Maps", "Tablero del día para el despacho y análisis del mes para dirección"].map((t) => (
                 <li key={t} className="flex gap-3"><Check /><span>{t}</span></li>
               ))}
             </ul>
@@ -140,18 +139,6 @@ export function GiroPage({ giro, zona }: { giro: Giro; zona?: Zona }) {
           </div>
         </div>
       </Seccion>
-
-      {/* RADAR FORM */}
-      <section className="bg-white border-y border-plata-2">
-        <div className="mx-auto max-w-[1440px] px-5 md:px-[72px] py-16 md:py-24 grid gap-10 md:grid-cols-[1.1fr_0.9fr] md:items-center">
-          <div className="flex flex-col gap-4">
-            <Eyebrow>Radar de clientes nuevos</Eyebrow>
-            <H2>¿Cuántos {giro.mercado[0].etiqueta.toLowerCase()} hay a 10 km de tu bodega{zona ? ` en ${zona.nombre}` : ""}?</H2>
-            <p className="text-[17px] leading-relaxed text-carbon">Los contamos con nuestros registros actualizados, uno por uno, y te mandamos el número con el mapa. Es el mismo Radar que después usa tu vendedor.</p>
-          </div>
-          <LeadForm tipo="radar" giro={giro.slug} ciudad={zona?.slug} titulo="Contar mis negocios" boton="Contar mis negocios" />
-        </div>
-      </section>
 
       {/* FAQ */}
       <Seccion className="py-16 md:py-24"><FAQ items={faq} titulo={`Lo que preguntan los distribuidores de ${giro.producto.split(",")[0]}`} eyebrow={`Preguntas de ${giro.corto}`} /></Seccion>

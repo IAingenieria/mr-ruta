@@ -13,7 +13,7 @@ const barlowCondensed = Barlow_Condensed({ subsets: ["latin"], weight: ["600", "
 export const metadata: Metadata = {
   metadataBase: new URL(SITIO.dominio),
   title: { default: "Mr Ruta — Software de reparto y venta en ruta", template: "%s" },
-  description: "Plataforma de reparto y venta en ruta para distribuidoras con flota propia: ruta ordenada, pedido sugerido, evidencia de entrega y Radar de clientes nuevos.",
+  description: "Plataforma de reparto y venta en ruta para distribuidoras con flota propia: ruta ordenada, pedido sugerido, devolución y evidencia de entrega.",
   applicationName: "Mr Ruta",
   formatDetection: { telephone: false },
 };
