@@ -113,6 +113,13 @@ export function DemoWizard({ giroInicial, ciudadInicial }: { giroInicial?: strin
 
   useEffect(() => { window.scrollTo({ top: 0, behavior: "smooth" }); }, [paso]);
 
+  // Sitio exportado estático: el giro y la ciudad del enlace se leen en el navegador.
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search);
+    const g = p.get("giro"), c = p.get("ciudad");
+    setD((x) => ({ ...x, giro: g && GIROS.some((y) => y.slug === g) ? g : x.giro, ciudad: c || x.ciudad }));
+  }, []);
+
   const puede = paso === 1 || (paso === 2 && d.giro) || (paso === 3 && d.tamano) || (paso === 4 && d.dolor) ||
     (paso === 5 && d.nombre.trim() && d.empresa.trim() && d.estado && d.choferes.some((c) => c.trim()));
 

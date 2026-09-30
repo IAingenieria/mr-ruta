@@ -1,7 +1,7 @@
 // Datos fijos del sitio. Lo que está en corchetes lo define Luis antes de publicar.
 export const SITIO = {
   nombre: "Mr Ruta",
-  dominio: process.env.NEXT_PUBLIC_SITE_URL || "https://www.mr-ruta.com",
+  dominio: process.env.NEXT_PUBLIC_SITE_URL || "https://www.goodmantech.com.mx/logistica",
   empresa: "Goodman Tech",
   ciudad: "México",                       // [Ciudad] — pendiente de Luis
   whatsapp: process.env.NEXT_PUBLIC_WHATSAPP || "528126350902",   // Luis, 16-sep-2026
@@ -22,7 +22,7 @@ export const demoLink = (giro?: string, ciudad?: string) => {
   if (giro) p.set("giro", giro);
   if (ciudad) p.set("ciudad", ciudad);
   const q = p.toString();
-  return `/demo${q ? "?" + q : ""}`;
+  return `/logistica/demo${q ? "?" + q : ""}`;   // <a> normal: lleva el basePath a mano
 };
 
 // Cifras verificadas en campo (no cambiar sin fuente): ver docs internos de la plataforma.

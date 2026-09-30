@@ -8,12 +8,11 @@ export const metadata = meta({
   path: "/demo",
 });
 
-export default async function Demo({ searchParams }: { searchParams: Promise<{ giro?: string; ciudad?: string }> }) {
-  const sp = await searchParams;
+export default function Demo() {
   return (
     <>
       <JsonLd data={breadcrumb([{ name: "Inicio", path: "/" }, { name: "Crea tu demo", path: "/demo" }])} />
-      <DemoWizard giroInicial={sp.giro} ciudadInicial={sp.ciudad} />
+      <DemoWizard />
     </>
   );
 }
