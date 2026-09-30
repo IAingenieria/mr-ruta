@@ -4,7 +4,7 @@ export const SITIO = {
   dominio: process.env.NEXT_PUBLIC_SITE_URL || "https://www.mr-ruta.com",
   empresa: "Goodman Tech",
   ciudad: "México",                       // [Ciudad] — pendiente de Luis
-  whatsapp: process.env.NEXT_PUBLIC_WHATSAPP || "528126350902",   // Luis, 16-sep-2026
+  whatsapp: process.env.NEXT_PUBLIC_WHATSAPP || "528120408940",   // Luis, 29-sep-2026 (antes 528126350902)
   demoUrl: "https://demo.mr-ruta.com",
   leadsEndpoint: process.env.NEXT_PUBLIC_LEADS_ENDPOINT || "https://demo.mr-ruta.com/api/sitio/lead",
   gtmId: process.env.NEXT_PUBLIC_GTM_ID || "",         // pendiente de Luis
@@ -14,6 +14,12 @@ export const SITIO = {
 
 export const waLink = (texto: string) =>
   SITIO.whatsapp ? `https://wa.me/${SITIO.whatsapp}?text=${encodeURIComponent(texto)}` : "/contacto";
+
+// El número para mostrar sale del mismo dato que la liga: 528120408940 → "+52 81 2040 8940".
+export const whatsappVisible = () => {
+  const d = SITIO.whatsapp.replace(/\D/g, "");
+  return d.length === 12 && d.startsWith("52") ? `+52 ${d.slice(2, 4)} ${d.slice(4, 8)} ${d.slice(8)}` : `+${d}`;
+};
 
 // Ya no hay demo en línea (Luis, 29-sep-2026): la demostración se agenda con una persona.
 export const demoLink = () => "/contacto";
