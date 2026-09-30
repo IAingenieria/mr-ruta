@@ -23,7 +23,7 @@ node scripts/auditar.mjs http://localhost:3051   # 1 h1 · title ≤ 60 · desc 
 | Variable | Para qué |
 |---|---|
 | `NEXT_PUBLIC_SITE_URL` | `https://www.mr-ruta.com` (canonical, sitemaps, Schema) |
-| `NEXT_PUBLIC_WHATSAPP` | por defecto `528126350902`; cámbialo aquí si cambia el número |
+| `NEXT_PUBLIC_WHATSAPP` | por defecto `528120408940` (+52 81 2040 8940); cámbialo aquí si cambia el número |
 | `NEXT_PUBLIC_GTM_ID` | `GTM-XXXXXXX`; sin él no hay medición |
 | `NEXT_PUBLIC_LEADS_ENDPOINT` | por defecto `https://demo.mr-ruta.com/api/sitio/lead` |
 

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { NAV, SITIO, demoLink, waLink } from "@/content/sitio";
+import { NAV, SITIO, demoLink, waLink, whatsappVisible } from "@/content/sitio";
 
 export const Flecha = ({ color = "#1F2224" }: { color?: string }) => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -62,6 +62,11 @@ export function Footer() {
         <div className="flex flex-col gap-4">
           <Image src="/img/isotipo.png" alt="Mr Ruta" width={514} height={167} className="h-10 w-auto self-start" />
           <p className="text-[15px] leading-relaxed max-w-[340px]">Plataforma de reparto y venta en ruta para distribuidoras con flota propia. Hecha en México por {SITIO.empresa}.</p>
+          {SITIO.whatsapp && (
+            <a href={waLink("Hola, quiero hablar con alguien de Mr Ruta.")} target="_blank" rel="noopener" className="text-[15px] text-white hover:text-naranja self-start">
+              WhatsApp <span className="font-semibold">{whatsappVisible()}</span>
+            </a>
+          )}
         </div>
         {cols.map((c) => (
           <div key={c.t} className="flex flex-col gap-2.5 text-[15px]">
